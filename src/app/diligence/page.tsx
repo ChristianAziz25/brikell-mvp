@@ -75,7 +75,7 @@ export default function Page() {
           <div className="flex-1 space-y-4 overflow-y-auto p-6">
             <div className="flex justify-start">
               <div className="flex max-w-3xl items-start gap-3">
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-muted">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
                   <Sparkles className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">

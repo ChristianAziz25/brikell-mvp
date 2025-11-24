@@ -354,10 +354,7 @@ export default function Page() {
       </div>
 
       <div className="overflow-hidden rounded-lg border bg-card">
-        <div
-          ref={tableContainerRef}
-          className="relative max-h-[600px] w-full overflow-auto"
-        >
+        <div ref={tableContainerRef} className="relative max-h-[600px] w-full">
           <table className="w-full caption-bottom text-sm">
             <thead className="[&_tr]:border-b">
               {table.getHeaderGroups().map((headerGroup) => (

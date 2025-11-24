@@ -20,7 +20,7 @@ export default function RootLayout({
       <body className="bg-background text-foreground antialiased">
         <Providers>
           <SidebarProvider>
-            <div className="flex min-h-screen w-full bg-muted/5">
+            <div className="flex w-full min-h-svh bg-muted/5 overflow-hidden">
               <Sidebar>{children}</Sidebar>
             </div>
           </SidebarProvider>

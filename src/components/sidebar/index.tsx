@@ -90,40 +90,38 @@ function AppSidebar({ setOpen }: { setOpen?: (open: boolean) => void }) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-x-hidden">
-        <div className="px-3 pt-4">
-          <nav className="space-y-1">
-            {navItems.map((item) => {
-              const isActive =
-                item.url === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.url);
+      <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-4">
+        <nav className="space-y-1 pb-4">
+          {navItems.map((item) => {
+            const isActive =
+              item.url === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.url);
 
-              return (
-                <button
-                  key={item.title}
-                  type="button"
-                  onClick={() => {
-                    if (item.disabled) return;
-                    router.push(item.url);
-                    setOpen?.(false);
-                  }}
-                  className={cn(
-                    "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors cursor-pointer",
-                    item.disabled &&
-                      "cursor-not-allowed text-sidebar-foreground/40",
-                    isActive
-                      ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent/40"
-                  )}
-                >
-                  <item.icon className="size-4 shrink-0" />
-                  <span>{item.title}</span>
-                </button>
-              );
-            })}
-          </nav>
-        </div>
+            return (
+              <button
+                key={item.title}
+                type="button"
+                onClick={() => {
+                  if (item.disabled) return;
+                  router.push(item.url);
+                  setOpen?.(false);
+                }}
+                className={cn(
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                  item.disabled &&
+                    "cursor-not-allowed text-sidebar-foreground/40",
+                  isActive
+                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent/40"
+                )}
+              >
+                <item.icon className="size-4 shrink-0" />
+                <span>{item.title}</span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
     </div>
   );
@@ -132,10 +130,9 @@ function AppSidebar({ setOpen }: { setOpen?: (open: boolean) => void }) {
 // Mobile sidebar component using Sheet
 function MobileSidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
+    <div className="flex min-h-svh w-full flex-col">
       {/* Mobile header with menu button */}
       <header className="absolute z-50 top-0 h-16 left-0 w-full flex shrink-0 items-center gap-2 px-4">
         <Sheet open={open} onOpenChange={setOpen}>
@@ -184,7 +181,7 @@ function MobileSidebar({ children }: { children: React.ReactNode }) {
       </header>
 
       {/* Main content - REMOVED overflow-y-auto */}
-      <div className="flex-1 px-4 pt-16 pb-16 no-scrollbar overflow-y-auto">
+      <div className="flex-1 min-h-0 px-4 pt-16 pb-16 no-scrollbar overflow-y-auto">
         {children}
       </div>
     </div>
@@ -193,29 +190,37 @@ function MobileSidebar({ children }: { children: React.ReactNode }) {
 
 // Desktop sidebar component with resizable panels
 function DesktopSidebar({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isFlow = pathname.startsWith("/flow");
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      className="flex w-full min-h-screen"
-    >
-      <ResizablePanel
-        defaultSize={25}
-        minSize={20}
-        maxSize={30}
-        className="border-r border-sidebar-border bg-sidebar"
+    <div className="h-screen w-full">
+      <ResizablePanelGroup
+        direction="horizontal"
+        className="flex h-full w-full"
       >
-        <AppSidebar />
-      </ResizablePanel>
-      <ResizableHandle withHandle className="bg-sidebar-border" />
-      <ResizablePanel defaultSize={78} minSize={60}>
-        <div className="flex h-full flex-col bg-background">
-          <header className="border-b px-6 py-4">
-            <BreadCrumbsBar />
-          </header>
-          <main className="flex-1 overflow-y-auto p-6">{children}</main>
-        </div>
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        <ResizablePanel
+          defaultSize={25}
+          minSize={20}
+          maxSize={30}
+          className="border-r border-sidebar-border bg-sidebar min-h-0"
+        >
+          <AppSidebar />
+        </ResizablePanel>
+        <ResizableHandle withHandle className="bg-sidebar-border" />
+        <ResizablePanel defaultSize={75} minSize={70} className="min-h-0">
+          <div className="flex h-full min-h-0 flex-col bg-background">
+            <header className="border-b px-6 py-4">
+              <BreadCrumbsBar />
+            </header>
+            <main
+              className={cn("flex-1 min-h-0 overflow-y-auto", !isFlow && "p-6")}
+            >
+              {children}
+            </main>
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   );
 }
 

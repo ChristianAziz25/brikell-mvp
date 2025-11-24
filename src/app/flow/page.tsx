@@ -390,7 +390,7 @@ export default function Page() {
       : stages.filter((stage) => stage === selectedStage);
 
   return (
-    <div className="w-full min-h-screen">
+    <div className="w-full h-screen">
       <div className="w-full">
         <div className="space-y-6 max-w-full">
           <div className="w-full p-6 ">
