@@ -28,7 +28,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { BreadCrumbsBar } from "../breadcrumbsBar";
 
-// Navigation item types
 type NavItem = {
   title: string;
   url: string;
@@ -36,7 +35,6 @@ type NavItem = {
   disabled?: boolean;
 };
 
-// Navigation items
 const navItems: NavItem[] = [
   {
     title: "Home",
@@ -127,14 +125,15 @@ function AppSidebar({ setOpen }: { setOpen?: (open: boolean) => void }) {
   );
 }
 
-// Mobile sidebar component using Sheet
 function MobileSidebar({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const isFlow = pathname.startsWith("/flow");
 
   return (
     <div className="flex min-h-svh w-full flex-col">
       {/* Mobile header with menu button */}
-      <header className="absolute z-50 top-0 h-16 left-0 w-full flex shrink-0 items-center gap-2 px-4">
+      <header className="fixed z-50 top-0 h-16 left-0 w-full flex shrink-0 items-center gap-2 px-4">
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger className="border border-gray-200" asChild>
             <Button
@@ -180,15 +179,18 @@ function MobileSidebar({ children }: { children: React.ReactNode }) {
         </Sheet>
       </header>
 
-      {/* Main content - REMOVED overflow-y-auto */}
-      <div className="flex-1 min-h-0 px-4 pt-16 pb-16 no-scrollbar overflow-y-auto">
+      <div
+        className={cn(
+          "flex-1 min-h-0 py-16 no-scrollbar overflow-y-auto",
+          !isFlow && "px-4"
+        )}
+      >
         {children}
       </div>
     </div>
   );
 }
 
-// Desktop sidebar component with resizable panels
 function DesktopSidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isFlow = pathname.startsWith("/flow");

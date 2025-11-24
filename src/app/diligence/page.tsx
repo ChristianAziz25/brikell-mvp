@@ -20,7 +20,7 @@ export default function Page() {
   };
 
   return (
-    <div className="flex w-full flex-col gap-6 lg:flex-row h-full">
+    <div className="flex w-full flex-col gap-6 lg:flex-row min-h-[600px]">
       <aside className="w-full space-y-6 lg:w-72">
         <section className="rounded-2xl border bg-card p-6 shadow-sm">
           <h3 className="mb-4 font-semibold text-foreground">Upload File</h3>
@@ -56,9 +56,9 @@ export default function Page() {
         </section>
       </aside>
 
-      <section className="flex flex-1 flex-col h-full">
-        <div className="flex flex-1 flex-col rounded-2xl border bg-card shadow-sm">
-          <header className="border-b p-6">
+      <section className="flex flex-1 flex-col min-h-[600px]">
+        <div className="flex flex-1 flex-col rounded-2xl border bg-card shadow-sm min-h-0">
+          <header className="border-b p-6 shrink-0">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
                 <Sparkles className="h-5 w-5 text-muted-foreground" />
@@ -72,7 +72,7 @@ export default function Page() {
             </div>
           </header>
 
-          <div className="flex-1 space-y-4 overflow-y-auto p-6">
+          <div className="flex-1 space-y-4 overflow-y-auto p-6 min-h-0">
             <div className="flex justify-start">
               <div className="flex max-w-3xl items-start gap-3">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
@@ -90,7 +90,7 @@ export default function Page() {
             </div>
           </div>
 
-          <footer className="border-t p-4">
+          <footer className="border-t p-4 shrink-0">
             <form className="relative" onSubmit={handleSubmit}>
               <Input
                 className="h-12 rounded-2xl pr-12"

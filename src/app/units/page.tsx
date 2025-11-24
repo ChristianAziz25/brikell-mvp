@@ -160,9 +160,9 @@ export default function Page() {
     },
     {
       id: "actions",
-      header: () => <div className="text-right">Actions</div>,
+      header: () => <div>Actions</div>,
       cell: () => (
-        <div className="text-right">
+        <div>
           <Button variant="ghost" size="sm" className="text-muted-foreground">
             <Trash2 className="h-4 w-4" />
             Delete
