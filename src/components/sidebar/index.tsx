@@ -108,7 +108,7 @@ function AppSidebar({ setOpen }: { setOpen?: (open: boolean) => void }) {
                   setOpen?.(false);
                 }}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors cursor-pointer",
                   item.disabled &&
                     "cursor-not-allowed text-sidebar-foreground/40",
                   isActive
