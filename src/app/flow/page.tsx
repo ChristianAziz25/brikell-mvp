@@ -434,7 +434,7 @@ export default function Page() {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <div className="flex flex-col md:flex-row p-4 md:p-0 gap-4 overflow-x-auto pb-4 no-scrollbar">
+            <div className="flex flex-col md:flex-row p-4 md:p-0 md:pb-4 gap-4 overflow-x-auto pb-4 no-scrollbar">
               {filteredStages.map((stage, index) => (
                 <KanbanColumn
                   key={stage}
