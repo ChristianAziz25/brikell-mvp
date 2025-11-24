@@ -194,7 +194,7 @@ export default function MyAssets() {
                 </CardContent>
               </Card>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] rounded-2xl flex flex-col pb-0">
+            <DialogContent className="w-[80%] max-w-2xl max-h-[90vh] rounded-2xl flex flex-col pb-0">
               <DialogHeader className="shrink-0">
                 <DialogTitle className="text-2xl flex items-center gap-3">
                   <div className="p-2 rounded-xl bg-muted">
