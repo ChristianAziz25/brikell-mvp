@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
-import { Send, Sparkles, Upload } from "lucide-react";
+import { Loader2, Send, Sparkles, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const tips = [
@@ -130,32 +130,48 @@ export default function Page() {
                     }`}
                   >
                     <div className="text-sm text-foreground whitespace-pre-wrap">
-                      {message.parts.map((part, i) => {
+                      {(() => {
                         if (
-                          part.type === "text" &&
-                          message.role === "assistant"
+                          message.role === "assistant" &&
+                          (!message.parts ||
+                            message.parts.length === 0 ||
+                            !message.parts.some((p) => p.type === "text"))
                         ) {
                           return (
-                            <p
-                              className="text-chat-machine-color"
-                              key={`${message.id}-${i}`}
-                            >
-                              {part.text}
-                            </p>
+                            <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
                           );
                         }
-                        if (part.type === "text" && message.role === "user") {
-                          return (
-                            <p
-                              className="text-primary-foreground"
-                              key={`${message.id}-${i}`}
-                            >
-                              {part.text}
-                            </p>
-                          );
-                        }
-                        return null;
-                      })}
+
+                        return message.parts.map((part, i) => {
+                          switch (part.type) {
+                            case "text":
+                              switch (message.role) {
+                                case "assistant":
+                                  return (
+                                    <p
+                                      className="text-chat-machine-color"
+                                      key={`${message.id}-${i}`}
+                                    >
+                                      {part.text}
+                                    </p>
+                                  );
+                                case "user":
+                                  return (
+                                    <p
+                                      className="text-primary-foreground"
+                                      key={`${message.id}-${i}`}
+                                    >
+                                      {part.text}
+                                    </p>
+                                  );
+                                default:
+                                  return null;
+                              }
+                            default:
+                              return null;
+                          }
+                        });
+                      })()}
                     </div>
                   </div>
                   {message.role === "user" && (
