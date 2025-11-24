@@ -172,8 +172,6 @@ export default function Page() {
     },
   ];
 
-  // React Compiler can't memoize TanStack Table yet; suppress lint until upstream fix.
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: properties,
     columns,

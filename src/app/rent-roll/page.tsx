@@ -2,16 +2,27 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import {
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
   type ColumnDef,
+  type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Plus } from "lucide-react";
-import { useMemo, useRef } from "react";
+import { ChevronDown, Plus, Upload, X } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
 
 type RentStatus = "occupied" | "vacant" | "terminated";
 
@@ -206,11 +217,19 @@ function fetchRentRollData(): Promise<RentRollUnit[]> {
 
 export default function Page() {
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [globalFilter, setGlobalFilter] = useState("");
+  const [showFilter, setShowFilter] = useState(false);
 
   const { data: rentRollData = [], isLoading } = useQuery({
     queryKey: ["rentRollData"],
     queryFn: fetchRentRollData,
   });
+
+  const handleFileUpload = (file: File) => {
+    console.log("File selected:", file.name);
+  };
 
   const columns = useMemo<ColumnDef<RentRollUnit>[]>(
     () => [
@@ -222,54 +241,67 @@ export default function Page() {
             {getValue<string>()}
           </span>
         ),
+        enableColumnFilter: true,
       },
       {
         accessorKey: "propertyYear",
         header: "Property Year",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "propertyName",
         header: "Property Name",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "unitAddress",
         header: "Unit Address",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "zipcode",
         header: "Zipcode",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "floor",
         header: "Floor",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "unitType",
         header: "Unit Type",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "size",
         header: "Size (sqm)",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "rooms",
         header: "Rooms",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "bedrooms",
         header: "Bedrooms",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "bathrooms",
         header: "Bathrooms",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "rentCurrent",
         header: "Rent Current",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "rentBudget",
         header: "Rent Budget",
+        enableColumnFilter: true,
       },
       {
         accessorKey: "status",
@@ -286,6 +318,10 @@ export default function Page() {
             </Badge>
           );
         },
+        enableColumnFilter: true,
+        filterFn: (row, id, value) => {
+          return value.includes(row.getValue(id));
+        },
       },
       {
         accessorKey: "leaseStart",
@@ -293,6 +329,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
+        enableColumnFilter: true,
       },
       {
         accessorKey: "leaseEnd",
@@ -300,6 +337,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
+        enableColumnFilter: true,
       },
       {
         accessorKey: "tenantName",
@@ -307,6 +345,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
+        enableColumnFilter: true,
       },
     ],
     []
@@ -318,6 +357,14 @@ export default function Page() {
     data: rentRollData,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    state: {
+      columnFilters,
+      globalFilter,
+    },
+    globalFilterFn: "includesString",
   });
 
   const { rows } = table.getRowModel();
@@ -336,6 +383,13 @@ export default function Page() {
       ? rowVirtualizer.getTotalSize() - virtualRows[virtualRows.length - 1].end
       : 0;
 
+  const clearFilters = () => {
+    setColumnFilters([]);
+    setGlobalFilter("");
+  };
+
+  const hasActiveFilters = columnFilters.length > 0 || globalFilter.length > 0;
+
   return (
     <div className="w-full space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -347,14 +401,144 @@ export default function Page() {
             Comprehensive unit and lease data
           </p>
         </div>
-        <Button size="lg" className="w-full gap-2 md:w-fit">
-          <Plus className="h-4 w-4" />
-          Add Unit
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button size="lg" className="w-full gap-2 md:w-fit">
+              <Plus className="h-4 w-4" />
+              Add Unit
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Upload CSV File</DialogTitle>
+            </DialogHeader>
+            <div className="flex items-center justify-center py-6">
+              <Button
+                variant="outline"
+                size="sm"
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Upload CSV
+              </Button>
+              <input
+                ref={fileInputRef}
+                id="csv"
+                type="file"
+                accept=".csv, .xlsx, .xls, .pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    handleFileUpload(file);
+                  }
+                }}
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Search all columns..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            className="max-w-sm"
+          />
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearFilters}
+              className="gap-2"
+            >
+              <X className="h-4 w-4" />
+              Clear Filters
+            </Button>
+          )}
+        </div>
+
+        <div className="relative rounded-md bg-gray-100 flex items-center justify-end">
+          <button
+            className="cursor-pointer flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors"
+            onClick={() => setShowFilter(!showFilter)}
+            aria-label={showFilter ? "Hide filters" : "Show filters"}
+          >
+            <ChevronDown
+              className={cn(
+                "size-5 transition-transform duration-300",
+                showFilter && "rotate-180"
+              )}
+            />
+          </button>
+        </div>
+
+        <div
+          className={cn(
+            "grid overflow-hidden transition-[grid-template-rows] duration-1000",
+            showFilter ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+          )}
+        >
+          <div
+            className="min-h-0 transition-[visibility] duration-1000"
+            style={{ visibility: showFilter ? "visible" : "hidden" }}
+          >
+            <div className="flex flex-wrap gap-2 pt-2">
+              {table.getAllColumns().map((column) => {
+                if (!column.getCanFilter() || column.id === "status")
+                  return null;
+
+                const filterValue = (column.getFilterValue() as string) ?? "";
+
+                return (
+                  <div key={column.id} className="flex items-center gap-2">
+                    <Input
+                      placeholder={`Filter ${column.id}...`}
+                      value={filterValue}
+                      onChange={(e) =>
+                        column.setFilterValue(e.target.value || undefined)
+                      }
+                      className="h-8 w-[140px]"
+                    />
+                  </div>
+                );
+              })}
+              {table.getColumn("status") && (
+                <div className="flex items-center gap-2">
+                  <select
+                    value={
+                      (
+                        table.getColumn("status")?.getFilterValue() as string[]
+                      )?.join(",") || ""
+                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      table
+                        .getColumn("status")
+                        ?.setFilterValue(value ? value.split(",") : undefined);
+                    }}
+                    className="h-8 w-[140px] rounded-md border border-input bg-background px-3 py-1 text-sm"
+                  >
+                    <option value="">All Status</option>
+                    <option value="occupied">Occupied</option>
+                    <option value="vacant">Vacant</option>
+                    <option value="terminated">Terminated</option>
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg border bg-card">
-        <div ref={tableContainerRef} className="relative max-h-[600px] w-full">
+        <div
+          ref={tableContainerRef}
+          className="relative w-full overflow-x-auto no-scrollbar"
+        >
           <table className="w-full caption-bottom text-sm">
             <thead className="[&_tr]:border-b">
               {table.getHeaderGroups().map((headerGroup) => (

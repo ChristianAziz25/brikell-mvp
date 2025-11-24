@@ -1,4 +1,4 @@
-import { CardContent, CardHeader, CardTitle, Card as CardUI } from "../ui/card";
+import { Card as CardUI } from "../ui/card";
 
 export default function Card({
   title,
@@ -13,13 +13,17 @@ export default function Card({
 }) {
   return (
     <CardUI className={className}>
-      <CardHeader>
-        <CardTitle>{children}</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <h1>{title}</h1>
-        <p>{content}</p>
-      </CardContent>
+      <div className="text-card-foreground shadow-sm p-5">
+        <div className="space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-muted/50 border border-border/50 flex items-center justify-center">
+            {children}
+          </div>
+          <div>
+            <h3 className="font-medium text-foreground text-sm">{title}</h3>
+            <p className="text-xs text-muted-foreground">{content}</p>
+          </div>
+        </div>
+      </div>
     </CardUI>
   );
 }

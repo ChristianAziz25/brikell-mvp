@@ -371,7 +371,6 @@ export default function Page() {
           });
         }
       } else {
-        // Move to different stage
         setData((items) =>
           items.map((item) =>
             item.id === active.id

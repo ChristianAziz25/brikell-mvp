@@ -2,7 +2,19 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
-First, run the development server:
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Set up environment variables by creating a `.env.local` file:
+
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
@@ -15,6 +27,15 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## OpenAI Agent API
+
+This project includes a complete OpenAI agent API configuration. See [src/lib/openai/README.md](src/lib/openai/README.md) for detailed documentation.
+
+Quick setup:
+1. Get your API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Add it to `.env.local` as `OPENAI_API_KEY`
+3. Use the `useOpenAIChat` hook or API routes to interact with the agent
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
