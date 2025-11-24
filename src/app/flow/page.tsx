@@ -412,8 +412,8 @@ export default function Page() {
                 className={cn(
                   "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border min-w-fit cursor-pointer transition-colors",
                   selectedStage === stage && "bg-muted/50",
-                  index === 0 && "ml-4",
-                  index === filteredStages.length - 1 && "mr-4"
+                  index === 0 && "ml-6",
+                  index === stages.length && "mr-4"
                 )}
               >
                 <span className="text-sm font-medium text-foreground">
@@ -441,8 +441,8 @@ export default function Page() {
                   stage={stage}
                   cards={getCardsByStage(stage)}
                   className={cn(
-                    index === 0 && "md:ml-4",
-                    index === filteredStages.length - 1 && "md:mr-4"
+                    index === 0 && "md:ml-6",
+                    index === filteredStages.length - 1 && "md:mr-6"
                   )}
                 />
               ))}

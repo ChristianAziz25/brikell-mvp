@@ -38,14 +38,15 @@ export function BreadCrumbsBar() {
                 router.push(`/${cleanedSegments.slice(0, index + 1).join("/")}`)
               }
               className={cn(
+                "flex items-center text-sm font-semibold leading-tight",
                 index === cleanedSegments.length - 1
-                  ? "pointer-events-none"
-                  : "cursor-pointer"
+                  ? "pointer-events-none text-foreground"
+                  : "cursor-pointer text-muted-foreground hover:text-foreground"
               )}
             >
-              <h1 className="text-sm font-semibold">
+              <span>
                 {segment.charAt(0).toUpperCase() + segment.slice(1)}
-              </h1>
+              </span>
             </BreadcrumbLink>
           </BreadcrumbItem>
           {index < cleanedSegments.length - 1 && (
