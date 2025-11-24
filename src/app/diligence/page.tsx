@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useChat } from "@ai-sdk/react";
 import { Send, Sparkles, Upload } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 
 const tips = [
   "Upload your dataset or report for analysis",
@@ -12,12 +13,8 @@ const tips = [
 ];
 
 export default function Page() {
-  const [message, setMessage] = useState("");
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setMessage("");
-  };
+  const [input, setInput] = useState("");
+  const { messages, sendMessage } = useChat();
 
   return (
     <div className="flex w-full flex-col gap-6 lg:flex-row min-h-[600px]">
@@ -73,36 +70,90 @@ export default function Page() {
           </header>
 
           <div className="flex-1 space-y-4 overflow-y-auto p-6 min-h-0">
-            <div className="flex justify-start">
-              <div className="flex max-w-3xl items-start gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
-                  <Sparkles className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
-                  <p className="text-sm text-foreground">
-                    Hello! I&apos;m your AI analyst. Upload a file and ask me
-                    anything about your data. I can help you analyze trends,
-                    create visualizations, and answer questions about your
-                    information.
-                  </p>
+            {messages.length === 0 && (
+              <div className="flex justify-start">
+                <div className="flex max-w-3xl items-start gap-3">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                    <Sparkles className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
+                    <p className="text-sm text-foreground">
+                      Hello! I&apos;m your AI analyst. Upload a file and ask me
+                      anything about your data. I can help you analyze trends,
+                      create visualizations, and answer questions about your
+                      information.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${
+                  message.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div className="flex max-w-3xl items-start gap-3">
+                  {message.role === "assistant" && (
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                      <Sparkles className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div
+                    className={`rounded-2xl px-4 py-3 ${
+                      message.role === "user"
+                        ? "rounded-tr-sm bg-primary text-primary-foreground"
+                        : "rounded-tl-sm bg-muted"
+                    }`}
+                  >
+                    <div className="text-sm text-foreground whitespace-pre-wrap">
+                      {message.parts.map((part, i) => {
+                        if (part.type === "text") {
+                          return (
+                            <p
+                              className="text-primary-foreground"
+                              key={`${message.id}-${i}`}
+                            >
+                              {part.text}
+                            </p>
+                          );
+                        }
+                        return null;
+                      })}
+                    </div>
+                  </div>
+                  {message.role === "user" && (
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
+                      <span className="text-xs font-medium text-primary-foreground">
+                        U
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <footer className="border-t p-4 shrink-0">
-            <form className="relative" onSubmit={handleSubmit}>
+            <form
+              className="relative"
+              onSubmit={(e) => {
+                e.preventDefault();
+                sendMessage({ text: input });
+                setInput("");
+              }}
+            >
               <Input
                 className="h-12 rounded-2xl pr-12"
                 placeholder="Ask something about your file..."
-                value={message}
-                onChange={(event) => setMessage(event.target.value)}
+                value={input}
+                onChange={(e) => setInput(e.currentTarget.value)}
               />
               <Button
                 type="submit"
                 size="sm"
                 className="absolute right-2 top-1/2 flex h-8 -translate-y-1/2 gap-1 rounded-xl px-3"
-                disabled={!message.trim()}
               >
                 Send
                 <Send className="h-3.5 w-3.5" />

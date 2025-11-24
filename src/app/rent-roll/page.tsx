@@ -391,8 +391,8 @@ export default function Page() {
   const hasActiveFilters = columnFilters.length > 0 || globalFilter.length > 0;
 
   return (
-    <div className="w-full space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
+    <div className="w-full">
+      <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
         <div>
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
             Rent Roll
@@ -448,6 +448,9 @@ export default function Page() {
             onChange={(e) => setGlobalFilter(e.target.value)}
             className="max-w-sm"
           />
+        </div>
+
+        <div className="relative rounded-md flex items-center justify-end gap-2">
           {hasActiveFilters && (
             <Button
               variant="outline"
@@ -459,9 +462,6 @@ export default function Page() {
               Clear Filters
             </Button>
           )}
-        </div>
-
-        <div className="relative rounded-md bg-gray-100 flex items-center justify-end">
           <button
             className="cursor-pointer flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors"
             onClick={() => setShowFilter(!showFilter)}
@@ -486,7 +486,7 @@ export default function Page() {
             className="min-h-0 transition-[visibility] duration-1000"
             style={{ visibility: showFilter ? "visible" : "hidden" }}
           >
-            <div className="flex flex-wrap gap-2 pt-2">
+            <div className="flex flex-wrap gap-2 p-2 pb-0 mb-4">
               {table.getAllColumns().map((column) => {
                 if (!column.getCanFilter() || column.id === "status")
                   return null;
