@@ -44,9 +44,7 @@ export function BreadCrumbsBar() {
                   : "cursor-pointer text-muted-foreground hover:text-foreground"
               )}
             >
-              <span>
-                {segment.charAt(0).toUpperCase() + segment.slice(1)}
-              </span>
+              <span>{segment.charAt(0).toUpperCase() + segment.slice(1)}</span>
             </BreadcrumbLink>
           </BreadcrumbItem>
           {index < cleanedSegments.length - 1 && (
