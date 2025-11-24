@@ -44,6 +44,7 @@
   --radius-xl: calc(var(--radius) + 4px);
   --color-primary-border: var(--primary-border);
   --color-input-background-color: var(--input-background-color);
+  --color-chat-machine-color: var(--chat-machine-color);
 }
 
 * {
@@ -85,6 +86,7 @@
   --sidebar-ring: oklch(0.705 0.015 286.067);
   --primary-border: oklch(0.872 0.01 258.34);
   --input-background-color: oklch(1 0 0);
+  --chat-machine-color: oklch(0.21 0.006 285.885);
 }
 
 .dark {

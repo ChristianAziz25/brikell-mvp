@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
 import { Send, Sparkles, Upload } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const tips = [
   "Upload your dataset or report for analysis",
@@ -14,10 +14,29 @@ const tips = [
 
 export default function Page() {
   const [input, setInput] = useState("");
-  const { messages, sendMessage } = useChat();
+  const messageScrollRef = useRef<HTMLDivElement>(null);
+  const { messages, sendMessage, status } = useChat();
+
+  useEffect(() => {
+    if (!messageScrollRef.current) return;
+
+    const scrollToBottom = () => {
+      messageScrollRef.current?.scrollTo({
+        top: messageScrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    };
+
+    scrollToBottom();
+
+    if (status === "streaming") {
+      const interval = setInterval(scrollToBottom, 100);
+      return () => clearInterval(interval);
+    }
+  }, [messages, status]);
 
   return (
-    <div className="flex w-full flex-col gap-6 lg:flex-row min-h-[600px]">
+    <div className="flex w-full flex-col gap-6 lg:flex-row min-h-[600px] md:h-full">
       <aside className="w-full space-y-6 lg:w-72">
         <section className="rounded-2xl border bg-card p-6 shadow-sm">
           <h3 className="mb-4 font-semibold text-foreground">Upload File</h3>
@@ -69,7 +88,10 @@ export default function Page() {
             </div>
           </header>
 
-          <div className="flex-1 space-y-4 overflow-y-auto p-6 min-h-0">
+          <div
+            ref={messageScrollRef}
+            className="flex-1 space-y-4 overflow-y-auto p-6 min-h-0 no-scrollbar"
+          >
             {messages.length === 0 && (
               <div className="flex justify-start">
                 <div className="flex max-w-3xl items-start gap-3">
@@ -109,7 +131,20 @@ export default function Page() {
                   >
                     <div className="text-sm text-foreground whitespace-pre-wrap">
                       {message.parts.map((part, i) => {
-                        if (part.type === "text") {
+                        if (
+                          part.type === "text" &&
+                          message.role === "assistant"
+                        ) {
+                          return (
+                            <p
+                              className="text-chat-machine-color"
+                              key={`${message.id}-${i}`}
+                            >
+                              {part.text}
+                            </p>
+                          );
+                        }
+                        if (part.type === "text" && message.role === "user") {
                           return (
                             <p
                               className="text-primary-foreground"

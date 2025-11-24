@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     const modelMessages = convertToModelMessages(messages);
 
     const result = streamText({
-      model: openai('gpt-4o'),
+      model: openai('gpt-5-nano'),
       system: systemPrompt,
       messages: modelMessages,
     });

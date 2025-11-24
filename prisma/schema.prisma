@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model RentRollUnit {
+  id              String          @id @default(cuid())
+  unitId          String          @unique
+  propertyName    String
+  address         String
+  zipcode         String
+  size            String
+  rooms           Int
+  bedrooms        Int
+  bathrooms       Int
+  floor           String
+  monthlyRent     Int
+  contractedRent  Int
+  occupancyStatus OccupancyStatus
+  leaseStart      DateTime
+  leaseEnd        DateTime
+  tenantName      String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([propertyName])
+  @@index([occupancyStatus])
+  @@index([unitId])
+  @@map("rent_roll_units")
+}
+
+enum OccupancyStatus {
+  occupied
+  vacant
+  terminated
+}
