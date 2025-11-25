@@ -19,8 +19,6 @@ export async function POST(request: NextRequest) {
   const fileType = file.name.endsWith('.csv') ? 'csv' : file.name.endsWith('.xlsx') ? 'xlsx' : 'xls';
   
   const llmExtracted = await extractDataWithLLM(fileContent, fileType);
-
-  console.log(llmExtracted);
   
   const rentRollUnits = llmExtracted
     .map(transformLLMDataToRentRollUnit)

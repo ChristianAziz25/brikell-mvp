@@ -323,7 +323,6 @@ export default function Page() {
 
   const handleDragStart = (event: DragStartEvent) => {
     const id = event.active.id as string;
-    console.log("Drag started, setting activeId to:", id);
     setActiveId(id);
   };
 
@@ -459,7 +458,6 @@ export default function Page() {
                 ? (() => {
                     const card = data.find((card) => card.id === activeId);
                     if (!card) {
-                      console.log("Card not found for activeId:", activeId);
                       return null;
                     }
                     return (
