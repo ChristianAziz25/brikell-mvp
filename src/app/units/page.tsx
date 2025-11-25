@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getCoreRowModel,
   getFilteredRowModel,
@@ -118,6 +118,7 @@ export default function Page() {
     queryKey: ["properties"],
     queryFn: fetchProperties,
   });
+  const queryClient = useQueryClient();
 
   const columns: ColumnDef<Property>[] = [
     {
@@ -161,14 +162,29 @@ export default function Page() {
     {
       id: "actions",
       header: () => <div>Actions</div>,
-      cell: () => (
-        <div>
-          <Button variant="ghost" size="sm" className="text-muted-foreground">
-            <Trash2 className="h-4 w-4" />
-            Delete
-          </Button>
-        </div>
-      ),
+      cell: ({ row }) => {
+        const id = row.original.id;
+
+        const handleDelete = () => {
+          queryClient.setQueryData<Property[]>(["properties"], (old) =>
+            (old ?? []).filter((property) => property.id !== id)
+          );
+        };
+
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-muted-foreground"
+              onClick={handleDelete}
+            >
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </Button>
+          </div>
+        );
+      },
     },
   ];
 

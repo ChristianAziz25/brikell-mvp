@@ -4,6 +4,7 @@ export async function parseFileToText(file: File): Promise<string> {
   const fileName = file.name.toLowerCase();
   
   if (fileName.endsWith('.csv')) {
+    console.log(file.text())
     return await file.text();
   }
   
