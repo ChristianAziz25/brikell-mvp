@@ -1,10 +1,11 @@
-import { prisma } from './client';
-import type { RentRollUnitInput, BulkInsertResult } from './types';
+import prisma from './client';
+import type { BulkInsertResult, RentRollUnit, RentRollUnitInput } from './types';
 
 export async function upsertRentRollUnit(data: RentRollUnitInput) {
   return prisma.rentRollUnit.upsert({
     where: { unitId: data.unitId },
     update: {
+      propertyYear: data.propertyYear,
       propertyName: data.propertyName,
       address: data.address,
       zipcode: data.zipcode,
@@ -45,6 +46,7 @@ export async function bulkUpsertRentRollUnits(
         await prisma.rentRollUnit.update({
           where: { unitId: unit.unitId },
           data: {
+            propertyYear: unit.propertyYear,
             propertyName: unit.propertyName,
             address: unit.address,
             zipcode: unit.zipcode,
@@ -79,7 +81,7 @@ export async function bulkUpsertRentRollUnits(
   return result;
 }
 
-export async function getAllRentRollUnits() {
+export async function getAllRentRollUnits(): Promise<RentRollUnit[]> {
   return prisma.rentRollUnit.findMany({
     orderBy: { createdAt: 'desc' },
   });

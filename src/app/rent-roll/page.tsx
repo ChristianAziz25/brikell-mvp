@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   flexRender,
   getCoreRowModel,
@@ -46,189 +46,64 @@ interface RentRollUnit {
   tenantName: string;
 }
 
-const fakeRentRollData: RentRollUnit[] = [
-  {
-    unitId: "149",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Gertrude Steins Vej",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 41,
-    rooms: 1,
-    bedrooms: 0,
-    bathrooms: 1,
-    rentCurrent: 9850,
-    rentBudget: 10050,
-    status: "occupied",
-    leaseStart: "01-03-2023",
-    leaseEnd: "na",
-    tenantName: "Christian Azzi",
-  },
-  {
-    unitId: "148",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Gertrude Steins Vej",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 42,
-    rooms: 1,
-    bedrooms: 0,
-    bathrooms: 1,
-    rentCurrent: 9850,
-    rentBudget: 10050,
-    status: "occupied",
-    leaseStart: "01-03-2023",
-    leaseEnd: "na",
-    tenantName: "Niels Christian",
-  },
-  {
-    unitId: "147",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Gertrude Steins Vej",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 42,
-    rooms: 1,
-    bedrooms: 0,
-    bathrooms: 1,
-    rentCurrent: 9850,
-    rentBudget: 10050,
-    status: "occupied",
-    leaseStart: "01-03-2023",
-    leaseEnd: "na",
-    tenantName: "Magnus Larsen",
-  },
-  {
-    unitId: "146",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Gertrude Steins Vej",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 43,
-    rooms: 1,
-    bedrooms: 0,
-    bathrooms: 1,
-    rentCurrent: 9850,
-    rentBudget: 10050,
-    status: "occupied",
-    leaseStart: "01-03-2023",
-    leaseEnd: "na",
-    tenantName: "Kristoffer Møller",
-  },
-  {
-    unitId: "145",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Gertrude Steins Vej",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 43,
-    rooms: 1,
-    bedrooms: 0,
-    bathrooms: 1,
-    rentCurrent: 9850,
-    rentBudget: 10050,
-    status: "occupied",
-    leaseStart: "01-03-2023",
-    leaseEnd: "na",
-    tenantName: "Christian Azzi",
-  },
-  {
-    unitId: "6",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Ørestad Boulevard",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 53,
-    rooms: 1,
-    bedrooms: 0,
-    bathrooms: 1,
-    rentCurrent: 10150,
-    rentBudget: 10450,
-    status: "vacant",
-    leaseStart: "01-03-2023",
-    leaseEnd: "01-05-2025",
-    tenantName: "Niels Christian",
-  },
-  {
-    unitId: "125",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Gertrude Steins Vej",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 53,
-    rooms: 1,
-    bedrooms: 0,
-    bathrooms: 1,
-    rentCurrent: 10150,
-    rentBudget: 10450,
-    status: "terminated",
-    leaseStart: "01-03-2023",
-    leaseEnd: "01-03-2026",
-    tenantName: "Magnus Larsen",
-  },
-  {
-    unitId: "121",
-    propertyYear: 2020,
-    propertyName: "Gertrudehus",
-    unitAddress: "Gertrude Steins Vej",
-    zipcode: "2300",
-    floor: "—",
-    unitType: "Apartment",
-    size: 55,
-    rooms: 2,
-    bedrooms: 1,
-    bathrooms: 1,
-    rentCurrent: 11750,
-    rentBudget: 12050,
-    status: "occupied",
-    leaseStart: "01-03-2023",
-    leaseEnd: "na",
-    tenantName: "Oliver Larsen",
-  },
-];
-
 const rentStatusVariants: Record<RentStatus, string> = {
   occupied: "bg-foreground text-background border-0",
   vacant: "bg-background text-foreground border border-border",
   terminated: "bg-muted text-muted-foreground border border-border",
 };
 
-function fetchRentRollData(): Promise<RentRollUnit[]> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(fakeRentRollData);
-    }, 500);
-  });
+async function fetchRentRollData(): Promise<RentRollUnit[]> {
+  const response = await fetch("/api/rent-roll");
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch rent roll data: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+
+  // Type assertion with validation
+  if (!Array.isArray(data)) {
+    throw new Error("Invalid response format");
+  }
+
+  return data as RentRollUnit[];
 }
 
 export default function Page() {
+  const queryClient = useQueryClient();
   const tableContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [showFilter, setShowFilter] = useState(false);
+  const [isUploading, setIsUploading] = useState(false); // <- new state
 
   const { data: rentRollData = [], isLoading } = useQuery({
     queryKey: ["rentRollData"],
     queryFn: fetchRentRollData,
   });
 
-  const handleFileUpload = (file: File) => {
-    console.log("File selected:", file.name);
+  const handleFileUpload = async (file: File) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const result = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!result.ok) {
+        throw new Error("Failed to upload file");
+      }
+
+      await queryClient.invalidateQueries({ queryKey: ["rentRollData"] });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const columns = useMemo<ColumnDef<RentRollUnit>[]>(
@@ -418,9 +293,10 @@ export default function Page() {
                 size="sm"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
               >
                 <Upload className="h-4 w-4 mr-2" />
-                Upload CSV
+                {isUploading ? "Uploading..." : "Upload CSV"}
               </Button>
               <input
                 ref={fileInputRef}
@@ -431,7 +307,9 @@ export default function Page() {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (file) {
-                    handleFileUpload(file);
+                    void handleFileUpload(file);
+                    // Optional: allow re‑uploading the same file
+                    e.target.value = "";
                   }
                 }}
               />

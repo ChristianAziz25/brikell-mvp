@@ -1,9 +1,11 @@
-import type { RentRollUnit, OccupancyStatus } from '@prisma/client';
+import type { OccupancyStatus, RentRollUnit } from '@/generated/client';
 
-export type { RentRollUnit, OccupancyStatus };
+
+export type { OccupancyStatus, RentRollUnit };
 
 export interface RentRollUnitInput {
   unitId: string;
+  propertyYear: number;
   propertyName: string;
   address: string;
   zipcode: string;
