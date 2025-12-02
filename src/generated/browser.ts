@@ -32,8 +32,3 @@ export type Opex = Prisma.OpexModel
  * 
  */
 export type RentRollUnit = Prisma.RentRollUnitModel
-/**
- * Model Asset
- * 
- */
-export type Asset = Prisma.AssetModel

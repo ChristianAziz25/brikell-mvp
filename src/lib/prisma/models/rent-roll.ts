@@ -35,9 +35,8 @@ export async function upsertRentRollUnit(data: Prisma.RentRollUnitCreateInput) {
       tenant_name2: data.tenant_name2,
       tenant_number1: data.tenant_number1,
       tenant_number2: data.tenant_number2,
-      tenant_email1: data.tenant_email1,
-      tenant_email2: data.tenant_email2,
-      updated_at: new Date(),
+      tenant_mail1: data.tenant_mail1,
+      tenant_mail2: data.tenant_mail2,
     },
     create: {
       unit_id: data.unit_id,
@@ -62,10 +61,8 @@ export async function upsertRentRollUnit(data: Prisma.RentRollUnitCreateInput) {
       tenant_name2: data.tenant_name2,
       tenant_number1: data.tenant_number1,
       tenant_number2: data.tenant_number2,
-      tenant_email1: data.tenant_email1,
-      tenant_email2: data.tenant_email2,
-      created_at: new Date(),
-      updated_at: new Date(),
+      tenant_mail1: data.tenant_mail1,
+      tenant_mail2: data.tenant_mail2,
     },
   });
 }
@@ -110,9 +107,8 @@ export async function bulkUpsertRentRollUnits(
             tenant_name2: unit.tenant_name2,
             tenant_number1: unit.tenant_number1,
             tenant_number2: unit.tenant_number2,
-            tenant_email1: unit.tenant_email1,
-            tenant_email2: unit.tenant_email2,
-            updated_at: new Date(),
+            tenant_mail1: unit.tenant_mail1,
+            tenant_mail2: unit.tenant_mail2,
           },
         });
         result.updated++;
@@ -134,7 +130,7 @@ export async function bulkUpsertRentRollUnits(
 
 export async function getAllRentRollUnits(): Promise<Prisma.RentRollUnitMinAggregateOutputType[]> {
   return prisma.rentRollUnit.findMany({
-    orderBy: { created_at: 'desc' },
+    orderBy: { unit_id: 'asc' },
   });
 }
 

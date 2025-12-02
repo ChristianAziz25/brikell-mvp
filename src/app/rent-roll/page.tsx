@@ -57,7 +57,7 @@ export default function Page() {
   const [showFilter, setShowFilter] = useState(false);
   const [isUploading, setIsUploading] = useState(false); // <- new state
 
-  const { data: rentRollData = [], isLoading } = useQuery({
+  const { data: rentRollData = [], isLoading } = useQuery<RentRollUnit[]>({
     queryKey: ["rentRollData"],
     queryFn: fetchRentRollData,
   });
@@ -89,7 +89,7 @@ export default function Page() {
   const columns = useMemo<ColumnDef<RentRollUnit>[]>(
     () => [
       {
-        accessorKey: "unitId",
+        accessorKey: "unit_id",
         header: "Unit ID",
         cell: ({ getValue }) => (
           <span className="font-medium text-foreground">
@@ -99,70 +99,80 @@ export default function Page() {
         enableColumnFilter: true,
       },
       {
-        accessorKey: "propertyYear",
+        accessorKey: "property_build_year",
         header: "Property Year",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "propertyName",
+        accessorKey: "property_name",
         header: "Property Name",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "unitAddress",
+        accessorKey: "unit_address",
         header: "Unit Address",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "zipcode",
+        accessorKey: "unit_zipcode",
         header: "Zipcode",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "floor",
+        accessorKey: "unit_door",
+        header: "Unit Door",
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "unit_floor",
         header: "Floor",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "unitType",
+        accessorKey: "utilites_cost",
+        header: "Utilities Cost",
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "unit_type",
         header: "Unit Type",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "size",
+        accessorKey: "size_sqm",
         header: "Size (sqm)",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "rooms",
+        accessorKey: "rooms_amount",
         header: "Rooms",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "bedrooms",
+        accessorKey: "bedrooms_amount",
         header: "Bedrooms",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "bathrooms",
+        accessorKey: "bathrooms_amount",
         header: "Bathrooms",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "rentCurrent",
+        accessorKey: "rent_current_gri",
         header: "Rent Current",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "rentBudget",
+        accessorKey: "rent_budget_tri",
         header: "Rent Budget",
         enableColumnFilter: true,
       },
       {
-        accessorKey: "status",
+        accessorKey: "units_status",
         header: "Status",
         cell: ({ row }) => {
-          const status = row.getValue("status") as RentStatus;
+          const status = row.getValue("units_status") as RentStatus;
           const className = rentStatusVariants[status];
           return (
             <Badge
@@ -179,7 +189,7 @@ export default function Page() {
         },
       },
       {
-        accessorKey: "leaseStart",
+        accessorKey: "lease_start",
         header: "Lease Start",
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
@@ -187,7 +197,7 @@ export default function Page() {
         enableColumnFilter: true,
       },
       {
-        accessorKey: "leaseEnd",
+        accessorKey: "lease_end",
         header: "Lease End",
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
@@ -195,8 +205,56 @@ export default function Page() {
         enableColumnFilter: true,
       },
       {
-        accessorKey: "tenantName",
+        accessorKey: "tenant_name1",
         header: "Tenant Name",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap">{getValue<string>()}</span>
+        ),
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "tenant_name2",
+        header: "Tenant Name 2",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap">{getValue<string>()}</span>
+        ),
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "tenant_number1",
+        header: "Tenant Number 1",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap">{getValue<string>()}</span>
+        ),
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "tenant_number2",
+        header: "Tenant Number 2",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap">{getValue<string>()}</span>
+        ),
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "tenant_mail1",
+        header: "Tenant Mail 1",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap">{getValue<string>()}</span>
+        ),
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "tenant_mail2",
+        header: "Tenant Mail 2",
+        cell: ({ getValue }) => (
+          <span className="whitespace-nowrap">{getValue<string>()}</span>
+        ),
+        enableColumnFilter: true,
+      },
+      {
+        accessorKey: "property_id",
+        header: "Property ID",
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
@@ -224,12 +282,7 @@ export default function Page() {
 
   const { rows } = table.getRowModel();
 
-  const properties = useMemo(() => {
-    const values = table
-      .getCoreRowModel()
-      .flatRows.map((row) => row.getValue("propertyName")) as string[];
-    return Array.from(new Set(values));
-  }, [table]);
+  console.log(rentRollData, rows);
 
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -353,7 +406,7 @@ export default function Page() {
           >
             <div className="flex flex-wrap gap-2 p-2 pb-0 mb-4">
               {table.getAllColumns().map((column) => {
-                if (!column.getCanFilter() || column.id === "status")
+                if (!column.getCanFilter() || column.id === "units_status")
                   return null;
 
                 const filterValue = (column.getFilterValue() as string) ?? "";
@@ -372,7 +425,7 @@ export default function Page() {
                 );
               })}
 
-              {table.getColumn("propertyName") && (
+              {/* {table.getColumn("propertyName") && (
                 <div className="flex items-center gap-2">
                   {properties.map((property) => (
                     <Button
@@ -389,20 +442,22 @@ export default function Page() {
                     </Button>
                   ))}
                 </div>
-              )}
+              )} */}
 
-              {table.getColumn("status") && (
+              {table.getColumn("units_status") && (
                 <div className="flex items-center gap-2">
                   <select
                     value={
                       (
-                        table.getColumn("status")?.getFilterValue() as string[]
+                        table
+                          .getColumn("units_status")
+                          ?.getFilterValue() as string[]
                       )?.join(",") || ""
                     }
                     onChange={(e) => {
                       const value = e.target.value;
                       table
-                        .getColumn("status")
+                        .getColumn("units_status")
                         ?.setFilterValue(value ? value.split(",") : undefined);
                     }}
                     className="h-8 w-[140px] rounded-md border border-input bg-background px-3 py-1 text-sm"

@@ -29,7 +29,6 @@ model Capex {
   created_at                  DateTime @default(now())
   updated_at                  DateTime @updatedAt
   assetId                     String   @unique
-  asset                       Asset    @relation(fields: [assetId], references: [id])
 
   @@map("capex")
   @@schema("public")
@@ -66,22 +65,16 @@ model Opex {
   created_at                     DateTime @default(now())
   updated_at                     DateTime @updatedAt
   assetId                        String   @unique
-  asset                          Asset    @relation(fields: [assetId], references: [id])
 
   @@map("opex")
   @@schema("public")
 }
 
 model RentRollUnit {
-  unit_id             Int        @id @unique
-  assetId             String?
-  asset               Asset?     @relation(fields: [assetId], references: [id])
   property_build_year Int
   property_name       String
   unit_address        String
   unit_zipcode        String
-  unit_door           Int
-  unit_floor          Int
   utilites_cost       Int
   unit_type           String
   size_sqm            Int
@@ -90,36 +83,21 @@ model RentRollUnit {
   bathrooms_amount    Int
   rent_current_gri    Int
   rent_budget_tri     Int
-  units_status        RentStatus
-  lease_start         DateTime
-  lease_end           DateTime
+  lease_start         String
+  lease_end           String?
   tenant_name1        String
   tenant_name2        String
+  unit_id             Int        @id @unique
+  unit_door           Int
+  unit_floor          Int
   tenant_number1      Int
   tenant_number2      Int
-  tenant_email1       String
-  tenant_email2       String
-  created_at          DateTime   @default(now())
-  updated_at          DateTime   @updatedAt
+  property_id         String?
+  units_status        RentStatus
+  tenant_mail1        String
+  tenant_mail2        String
 
   @@map("rent_roll_unit")
-  @@schema("public")
-}
-
-model Asset {
-  id             String   @id @unique @default(cuid())
-  asset_name     String?
-  asset_type     String?
-  asset_value    Int?
-  asset_location String?
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
-
-  capex Capex?
-  opex  Opex?
-  units RentRollUnit[]
-
-  @@map("asset")
   @@schema("public")
 }
 

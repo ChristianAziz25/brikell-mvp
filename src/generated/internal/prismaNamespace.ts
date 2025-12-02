@@ -386,8 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Capex: 'Capex',
   Opex: 'Opex',
-  RentRollUnit: 'RentRollUnit',
-  Asset: 'Asset'
+  RentRollUnit: 'RentRollUnit'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "capex" | "opex" | "rentRollUnit" | "asset"
+    modelProps: "capex" | "opex" | "rentRollUnit"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -629,80 +628,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Asset: {
-      payload: Prisma.$AssetPayload<ExtArgs>
-      fields: Prisma.AssetFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.AssetFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.AssetFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
-        }
-        findFirst: {
-          args: Prisma.AssetFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.AssetFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
-        }
-        findMany: {
-          args: Prisma.AssetFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>[]
-        }
-        create: {
-          args: Prisma.AssetCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
-        }
-        createMany: {
-          args: Prisma.AssetCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.AssetCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>[]
-        }
-        delete: {
-          args: Prisma.AssetDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
-        }
-        update: {
-          args: Prisma.AssetUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
-        }
-        deleteMany: {
-          args: Prisma.AssetDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.AssetUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.AssetUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>[]
-        }
-        upsert: {
-          args: Prisma.AssetUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
-        }
-        aggregate: {
-          args: Prisma.AssetAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateAsset>
-        }
-        groupBy: {
-          args: Prisma.AssetGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AssetGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.AssetCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AssetCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -805,14 +730,10 @@ export type OpexScalarFieldEnum = (typeof OpexScalarFieldEnum)[keyof typeof Opex
 
 
 export const RentRollUnitScalarFieldEnum = {
-  unit_id: 'unit_id',
-  assetId: 'assetId',
   property_build_year: 'property_build_year',
   property_name: 'property_name',
   unit_address: 'unit_address',
   unit_zipcode: 'unit_zipcode',
-  unit_door: 'unit_door',
-  unit_floor: 'unit_floor',
   utilites_cost: 'utilites_cost',
   unit_type: 'unit_type',
   size_sqm: 'size_sqm',
@@ -821,33 +742,22 @@ export const RentRollUnitScalarFieldEnum = {
   bathrooms_amount: 'bathrooms_amount',
   rent_current_gri: 'rent_current_gri',
   rent_budget_tri: 'rent_budget_tri',
-  units_status: 'units_status',
   lease_start: 'lease_start',
   lease_end: 'lease_end',
   tenant_name1: 'tenant_name1',
   tenant_name2: 'tenant_name2',
+  unit_id: 'unit_id',
+  unit_door: 'unit_door',
+  unit_floor: 'unit_floor',
   tenant_number1: 'tenant_number1',
   tenant_number2: 'tenant_number2',
-  tenant_email1: 'tenant_email1',
-  tenant_email2: 'tenant_email2',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
+  property_id: 'property_id',
+  units_status: 'units_status',
+  tenant_mail1: 'tenant_mail1',
+  tenant_mail2: 'tenant_mail2'
 } as const
 
 export type RentRollUnitScalarFieldEnum = (typeof RentRollUnitScalarFieldEnum)[keyof typeof RentRollUnitScalarFieldEnum]
-
-
-export const AssetScalarFieldEnum = {
-  id: 'id',
-  asset_name: 'asset_name',
-  asset_type: 'asset_type',
-  asset_value: 'asset_value',
-  asset_location: 'asset_location',
-  created_at: 'created_at',
-  updated_at: 'updated_at'
-} as const
-
-export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -919,6 +829,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RentStatus'
+ */
+export type EnumRentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RentStatus[]'
+ */
+export type ListEnumRentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RentStatus[]'>
     
 
 
@@ -1017,7 +941,6 @@ export type GlobalOmitConfig = {
   capex?: Prisma.CapexOmit
   opex?: Prisma.OpexOmit
   rentRollUnit?: Prisma.RentRollUnitOmit
-  asset?: Prisma.AssetOmit
 }
 
 /* Types for Logging */
