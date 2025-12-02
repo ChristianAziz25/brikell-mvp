@@ -1,34 +1,70 @@
+import type { Prisma } from '@/generated/client';
 import prisma from '@/lib/prisma/client';
-import type { BulkInsertResult, RentRollUnit, RentRollUnitInput } from '../types';
+import type { BulkInsertResult } from '../types';
 
 // TODO: requires zod to runtime check types
 
-export async function upsertRentRollUnit(data: RentRollUnitInput) {
+export async function upsertRentRollUnit(data: Prisma.RentRollUnitCreateInput) {
   return prisma.rentRollUnit.upsert({
-    where: { unitId: data.unitId },
+    where: { unit_id: data.unit_id },
     update: {
-      propertyName: data.propertyName,
-      address: data.address,
-      zipcode: data.zipcode,
-      size: data.size,
-      rooms: data.rooms,
-      bedrooms: data.bedrooms,
-      bathrooms: data.bathrooms,
-      floor: data.floor,
-      monthlyRent: data.monthlyRent,
-      contractedRent: data.contractedRent,
-      occupancyStatus: data.occupancyStatus,
-      leaseStart: data.leaseStart,
-      leaseEnd: data.leaseEnd,
-      tenantName: data.tenantName,
-      updatedAt: new Date(),
+      property_name: data.property_name,
+      unit_address: data.unit_address,
+      unit_zipcode: data.unit_zipcode,
+      unit_door: data.unit_door,
+      unit_floor: data.unit_floor,
+      utilites_cost: data.utilites_cost,
+      unit_type: data.unit_type,
+      size_sqm: data.size_sqm,
+      rooms_amount: data.rooms_amount,
+      bedrooms_amount: data.bedrooms_amount,
+      bathrooms_amount: data.bathrooms_amount,
+      rent_current_gri: data.rent_current_gri,
+      rent_budget_tri: data.rent_budget_tri,
+      units_status: data.units_status,
+      lease_start: data.lease_start,
+      lease_end: data.lease_end,
+      tenant_name1: data.tenant_name1,
+      tenant_name2: data.tenant_name2,
+      tenant_number1: data.tenant_number1,
+      tenant_number2: data.tenant_number2,
+      tenant_email1: data.tenant_email1,
+      tenant_email2: data.tenant_email2,
+      updated_at: new Date(),
     },
-    create: data,
+    create: {
+      unit_id: data.unit_id,
+      property_build_year: data.property_build_year,
+      property_name: data.property_name,
+      unit_address: data.unit_address,
+      unit_zipcode: data.unit_zipcode,
+      unit_door: data.unit_door,
+      unit_floor: data.unit_floor,
+      utilites_cost: data.utilites_cost,
+      unit_type: data.unit_type,
+      size_sqm: data.size_sqm,
+      rooms_amount: data.rooms_amount,
+      bedrooms_amount: data.bedrooms_amount,
+      bathrooms_amount: data.bathrooms_amount,
+      rent_current_gri: data.rent_current_gri,
+      rent_budget_tri: data.rent_budget_tri,
+      units_status: data.units_status,
+      lease_start: data.lease_start,
+      lease_end: data.lease_end,
+      tenant_name1: data.tenant_name1,
+      tenant_name2: data.tenant_name2,
+      tenant_number1: data.tenant_number1,
+      tenant_number2: data.tenant_number2,
+      tenant_email1: data.tenant_email1,
+      tenant_email2: data.tenant_email2,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
   });
 }
 
 export async function bulkUpsertRentRollUnits(
-  data: RentRollUnitInput[]
+  data: Prisma.RentRollUnitCreateInput[]
 ): Promise<BulkInsertResult> {
   const result: BulkInsertResult = {
     success: true,
@@ -40,28 +76,36 @@ export async function bulkUpsertRentRollUnits(
   for (const unit of data) {
     try {
       const existing = await prisma.rentRollUnit.findUnique({
-        where: { unitId: unit.unitId },
+        where: { unit_id: unit.unit_id },
       });
 
       if (existing) {
         await prisma.rentRollUnit.update({
-          where: { unitId: unit.unitId },
+          where: { unit_id: unit.unit_id },
           data: {
-            propertyName: unit.propertyName,
-            address: unit.address,
-            zipcode: unit.zipcode,
-            size: unit.size,
-            rooms: unit.rooms,
-            bedrooms: unit.bedrooms,
-            bathrooms: unit.bathrooms,
-            floor: unit.floor,
-            monthlyRent: unit.monthlyRent,
-            contractedRent: unit.contractedRent,
-            occupancyStatus: unit.occupancyStatus,
-            leaseStart: unit.leaseStart,
-            leaseEnd: unit.leaseEnd,
-            tenantName: unit.tenantName,
-            updatedAt: new Date(),
+            property_name: unit.property_name,
+            unit_address: unit.unit_address,
+            unit_zipcode: unit.unit_zipcode,
+            unit_door: unit.unit_door,
+            unit_floor: unit.unit_floor,
+            utilites_cost: unit.utilites_cost,
+            unit_type: unit.unit_type,
+            size_sqm: unit.size_sqm,
+            rooms_amount: unit.rooms_amount,
+            bedrooms_amount: unit.bedrooms_amount,
+            bathrooms_amount: unit.bathrooms_amount,
+            rent_current_gri: unit.rent_current_gri,
+            rent_budget_tri: unit.rent_budget_tri,
+            units_status: unit.units_status,
+            lease_start: unit.lease_start,
+            lease_end: unit.lease_end,
+            tenant_name1: unit.tenant_name1,
+            tenant_name2: unit.tenant_name2,
+            tenant_number1: unit.tenant_number1,
+            tenant_number2: unit.tenant_number2,
+            tenant_email1: unit.tenant_email1,
+            tenant_email2: unit.tenant_email2,
+            updated_at: new Date(),
           },
         });
         result.updated++;
@@ -72,7 +116,7 @@ export async function bulkUpsertRentRollUnits(
     } catch (error) {
       result.success = false;
       result.errors.push({
-        unitId: unit.unitId,
+        unitId: unit.unit_id,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
     }
@@ -81,20 +125,20 @@ export async function bulkUpsertRentRollUnits(
   return result;
 }
 
-export async function getAllRentRollUnits(): Promise<RentRollUnit[]> {
+export async function getAllRentRollUnits(): Promise<Prisma.RentRollUnitMinAggregateOutputType[]> {
   return prisma.rentRollUnit.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { created_at: 'desc' },
   });
 }
 
 export async function getRentRollUnitByUnitId(unitId: string) {
   return prisma.rentRollUnit.findUnique({
-    where: { unitId },
+    where: { unit_id: unitId },
   });
 }
 
 export async function deleteRentRollUnit(unitId: string) {
   return prisma.rentRollUnit.delete({
-    where: { unitId },
+    where: { unit_id: unitId },
   });
 }

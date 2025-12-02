@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.js'
-export type * from './prismaNamespace.js'
+export type * from '../models'
+export type * from './prismaNamespace'
 
 export const Decimal = runtime.Decimal
 
@@ -51,7 +51,10 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  RentRollUnit: 'RentRollUnit'
+  Capex: 'Capex',
+  Opex: 'Opex',
+  RentRollUnit: 'RentRollUnit',
+  Asset: 'Asset'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -70,29 +73,112 @@ export const TransactionIsolationLevel = {
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const RentRollUnitScalarFieldEnum = {
+export const CapexScalarFieldEnum = {
   id: 'id',
-  unitId: 'unitId',
-  propertyYear: 'propertyYear',
-  propertyName: 'propertyName',
-  address: 'address',
-  zipcode: 'zipcode',
-  size: 'size',
-  rooms: 'rooms',
-  bedrooms: 'bedrooms',
-  bathrooms: 'bathrooms',
-  floor: 'floor',
-  monthlyRent: 'monthlyRent',
-  contractedRent: 'contractedRent',
-  occupancyStatus: 'occupancyStatus',
-  leaseStart: 'leaseStart',
-  leaseEnd: 'leaseEnd',
-  tenantName: 'tenantName',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  asset_name: 'asset_name',
+  capex_year: 'capex_year',
+  common_areas_actuals: 'common_areas_actuals',
+  units_renovations_actuals: 'units_renovations_actuals',
+  elevator_maintnance_actuals: 'elevator_maintnance_actuals',
+  roof_maintnance_actuals: 'roof_maintnance_actuals',
+  fire_safety_actuals: 'fire_safety_actuals',
+  outdoor_area_actuals: 'outdoor_area_actuals',
+  total_capex_actuals: 'total_capex_actuals',
+  common_areas_budget: 'common_areas_budget',
+  units_renovations_budget: 'units_renovations_budget',
+  elevator_maintnance_budget: 'elevator_maintnance_budget',
+  roof_maintnance_budget: 'roof_maintnance_budget',
+  fire_safety_budget: 'fire_safety_budget',
+  outdoor_area_budget: 'outdoor_area_budget',
+  total_capex_budget: 'total_capex_budget',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  assetId: 'assetId'
+} as const
+
+export type CapexScalarFieldEnum = (typeof CapexScalarFieldEnum)[keyof typeof CapexScalarFieldEnum]
+
+
+export const OpexScalarFieldEnum = {
+  id: 'id',
+  asset_name: 'asset_name',
+  opex_year: 'opex_year',
+  actual_delinquency: 'actual_delinquency',
+  actual_property_management_fee: 'actual_property_management_fee',
+  actual_leasing_fee: 'actual_leasing_fee',
+  actual_property_taxes: 'actual_property_taxes',
+  actual_refuse_collection: 'actual_refuse_collection',
+  actual_insurance: 'actual_insurance',
+  actual_cleaning: 'actual_cleaning',
+  actual_facility_management: 'actual_facility_management',
+  actual_service_subscriptions: 'actual_service_subscriptions',
+  actual_common_consumption: 'actual_common_consumption',
+  actual_home_owner_association: 'actual_home_owner_association',
+  actuals_total_opex: 'actuals_total_opex',
+  budget_delinquency: 'budget_delinquency',
+  budget_property_management_fee: 'budget_property_management_fee',
+  budget_leasing_fee: 'budget_leasing_fee',
+  budget_property_taxes: 'budget_property_taxes',
+  budget_refuse_collection: 'budget_refuse_collection',
+  budget_insurance: 'budget_insurance',
+  budget_cleaning: 'budget_cleaning',
+  budget_facility_management: 'budget_facility_management',
+  budget_service_subscriptions: 'budget_service_subscriptions',
+  budget_common_consumption: 'budget_common_consumption',
+  budget_home_owner_association: 'budget_home_owner_association',
+  budget_total_opex: 'budget_total_opex',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  assetId: 'assetId'
+} as const
+
+export type OpexScalarFieldEnum = (typeof OpexScalarFieldEnum)[keyof typeof OpexScalarFieldEnum]
+
+
+export const RentRollUnitScalarFieldEnum = {
+  unit_id: 'unit_id',
+  assetId: 'assetId',
+  property_build_year: 'property_build_year',
+  property_name: 'property_name',
+  unit_address: 'unit_address',
+  unit_zipcode: 'unit_zipcode',
+  unit_door: 'unit_door',
+  unit_floor: 'unit_floor',
+  utilites_cost: 'utilites_cost',
+  unit_type: 'unit_type',
+  size_sqm: 'size_sqm',
+  rooms_amount: 'rooms_amount',
+  bedrooms_amount: 'bedrooms_amount',
+  bathrooms_amount: 'bathrooms_amount',
+  rent_current_gri: 'rent_current_gri',
+  rent_budget_tri: 'rent_budget_tri',
+  units_status: 'units_status',
+  lease_start: 'lease_start',
+  lease_end: 'lease_end',
+  tenant_name1: 'tenant_name1',
+  tenant_name2: 'tenant_name2',
+  tenant_number1: 'tenant_number1',
+  tenant_number2: 'tenant_number2',
+  tenant_email1: 'tenant_email1',
+  tenant_email2: 'tenant_email2',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
 export type RentRollUnitScalarFieldEnum = (typeof RentRollUnitScalarFieldEnum)[keyof typeof RentRollUnitScalarFieldEnum]
+
+
+export const AssetScalarFieldEnum = {
+  id: 'id',
+  asset_name: 'asset_name',
+  asset_type: 'asset_type',
+  asset_value: 'asset_value',
+  asset_location: 'asset_location',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -109,4 +195,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

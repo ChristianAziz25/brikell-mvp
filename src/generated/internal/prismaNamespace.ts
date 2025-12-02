@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models.js"
-import { type PrismaClient } from "./class.js"
+import type * as Prisma from "../models"
+import { type PrismaClient } from "./class"
 
-export type * from '../models.js'
+export type * from '../models'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -384,7 +384,10 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
-  RentRollUnit: 'RentRollUnit'
+  Capex: 'Capex',
+  Opex: 'Opex',
+  RentRollUnit: 'RentRollUnit',
+  Asset: 'Asset'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -400,10 +403,158 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "rentRollUnit"
+    modelProps: "capex" | "opex" | "rentRollUnit" | "asset"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    Capex: {
+      payload: Prisma.$CapexPayload<ExtArgs>
+      fields: Prisma.CapexFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CapexFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CapexFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>
+        }
+        findFirst: {
+          args: Prisma.CapexFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CapexFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>
+        }
+        findMany: {
+          args: Prisma.CapexFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>[]
+        }
+        create: {
+          args: Prisma.CapexCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>
+        }
+        createMany: {
+          args: Prisma.CapexCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CapexCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>[]
+        }
+        delete: {
+          args: Prisma.CapexDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>
+        }
+        update: {
+          args: Prisma.CapexUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>
+        }
+        deleteMany: {
+          args: Prisma.CapexDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CapexUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CapexUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>[]
+        }
+        upsert: {
+          args: Prisma.CapexUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CapexPayload>
+        }
+        aggregate: {
+          args: Prisma.CapexAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCapex>
+        }
+        groupBy: {
+          args: Prisma.CapexGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CapexGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CapexCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CapexCountAggregateOutputType> | number
+        }
+      }
+    }
+    Opex: {
+      payload: Prisma.$OpexPayload<ExtArgs>
+      fields: Prisma.OpexFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.OpexFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.OpexFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>
+        }
+        findFirst: {
+          args: Prisma.OpexFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.OpexFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>
+        }
+        findMany: {
+          args: Prisma.OpexFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>[]
+        }
+        create: {
+          args: Prisma.OpexCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>
+        }
+        createMany: {
+          args: Prisma.OpexCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.OpexCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>[]
+        }
+        delete: {
+          args: Prisma.OpexDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>
+        }
+        update: {
+          args: Prisma.OpexUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>
+        }
+        deleteMany: {
+          args: Prisma.OpexDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.OpexUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.OpexUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>[]
+        }
+        upsert: {
+          args: Prisma.OpexUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$OpexPayload>
+        }
+        aggregate: {
+          args: Prisma.OpexAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateOpex>
+        }
+        groupBy: {
+          args: Prisma.OpexGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpexGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.OpexCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.OpexCountAggregateOutputType> | number
+        }
+      }
+    }
     RentRollUnit: {
       payload: Prisma.$RentRollUnitPayload<ExtArgs>
       fields: Prisma.RentRollUnitFieldRefs
@@ -478,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Asset: {
+      payload: Prisma.$AssetPayload<ExtArgs>
+      fields: Prisma.AssetFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AssetFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AssetFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
+        }
+        findFirst: {
+          args: Prisma.AssetFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AssetFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
+        }
+        findMany: {
+          args: Prisma.AssetFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>[]
+        }
+        create: {
+          args: Prisma.AssetCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
+        }
+        createMany: {
+          args: Prisma.AssetCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.AssetCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>[]
+        }
+        delete: {
+          args: Prisma.AssetDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
+        }
+        update: {
+          args: Prisma.AssetUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
+        }
+        deleteMany: {
+          args: Prisma.AssetDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AssetUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.AssetUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>[]
+        }
+        upsert: {
+          args: Prisma.AssetUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AssetPayload>
+        }
+        aggregate: {
+          args: Prisma.AssetAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAsset>
+        }
+        groupBy: {
+          args: Prisma.AssetGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AssetGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AssetCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AssetCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -517,29 +742,112 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const RentRollUnitScalarFieldEnum = {
+export const CapexScalarFieldEnum = {
   id: 'id',
-  unitId: 'unitId',
-  propertyYear: 'propertyYear',
-  propertyName: 'propertyName',
-  address: 'address',
-  zipcode: 'zipcode',
-  size: 'size',
-  rooms: 'rooms',
-  bedrooms: 'bedrooms',
-  bathrooms: 'bathrooms',
-  floor: 'floor',
-  monthlyRent: 'monthlyRent',
-  contractedRent: 'contractedRent',
-  occupancyStatus: 'occupancyStatus',
-  leaseStart: 'leaseStart',
-  leaseEnd: 'leaseEnd',
-  tenantName: 'tenantName',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  asset_name: 'asset_name',
+  capex_year: 'capex_year',
+  common_areas_actuals: 'common_areas_actuals',
+  units_renovations_actuals: 'units_renovations_actuals',
+  elevator_maintnance_actuals: 'elevator_maintnance_actuals',
+  roof_maintnance_actuals: 'roof_maintnance_actuals',
+  fire_safety_actuals: 'fire_safety_actuals',
+  outdoor_area_actuals: 'outdoor_area_actuals',
+  total_capex_actuals: 'total_capex_actuals',
+  common_areas_budget: 'common_areas_budget',
+  units_renovations_budget: 'units_renovations_budget',
+  elevator_maintnance_budget: 'elevator_maintnance_budget',
+  roof_maintnance_budget: 'roof_maintnance_budget',
+  fire_safety_budget: 'fire_safety_budget',
+  outdoor_area_budget: 'outdoor_area_budget',
+  total_capex_budget: 'total_capex_budget',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  assetId: 'assetId'
+} as const
+
+export type CapexScalarFieldEnum = (typeof CapexScalarFieldEnum)[keyof typeof CapexScalarFieldEnum]
+
+
+export const OpexScalarFieldEnum = {
+  id: 'id',
+  asset_name: 'asset_name',
+  opex_year: 'opex_year',
+  actual_delinquency: 'actual_delinquency',
+  actual_property_management_fee: 'actual_property_management_fee',
+  actual_leasing_fee: 'actual_leasing_fee',
+  actual_property_taxes: 'actual_property_taxes',
+  actual_refuse_collection: 'actual_refuse_collection',
+  actual_insurance: 'actual_insurance',
+  actual_cleaning: 'actual_cleaning',
+  actual_facility_management: 'actual_facility_management',
+  actual_service_subscriptions: 'actual_service_subscriptions',
+  actual_common_consumption: 'actual_common_consumption',
+  actual_home_owner_association: 'actual_home_owner_association',
+  actuals_total_opex: 'actuals_total_opex',
+  budget_delinquency: 'budget_delinquency',
+  budget_property_management_fee: 'budget_property_management_fee',
+  budget_leasing_fee: 'budget_leasing_fee',
+  budget_property_taxes: 'budget_property_taxes',
+  budget_refuse_collection: 'budget_refuse_collection',
+  budget_insurance: 'budget_insurance',
+  budget_cleaning: 'budget_cleaning',
+  budget_facility_management: 'budget_facility_management',
+  budget_service_subscriptions: 'budget_service_subscriptions',
+  budget_common_consumption: 'budget_common_consumption',
+  budget_home_owner_association: 'budget_home_owner_association',
+  budget_total_opex: 'budget_total_opex',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  assetId: 'assetId'
+} as const
+
+export type OpexScalarFieldEnum = (typeof OpexScalarFieldEnum)[keyof typeof OpexScalarFieldEnum]
+
+
+export const RentRollUnitScalarFieldEnum = {
+  unit_id: 'unit_id',
+  assetId: 'assetId',
+  property_build_year: 'property_build_year',
+  property_name: 'property_name',
+  unit_address: 'unit_address',
+  unit_zipcode: 'unit_zipcode',
+  unit_door: 'unit_door',
+  unit_floor: 'unit_floor',
+  utilites_cost: 'utilites_cost',
+  unit_type: 'unit_type',
+  size_sqm: 'size_sqm',
+  rooms_amount: 'rooms_amount',
+  bedrooms_amount: 'bedrooms_amount',
+  bathrooms_amount: 'bathrooms_amount',
+  rent_current_gri: 'rent_current_gri',
+  rent_budget_tri: 'rent_budget_tri',
+  units_status: 'units_status',
+  lease_start: 'lease_start',
+  lease_end: 'lease_end',
+  tenant_name1: 'tenant_name1',
+  tenant_name2: 'tenant_name2',
+  tenant_number1: 'tenant_number1',
+  tenant_number2: 'tenant_number2',
+  tenant_email1: 'tenant_email1',
+  tenant_email2: 'tenant_email2',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
 export type RentRollUnitScalarFieldEnum = (typeof RentRollUnitScalarFieldEnum)[keyof typeof RentRollUnitScalarFieldEnum]
+
+
+export const AssetScalarFieldEnum = {
+  id: 'id',
+  asset_name: 'asset_name',
+  asset_type: 'asset_type',
+  asset_value: 'asset_value',
+  asset_location: 'asset_location',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -556,6 +864,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -589,20 +905,6 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
- * Reference to a field of type 'OccupancyStatus'
- */
-export type EnumOccupancyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OccupancyStatus'>
-    
-
-
-/**
- * Reference to a field of type 'OccupancyStatus[]'
- */
-export type ListEnumOccupancyStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OccupancyStatus[]'>
     
 
 
@@ -712,7 +1014,10 @@ export type PrismaClientOptions = ({
   omit?: GlobalOmitConfig
 }
 export type GlobalOmitConfig = {
+  capex?: Prisma.CapexOmit
+  opex?: Prisma.OpexOmit
   rentRollUnit?: Prisma.RentRollUnitOmit
+  asset?: Prisma.AssetOmit
 }
 
 /* Types for Logging */

@@ -15,11 +15,11 @@ import { fileURLToPath } from 'node:url'
 globalThis['__dirname'] = path.dirname(fileURLToPath(import.meta.url))
 
 import * as runtime from "@prisma/client/runtime/client"
-import * as $Class from "./internal/class.ts"
-import * as Prisma from "./internal/prismaNamespace.ts"
+import * as $Class from "./internal/class"
+import * as Prisma from "./internal/prismaNamespace"
 
-export * from "./enums.ts"
-export * as $Enums from './enums.ts'
+export * from "./enums"
+export * as $Enums from './enums'
 export { Prisma }
 /**
  * ## Prisma Client
@@ -28,8 +28,8 @@ export { Prisma }
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more RentRollUnits
- * const rentRollUnits = await prisma.rentRollUnit.findMany()
+ * // Fetch zero or more Capexes
+ * const capexes = await prisma.capex.findMany()
  * ```
  * 
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
@@ -38,7 +38,22 @@ export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 
 /**
+ * Model Capex
+ * 
+ */
+export type Capex = Prisma.CapexModel
+/**
+ * Model Opex
+ * 
+ */
+export type Opex = Prisma.OpexModel
+/**
  * Model RentRollUnit
  * 
  */
 export type RentRollUnit = Prisma.RentRollUnitModel
+/**
+ * Model Asset
+ * 
+ */
+export type Asset = Prisma.AssetModel
