@@ -1,6 +1,13 @@
 import type { Prisma } from '@/generated/client';
+import { RentRollUnitCreateInput } from '@/generated/models/RentRollUnit';
 import prisma from '@/lib/prisma/client';
-import type { BulkInsertResult } from '../types';
+
+interface BulkInsertResult {
+  success: boolean;
+  inserted: number;
+  updated: number;
+  errors: Array<{ unitId: number; error: string }>;
+}
 
 // TODO: requires zod to runtime check types
 
@@ -64,7 +71,7 @@ export async function upsertRentRollUnit(data: Prisma.RentRollUnitCreateInput) {
 }
 
 export async function bulkUpsertRentRollUnits(
-  data: Prisma.RentRollUnitCreateInput[]
+  data: RentRollUnitCreateInput[]
 ): Promise<BulkInsertResult> {
   const result: BulkInsertResult = {
     success: true,
@@ -131,13 +138,13 @@ export async function getAllRentRollUnits(): Promise<Prisma.RentRollUnitMinAggre
   });
 }
 
-export async function getRentRollUnitByUnitId(unitId: string) {
+export async function getRentRollUnitByUnitId(unitId: number) {
   return prisma.rentRollUnit.findUnique({
     where: { unit_id: unitId },
   });
 }
 
-export async function deleteRentRollUnit(unitId: string) {
+export async function deleteRentRollUnit(unitId: number) {
   return prisma.rentRollUnit.delete({
     where: { unit_id: unitId },
   });

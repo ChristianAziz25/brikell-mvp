@@ -1,9 +1,8 @@
+import { RentRollUnitCreateInput } from '@/generated/models/RentRollUnit';
 import { bulkUpsertRentRollUnits } from '@/lib/prisma/models/rent-roll';
-import { RentRollUnitInput } from '@/lib/prisma/types';
 import { NextRequest } from 'next/server';
 import { extractDataWithLLM } from './aiExtraction';
 import { parseFileToText } from './parsing';
-import { transformLLMDataToRentRollUnit } from './transformer';
 
 
 
@@ -21,8 +20,7 @@ export async function POST(request: NextRequest) {
   const llmExtracted = await extractDataWithLLM(fileContent, fileType);
   
   const rentRollUnits = llmExtracted
-    .map(transformLLMDataToRentRollUnit)
-    .filter((unit): unit is RentRollUnitInput => unit !== null);
+    .filter((unit) => unit !== null) as RentRollUnitCreateInput[];
   
   const result = await bulkUpsertRentRollUnits(rentRollUnits);
 

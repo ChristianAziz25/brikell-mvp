@@ -73,15 +73,15 @@ model Opex {
 }
 
 model RentRollUnit {
-  unit_id             String   @id @unique
+  unit_id             Int        @id @unique
   assetId             String?
-  asset               Asset?   @relation(fields: [assetId], references: [id])
+  asset               Asset?     @relation(fields: [assetId], references: [id])
   property_build_year Int
   property_name       String
   unit_address        String
   unit_zipcode        String
-  unit_door           String
-  unit_floor          String
+  unit_door           Int
+  unit_floor          Int
   utilites_cost       Int
   unit_type           String
   size_sqm            Int
@@ -90,17 +90,17 @@ model RentRollUnit {
   bathrooms_amount    Int
   rent_current_gri    Int
   rent_budget_tri     Int
-  units_status        String
+  units_status        RentStatus
   lease_start         DateTime
   lease_end           DateTime
   tenant_name1        String
   tenant_name2        String
-  tenant_number1      String
-  tenant_number2      String
+  tenant_number1      Int
+  tenant_number2      Int
   tenant_email1       String
   tenant_email2       String
-  created_at          DateTime @default(now())
-  updated_at          DateTime @updatedAt
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @updatedAt
 
   @@map("rent_roll_unit")
   @@schema("public")
@@ -120,5 +120,13 @@ model Asset {
   units RentRollUnit[]
 
   @@map("asset")
+  @@schema("public")
+}
+
+enum RentStatus {
+  occupied
+  vacant
+  terminated
+
   @@schema("public")
 }

@@ -23,28 +23,7 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDown, Plus, Upload, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-
-type RentStatus = "occupied" | "vacant" | "terminated";
-
-interface RentRollUnit {
-  unitId: string;
-  propertyYear: number;
-  propertyName: string;
-  unitAddress: string;
-  zipcode: string;
-  floor: string;
-  unitType: string;
-  size: number;
-  rooms: number;
-  bedrooms: number;
-  bathrooms: number;
-  rentCurrent: number;
-  rentBudget: number;
-  status: RentStatus;
-  leaseStart: string;
-  leaseEnd: string;
-  tenantName: string;
-}
+import type { RentRollUnit, RentStatus } from "../type/rent-roll";
 
 const rentStatusVariants: Record<RentStatus, string> = {
   occupied: "bg-foreground text-background border-0",
@@ -98,6 +77,7 @@ export default function Page() {
         throw new Error("Failed to upload file");
       }
 
+      await result.json();
       await queryClient.invalidateQueries({ queryKey: ["rentRollData"] });
     } catch (error) {
       console.error(error);
@@ -244,6 +224,13 @@ export default function Page() {
 
   const { rows } = table.getRowModel();
 
+  const properties = useMemo(() => {
+    const values = table
+      .getCoreRowModel()
+      .flatRows.map((row) => row.getValue("propertyName")) as string[];
+    return Array.from(new Set(values));
+  }, [table]);
+
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => tableContainerRef.current,
@@ -384,6 +371,26 @@ export default function Page() {
                   </div>
                 );
               })}
+
+              {table.getColumn("propertyName") && (
+                <div className="flex items-center gap-2">
+                  {properties.map((property) => (
+                    <Button
+                      key={property}
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        table
+                          .getColumn("propertyName")
+                          ?.setFilterValue(property)
+                      }
+                    >
+                      {property}
+                    </Button>
+                  ))}
+                </div>
+              )}
+
               {table.getColumn("status") && (
                 <div className="flex items-center gap-2">
                   <select
