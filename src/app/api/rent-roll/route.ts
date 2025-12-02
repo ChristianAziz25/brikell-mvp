@@ -1,4 +1,4 @@
-import { getAllRentRollUnits } from '@/lib/prisma/rent-roll';
+import { getAllRentRollUnits } from '@/lib/prisma/models/rent-roll';
 import { NextResponse } from 'next/server';
 
 type RentRollUnitResponse = {

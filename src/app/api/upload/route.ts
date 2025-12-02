@@ -1,4 +1,4 @@
-import { bulkUpsertRentRollUnits } from '@/lib/prisma/rent-roll';
+import { bulkUpsertRentRollUnits } from '@/lib/prisma/models/rent-roll';
 import { RentRollUnitInput } from '@/lib/prisma/types';
 import { NextRequest } from 'next/server';
 import { extractDataWithLLM } from './aiExtraction';

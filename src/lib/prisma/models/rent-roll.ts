@@ -1,11 +1,12 @@
-import prisma from './client';
-import type { BulkInsertResult, RentRollUnit, RentRollUnitInput } from './types';
+import prisma from '@/lib/prisma/client';
+import type { BulkInsertResult, RentRollUnit, RentRollUnitInput } from '../types';
+
+// TODO: requires zod to runtime check types
 
 export async function upsertRentRollUnit(data: RentRollUnitInput) {
   return prisma.rentRollUnit.upsert({
     where: { unitId: data.unitId },
     update: {
-      propertyYear: data.propertyYear,
       propertyName: data.propertyName,
       address: data.address,
       zipcode: data.zipcode,
@@ -46,7 +47,6 @@ export async function bulkUpsertRentRollUnits(
         await prisma.rentRollUnit.update({
           where: { unitId: unit.unitId },
           data: {
-            propertyYear: unit.propertyYear,
             propertyName: unit.propertyName,
             address: unit.address,
             zipcode: unit.zipcode,

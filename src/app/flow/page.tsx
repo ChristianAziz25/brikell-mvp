@@ -23,6 +23,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Building2, DollarSign, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Stage =
@@ -135,6 +136,7 @@ const stages: Stage[] = [
 ];
 
 function SortableCard({ card }: { card: LeaseCard }) {
+  const router = useRouter();
   const {
     attributes,
     listeners,
@@ -162,6 +164,7 @@ function SortableCard({ card }: { card: LeaseCard }) {
       )}
       role="button"
       tabIndex={0}
+      onClick={() => router.push(`/flow/unit/${card.id}`)}
     >
       <CardContent className="flex flex-col space-y-1.5 p-6 pb-3">
         <div className="flex items-start justify-between">

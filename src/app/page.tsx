@@ -25,8 +25,6 @@ const dashboardConfigs = [
   },
 ];
 
-console.log("DB:", process.env.DATABASE_URL, process.env.DIRECT_URL);
-
 export default function Home() {
   return (
     <div className="max-w-4xl mx-auto space-y-12 py-12">
