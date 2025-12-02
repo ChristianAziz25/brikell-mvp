@@ -2,12 +2,12 @@ import prisma from '@/lib/prisma/client'
 
 async function main() {
   // Seed a couple of sample rent roll units – this matches your current Prisma schema/client
-  await prisma.asset.createMany({
-    data: [{
+  // await prisma.asset.createMany({
+  //   data: [{
 
-    }],
-    skipDuplicates: true,
-  })
+  //   }],
+  //   skipDuplicates: true,
+  // })
 }
 
 main()
