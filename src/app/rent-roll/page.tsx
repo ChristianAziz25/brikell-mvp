@@ -376,14 +376,8 @@ export default function Page() {
                   size="lg"
                   className="w-full gap-2 md:w-fit"
                   onClick={() => {
-                    void fetch("/api/export", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        format: "csv",
-                      }),
+                    void fetch("/api/export?format=csv", {
+                      method: "GET",
                     }).then((response) => {
                       if (!response.ok) {
                         throw new Error("Failed to download CSV");
@@ -407,14 +401,8 @@ export default function Page() {
                   size="lg"
                   className="w-full gap-2 md:w-fit"
                   onClick={() => {
-                    void fetch("/api/export", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        format: "xlsx",
-                      }),
+                    void fetch("/api/export?format=xlsx", {
+                      method: "GET",
                     }).then((response) => {
                       if (!response.ok) {
                         throw new Error("Failed to download XLSX");

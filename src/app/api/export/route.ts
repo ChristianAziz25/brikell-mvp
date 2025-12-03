@@ -3,8 +3,9 @@ import { RentRollField } from "@/app/type/rent-roll";
 import { getAllRentRollUnits } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
+import { gzipSync } from "zlib";
 
-export async function POST(req: NextRequest) {
+export async function GET(req: NextRequest) {
   const units = await getAllRentRollUnits();
   if (!units) {
       return new NextResponse("No units found", { status: 404 });
@@ -48,7 +49,9 @@ export async function POST(req: NextRequest) {
     const bookType = format === "xls" ? "biff8" : "xlsx";
     const buffer = XLSX.write(workbook, { type: "buffer", bookType });
 
-    return new NextResponse(buffer, {
+    const compressed = gzipSync(buffer);
+
+    return new NextResponse(compressed, {
       status: 200,
       headers: {
         "Content-Type":
@@ -56,6 +59,7 @@ export async function POST(req: NextRequest) {
             ? "application/vnd.ms-excel"
             : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "Content-Disposition": `attachment; filename="rent-roll.${format}"`,
+        "Content-Encoding": "gzip",
       },
     });
   }
@@ -71,11 +75,15 @@ export async function POST(req: NextRequest) {
       )
       .join("\n");
 
-  return new NextResponse(csv, {
+  const csvCompressed = gzipSync(Buffer.from(csv, "utf-8"));
+
+
+  return new NextResponse(csvCompressed, {
     status: 200,
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
       "Content-Disposition": 'attachment; filename="rent-roll.csv"',
+      "Content-Encoding": "gzip",
     },
   });
 }
