@@ -1,6 +1,15 @@
 import prisma from "@/lib/prisma/client";
 import { RentStatus } from "../src/generated/enums";
-import { rentRollData } from "./fakeData";
+import { capexData, opexData, rentRollData } from "./fakeData";
+
+const parseMoneyToInt = (value: number | string): number => {
+  if (typeof value === "number") {
+    return Math.round(value);
+  }
+  const cleaned = value.replace(/[^\d]/g, "");
+  const parsed = parseInt(cleaned, 10);
+  return Number.isNaN(parsed) ? 0 : parsed;
+};
 
 async function main() {
   // Clear existing data in correct FK order
@@ -9,12 +18,13 @@ async function main() {
   await prisma.opex.deleteMany();
   await prisma.asset.deleteMany();
 
-  const assetIdByPropertyName = new Map<string, string>();
+  const assetIdByName = new Map<string, string>();
 
+  // Seed assets + rent roll
   for (const unit of rentRollData) {
     const propertyName = unit.property_name;
 
-    if (!assetIdByPropertyName.has(propertyName)) {
+    if (!assetIdByName.has(propertyName)) {
       const createdAsset = await prisma.asset.create({
         data: {
           name: propertyName,
@@ -24,10 +34,10 @@ async function main() {
         },
       });
 
-      assetIdByPropertyName.set(propertyName, createdAsset.id);
+      assetIdByName.set(propertyName, createdAsset.id);
     }
 
-    const assetId = assetIdByPropertyName.get(propertyName)!;
+    const assetId = assetIdByName.get(propertyName)!;
 
     await prisma.rentRollUnit.create({
       data: {
@@ -56,6 +66,101 @@ async function main() {
         units_status: unit.units_status as RentStatus,
         tenant_mail1: unit.tenant_mail1,
         tenant_mail2: unit.tenant_mail2,
+      },
+    });
+  }
+
+  // Ensure assets exist for capex / opex only names
+  for (const row of capexData) {
+    if (!assetIdByName.has(row.asset_name)) {
+      const createdAsset = await prisma.asset.create({
+        data: {
+          name: row.asset_name,
+          address: null,
+          city: null,
+          country: "Denmark",
+        },
+      });
+      assetIdByName.set(row.asset_name, createdAsset.id);
+    }
+  }
+
+  for (const row of opexData) {
+    if (!assetIdByName.has(row.asset_name)) {
+      const createdAsset = await prisma.asset.create({
+        data: {
+          name: row.asset_name,
+          address: null,
+          city: null,
+          country: "Denmark",
+        },
+      });
+      assetIdByName.set(row.asset_name, createdAsset.id);
+    }
+  }
+
+  // Seed Capex
+  for (const row of capexData) {
+    const assetId = assetIdByName.get(row.asset_name);
+    if (!assetId) continue;
+
+    await prisma.capex.create({
+      data: {
+        assetId,
+        asset_name: row.asset_name,
+        capex_year: row.capex_year,
+        common_areas_actuals: row.common_areas_actuals,
+        units_renovations_actuals: row.units_renovations_actuals,
+        elevator_maintnance_actuals: row.elevator_maintnance_actuals,
+        roof_maintnance_actuals: row.roof_maintnance_actuals,
+        fire_safety_actuals: row.fire_safety_actuals,
+        outdoor_area_actuals: row.outdoor_area_actuals,
+        total_capex_actuals: parseMoneyToInt(row.total_capex_actuals),
+        common_areas_budget: row.common_areas_budget,
+        units_renovations_budget: row.units_renovations_budget,
+        elevator_maintnance_budget: row.elevator_maintnance_budget,
+        roof_maintnance_budget: row.roof_maintnance_budget,
+        fire_safety_budget: row.fire_safety_budget,
+        outdoor_area_budget: row.outdoor_area_budget,
+        total_capex_budget: parseMoneyToInt(row.total_capex_budget),
+      },
+    });
+  }
+
+  // Seed Opex
+  for (const row of opexData) {
+    const assetId = assetIdByName.get(row.asset_name);
+    if (!assetId) continue;
+
+    await prisma.opex.create({
+      data: {
+        assetId,
+        asset_name: row.asset_name,
+        opex_year: row.opex_year,
+        actual_delinquency: row.actual_delinquency,
+        actual_property_management_fee: row.actual_property_management_fee,
+        actual_leasing_fee: row.actual_leasing_fee,
+        actual_property_taxes: row.actual_property_taxes,
+        actual_refuse_collection: row.actual_refuse_collection,
+        actual_insurance: row.actual_insurance,
+        actual_cleaning: row.actual_cleaning,
+        actual_facility_management: row.actual_facility_management,
+        actual_service_subscriptions: row.actual_service_subscriptions,
+        actual_common_consumption: row.actual_common_consumption,
+        actual_home_owner_association: row.actual_home_owner_association,
+        actuals_total_opex: parseMoneyToInt(row.actuals_total_opex),
+        budget_delinquency: row.budget_delinquency,
+        budget_property_management_fee: row.budget_property_management_fee,
+        budget_leasing_fee: row.budget_leasing_fee,
+        budget_property_taxes: row.budget_property_taxes,
+        budget_refuse_collection: row.budget_refuse_collection,
+        budget_insurance: row.budget_insurance,
+        budget_cleaning: row.budget_cleaning,
+        budget_facility_management: row.budget_facility_management,
+        budget_service_subscriptions: row.budget_service_subscriptions,
+        budget_common_consumption: row.budget_common_consumption,
+        budget_home_owner_association: row.budget_home_owner_association,
+        budget_total_opex: parseMoneyToInt(row.budget_total_opex),
       },
     });
   }
