@@ -23,7 +23,7 @@ import {
   type ColumnFiltersState,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDown, Plus, Upload, X } from "lucide-react";
+import { ChevronDown, DownloadIcon, Plus, Upload, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import type { RentRollUnit, RentStatus } from "../type/rent-roll";
 
@@ -315,46 +315,128 @@ export default function Page() {
             Comprehensive unit and lease data
           </p>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button size="lg" className="w-full gap-2 md:w-fit">
-              <Plus className="h-4 w-4" />
-              Add Unit
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Upload CSV File</DialogTitle>
-            </DialogHeader>
-            <div className="flex items-center justify-center py-6">
+        <div className="flex flex-col md:flex-row items-center gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button size="lg" className="w-full gap-2 md:w-fit">
+                <Plus className="h-4 w-4" />
+                Add Unit
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Upload CSV File</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center justify-center py-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                >
+                  <Upload className="h-4 w-4 mr-2" />
+                  {isUploading ? "Uploading..." : "Upload CSV"}
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  id="csv"
+                  type="file"
+                  accept=".csv, .xlsx, .xls, .pdf"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      void handleFileUpload(file);
+                      // Optional: allow re‑uploading the same file
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </div>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
               <Button
                 variant="outline"
-                size="sm"
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
+                size="lg"
+                className="w-full gap-2 md:w-fit"
               >
-                <Upload className="h-4 w-4 mr-2" />
-                {isUploading ? "Uploading..." : "Upload CSV"}
+                <DownloadIcon className="h-4 w-4" />
+                Export
               </Button>
-              <input
-                ref={fileInputRef}
-                id="csv"
-                type="file"
-                accept=".csv, .xlsx, .xls, .pdf"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    void handleFileUpload(file);
-                    // Optional: allow re‑uploading the same file
-                    e.target.value = "";
-                  }
-                }}
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Export as</DialogTitle>
+              </DialogHeader>
+              <div className="flex items-center justify-center py-6 gap-2">
+                <Button
+                  size="lg"
+                  className="w-full gap-2 md:w-fit"
+                  onClick={() => {
+                    void fetch("/api/export", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        format: "csv",
+                      }),
+                    }).then((response) => {
+                      if (!response.ok) {
+                        throw new Error("Failed to download CSV");
+                      }
+                      response.blob().then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "rent-roll-export.csv";
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                      });
+                    });
+                  }}
+                >
+                  <DownloadIcon className="h-4 w-4" />
+                  Download csv
+                </Button>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="w-full gap-2 md:w-fit"
+                  onClick={() => {
+                    void fetch("/api/export", {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify({
+                        format: "xlsx",
+                      }),
+                    }).then((response) => {
+                      if (!response.ok) {
+                        throw new Error("Failed to download XLSX");
+                      }
+                      response.blob().then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "rent-roll-export.xlsx";
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                      });
+                    });
+                  }}
+                >
+                  <DownloadIcon className="h-4 w-4" />
+                  Download xlsx
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <div className="space-y-4">

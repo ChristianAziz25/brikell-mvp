@@ -751,7 +751,6 @@ export const RentRollUnitScalarFieldEnum = {
   unit_floor: 'unit_floor',
   tenant_number1: 'tenant_number1',
   tenant_number2: 'tenant_number2',
-  property_id: 'property_id',
   units_status: 'units_status',
   tenant_mail1: 'tenant_mail1',
   tenant_mail2: 'tenant_mail2'

@@ -92,7 +92,6 @@ model RentRollUnit {
   unit_floor          Int
   tenant_number1      Int
   tenant_number2      Int
-  property_id         String?
   units_status        RentStatus
   tenant_mail1        String
   tenant_mail2        String
