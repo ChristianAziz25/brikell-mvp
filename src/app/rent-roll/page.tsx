@@ -15,6 +15,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   useReactTable,
   type ColumnDef,
@@ -96,12 +98,12 @@ export default function Page() {
             {getValue<string>()}
           </span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "property_build_year",
         header: "Property Year",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "property_name",
@@ -111,62 +113,62 @@ export default function Page() {
       {
         accessorKey: "unit_address",
         header: "Unit Address",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "unit_zipcode",
         header: "Zipcode",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "unit_door",
         header: "Unit Door",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "unit_floor",
         header: "Floor",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "utilites_cost",
         header: "Utilities Cost",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "unit_type",
         header: "Unit Type",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "size_sqm",
         header: "Size (sqm)",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "rooms_amount",
         header: "Rooms",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "bedrooms_amount",
         header: "Bedrooms",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "bathrooms_amount",
         header: "Bathrooms",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "rent_current_gri",
         header: "Rent Current",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "rent_budget_tri",
         header: "Rent Budget",
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "units_status",
@@ -184,9 +186,6 @@ export default function Page() {
           );
         },
         enableColumnFilter: true,
-        filterFn: (row, id, value) => {
-          return value.includes(row.getValue(id));
-        },
       },
       {
         accessorKey: "lease_start",
@@ -194,7 +193,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "lease_end",
@@ -202,7 +201,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "tenant_name1",
@@ -210,7 +209,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "tenant_name2",
@@ -218,7 +217,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "tenant_number1",
@@ -226,7 +225,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "tenant_number2",
@@ -234,7 +233,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "tenant_mail1",
@@ -242,7 +241,7 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "tenant_mail2",
@@ -250,15 +249,15 @@ export default function Page() {
         cell: ({ getValue }) => (
           <span className="whitespace-nowrap">{getValue<string>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
       {
-        accessorKey: "property_id",
-        header: "Property ID",
+        accessorKey: "rent_erv_tri",
+        header: "ERV/TRI",
         cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
+          <span className="whitespace-nowrap">{getValue<number>()}</span>
         ),
-        enableColumnFilter: true,
+        enableColumnFilter: false,
       },
     ],
     []
@@ -271,6 +270,8 @@ export default function Page() {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     state: {
@@ -281,8 +282,6 @@ export default function Page() {
   });
 
   const { rows } = table.getRowModel();
-
-  console.log(rentRollData, rows);
 
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -396,12 +395,12 @@ export default function Page() {
 
         <div
           className={cn(
-            "grid overflow-hidden transition-[grid-template-rows] duration-1000",
+            "grid overflow-hidden transition-[grid-template-rows] duration-200",
             showFilter ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
           )}
         >
           <div
-            className="min-h-0 transition-[visibility] duration-1000"
+            className="min-h-0 transition-[visibility] duration-200"
             style={{ visibility: showFilter ? "visible" : "hidden" }}
           >
             <div className="flex flex-wrap gap-2 p-2 pb-0 mb-4">
@@ -409,40 +408,26 @@ export default function Page() {
                 if (!column.getCanFilter() || column.id === "units_status")
                   return null;
 
-                const filterValue = (column.getFilterValue() as string) ?? "";
-
-                return (
-                  <div key={column.id} className="flex items-center gap-2">
-                    <Input
-                      placeholder={`Filter ${column.id}...`}
-                      value={filterValue}
-                      onChange={(e) =>
-                        column.setFilterValue(e.target.value || undefined)
-                      }
-                      className="h-8 w-[140px]"
-                    />
-                  </div>
-                );
+                if (column.id === "property_name") {
+                  const propertyUniqueValues = Array.from(
+                    column?.getFacetedUniqueValues().keys()
+                  ).sort();
+                  return (
+                    <div key={column.id} className="flex items-center gap-2">
+                      {propertyUniqueValues.map((property) => (
+                        <Button
+                          key={property}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => column.setFilterValue(property)}
+                        >
+                          {property}
+                        </Button>
+                      ))}
+                    </div>
+                  );
+                }
               })}
-
-              {/* {table.getColumn("propertyName") && (
-                <div className="flex items-center gap-2">
-                  {properties.map((property) => (
-                    <Button
-                      key={property}
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        table
-                          .getColumn("propertyName")
-                          ?.setFilterValue(property)
-                      }
-                    >
-                      {property}
-                    </Button>
-                  ))}
-                </div>
-              )} */}
 
               {table.getColumn("units_status") && (
                 <div className="flex items-center gap-2">
