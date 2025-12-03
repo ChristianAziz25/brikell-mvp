@@ -3,7 +3,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import { Loader2, Send, Sparkles, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -17,8 +19,24 @@ const agents = ["capex", "opex", "all"];
 
 export default function Page() {
   const [input, setInput] = useState("");
+  const [context, setContext] = useState<"capex" | "opex" | "all" | "general">(
+    "general"
+  );
+
   const messageScrollRef = useRef<HTMLDivElement>(null);
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      prepareSendMessagesRequest: ({ id, messages }) => {
+        return {
+          body: {
+            id,
+            messages,
+            context,
+          },
+        };
+      },
+    }),
+  });
 
   useEffect(() => {
     if (!messageScrollRef.current) return;
@@ -189,8 +207,16 @@ export default function Page() {
             ))}
             <div className="hidden md:flex items-center gap-2 absolute bottom-0 left-0 p-4">
               {agents.map((agent) => (
-                <button className="cursor-pointer" key={agent}>
-                  <Badge variant="secondary">{agent}</Badge>
+                <button
+                  className={cn("cursor-pointer")}
+                  key={agent}
+                  onClick={() =>
+                    setContext(agent as "capex" | "opex" | "all" | "general")
+                  }
+                >
+                  <Badge variant={context === agent ? "default" : "secondary"}>
+                    {agent}
+                  </Badge>
                 </button>
               ))}
             </div>

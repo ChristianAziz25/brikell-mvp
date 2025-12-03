@@ -4,7 +4,9 @@ import { convertToModelMessages, streamText, UIMessage } from 'ai';
 
 export async function POST(req: Request) {
   try {
-    const { messages, context = 'general' }: { messages: UIMessage[]; context?: 'diligence' | 'general' } = await req.json();
+    const { messages, context }: { messages: UIMessage[]; context?: 'capex' | 'opex' | 'all' | 'general' } = await req.json();
+
+    console.log(context)
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new Response(
