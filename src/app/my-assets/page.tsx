@@ -9,15 +9,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 import { Building2 } from "lucide-react";
-
-type Asset = {
-  name: string;
-  type: string;
-  units: string;
-  value: string;
-  location: string;
-};
 
 type ProfitLoss = {
   theoreticalRentalIncome: number;
@@ -35,6 +28,20 @@ type ProfitLoss = {
   totalOpex: number;
   cashFlow: number;
 };
+
+type AssetWithRelations = {
+  id: string;
+  name: string;
+  address: string | null;
+  city: string | null;
+  country: string | null;
+  rentRoll: unknown[] | null;
+};
+
+function getAssetLocation(asset: AssetWithRelations): string {
+  const parts = [asset.city, asset.country].filter(Boolean) as string[];
+  return parts.join(", ") || "Unknown location";
+}
 
 function calculateProfitLoss(units: number): ProfitLoss {
   const theoreticalRentalIncome = units * 1300;
@@ -76,80 +83,17 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-const portfolio: Asset[] = [
-  {
-    name: "Maple Tower",
-    type: "Residential",
-    units: "24",
-    value: "$2.8M",
-    location: "Downtown",
-  },
-  {
-    name: "Oak Complex",
-    type: "Mixed Use",
-    units: "36",
-    value: "$4.2M",
-    location: "Midtown",
-  },
-  {
-    name: "Pine Apartments",
-    type: "Residential",
-    units: "18",
-    value: "$1.9M",
-    location: "Suburbs",
-  },
-  {
-    name: "Birch Plaza",
-    type: "Commercial",
-    units: "12",
-    value: "$3.5M",
-    location: "Business District",
-  },
-  {
-    name: "Cedar Heights",
-    type: "Residential",
-    units: "28",
-    value: "$3.1M",
-    location: "Uptown",
-  },
-  {
-    name: "Willow Gardens",
-    type: "Mixed Use",
-    units: "42",
-    value: "$5.2M",
-    location: "East Side",
-  },
-  {
-    name: "Spruce Residences",
-    type: "Residential",
-    units: "32",
-    value: "$3.8M",
-    location: "West End",
-  },
-  {
-    name: "Elm Court",
-    type: "Commercial",
-    units: "16",
-    value: "$2.6M",
-    location: "Financial District",
-  },
-  {
-    name: "Ash Boulevard",
-    type: "Residential",
-    units: "22",
-    value: "$2.4M",
-    location: "North Quarter",
-  },
-  {
-    name: "Redwood Square",
-    type: "Mixed Use",
-    units: "48",
-    value: "$6.1M",
-    location: "City Center",
-  },
-];
-
 export default function MyAssets() {
+  const { data: assets } = useQuery<AssetWithRelations[]>({
+    queryKey: ["assets"],
+    queryFn: async () => {
+      const res = await fetch("/api/assets");
+      if (!res.ok) {
+        throw new Error("Failed to fetch assets");
+      }
+      return res.json();
+    },
+  });
   return (
     <div className="space-y-6">
       <div>
@@ -162,57 +106,57 @@ export default function MyAssets() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        {portfolio.map((asset) => (
-          <Dialog key={asset.name}>
-            <DialogTrigger asChild>
-              <Card className="cursor-pointer rounded-2xl transition-all hover:shadow-md">
-                <CardHeader>
-                  <div className="flex items-center gap-3">
-                    <div className="rounded-xl bg-muted p-2">
+        {assets?.map((asset) => {
+          const units = asset.rentRoll?.length ?? 0;
+          const location = getAssetLocation(asset);
+          const estimatedValue = formatCurrency(units * 1300 * 12);
+
+          return (
+            <Dialog key={asset.id}>
+              <DialogTrigger asChild>
+                <Card className="cursor-pointer rounded-2xl transition-all hover:shadow-md">
+                  <CardHeader>
+                    <div className="flex items-center gap-3">
+                      <div className="rounded-xl bg-muted p-2">
+                        <Building2 className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold tracking-tight">
+                          {asset.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {location}
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-3 gap-4">
+                      <AssetStat label="Units" value={units} />
+                      <AssetStat label="Value" value={estimatedValue} />
+                      <AssetStat label="Location" value={location} compact />
+                    </div>
+                  </CardContent>
+                </Card>
+              </DialogTrigger>
+              <DialogContent className="w-[80%] max-w-2xl max-h-[90vh] rounded-2xl flex flex-col pb-0">
+                <DialogHeader className="shrink-0">
+                  <DialogTitle className="text-2xl flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-muted">
                       <Building2 className="h-6 w-6 text-muted-foreground" />
                     </div>
-                    <div>
-                      <h3 className="text-lg font-semibold tracking-tight">
-                        {asset.name}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">
-                        {asset.type}
-                      </p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-4">
-                    <AssetStat label="Units" value={asset.units} />
-                    <AssetStat label="Value" value={asset.value} />
-                    <AssetStat
-                      label="Location"
-                      value={asset.location}
-                      compact
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-            </DialogTrigger>
-            <DialogContent className="w-[80%] max-w-2xl max-h-[90vh] rounded-2xl flex flex-col pb-0">
-              <DialogHeader className="shrink-0">
-                <DialogTitle className="text-2xl flex items-center gap-3">
-                  <div className="p-2 rounded-xl bg-muted">
-                    <Building2 className="h-6 w-6 text-muted-foreground" />
-                  </div>
-                  {asset.name}
-                </DialogTitle>
-                <p className="text-sm text-muted-foreground">
-                  {asset.type} • {asset.location}
-                </p>
-              </DialogHeader>
-              <div className="overflow-y-auto min-h-0 flex-1 relative">
-                <ProfitLossStatement asset={asset} />
-                <div className="sticky bottom-0 left-0 right-0 h-16 bg-linear-to-t from-background to-transparent pointer-events-none" />
-              </div>
-            </DialogContent>
-          </Dialog>
-        ))}
+                    {asset.name}
+                  </DialogTitle>
+                  <p className="text-sm text-muted-foreground">{location}</p>
+                </DialogHeader>
+                <div className="overflow-y-auto min-h-0 flex-1 relative">
+                  <ProfitLossStatement asset={asset} />
+                  <div className="sticky bottom-0 left-0 right-0 h-16 bg-linear-to-t from-background to-transparent pointer-events-none" />
+                </div>
+              </DialogContent>
+            </Dialog>
+          );
+        })}
       </div>
     </div>
   );
@@ -224,7 +168,7 @@ function AssetStat({
   compact,
 }: {
   label: string;
-  value: string;
+  value: string | number;
   compact?: boolean;
 }) {
   return (
@@ -243,8 +187,9 @@ function AssetStat({
   );
 }
 
-function ProfitLossStatement({ asset }: { asset: Asset }) {
-  const pl = calculateProfitLoss(parseInt(asset.units));
+function ProfitLossStatement({ asset }: { asset: AssetWithRelations }) {
+  const units = asset.rentRoll?.length ?? 0;
+  const pl = calculateProfitLoss(units);
 
   return (
     <div className="space-y-1 pt-4">

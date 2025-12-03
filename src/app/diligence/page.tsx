@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
 import { Loader2, Send, Sparkles, Upload } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -19,24 +18,10 @@ const agents = ["capex", "opex", "all"];
 
 export default function Page() {
   const [input, setInput] = useState("");
-  const [context, setContext] = useState<"capex" | "opex" | "all" | "general">(
-    "general"
-  );
+  const [context, setContext] = useState<"capex" | "opex" | "all">("all");
 
   const messageScrollRef = useRef<HTMLDivElement>(null);
-  const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({
-      prepareSendMessagesRequest: ({ id, messages }) => {
-        return {
-          body: {
-            id,
-            messages,
-            context,
-          },
-        };
-      },
-    }),
-  });
+  const { messages, sendMessage, status } = useChat();
 
   useEffect(() => {
     if (!messageScrollRef.current) return;
@@ -205,14 +190,15 @@ export default function Page() {
                 </div>
               </div>
             ))}
-            <div className="hidden md:flex items-center gap-2 absolute bottom-0 left-0 p-4">
+          </div>
+
+          <div>
+            <div className="hidden md:flex items-center gap-2 p-4">
               {agents.map((agent) => (
                 <button
                   className={cn("cursor-pointer")}
                   key={agent}
-                  onClick={() =>
-                    setContext(agent as "capex" | "opex" | "all" | "general")
-                  }
+                  onClick={() => setContext(agent as "capex" | "opex" | "all")}
                 >
                   <Badge variant={context === agent ? "default" : "secondary"}>
                     {agent}
@@ -220,33 +206,41 @@ export default function Page() {
                 </button>
               ))}
             </div>
-          </div>
-
-          <footer className="border-t p-4 shrink-0">
-            <form
-              className="relative"
-              onSubmit={(e) => {
-                e.preventDefault();
-                sendMessage({ text: input });
-                setInput("");
-              }}
-            >
-              <Input
-                className="h-12 rounded-2xl pr-12"
-                placeholder="Ask something about your file..."
-                value={input}
-                onChange={(e) => setInput(e.currentTarget.value)}
-              />
-              <Button
-                type="submit"
-                size="sm"
-                className="absolute right-2 top-1/2 flex h-8 -translate-y-1/2 gap-1 rounded-xl px-3"
+            <footer className="border-t p-4 shrink-0">
+              <form
+                className="relative"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (input.trim()) {
+                    sendMessage(
+                      { text: input },
+                      {
+                        body: {
+                          customKey: context,
+                        },
+                      }
+                    );
+                    setInput("");
+                  }
+                }}
               >
-                Send
-                <Send className="h-3.5 w-3.5" />
-              </Button>
-            </form>
-          </footer>
+                <Input
+                  className="h-12 rounded-2xl pr-12"
+                  placeholder="Ask something about your file..."
+                  value={input}
+                  onChange={(e) => setInput(e.currentTarget.value)}
+                />
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="absolute right-2 top-1/2 flex h-8 -translate-y-1/2 gap-1 rounded-xl px-3"
+                >
+                  Send
+                  <Send className="h-3.5 w-3.5" />
+                </Button>
+              </form>
+            </footer>
+          </div>
         </div>
       </section>
     </div>

@@ -1,5 +1,5 @@
 import { RentRollUnitCreateInput } from '@/generated/models/RentRollUnit';
-import { bulkUpsertRentRollUnits } from '@/lib/prisma/models/rent-roll';
+import { bulkUpsertRentRollUnits } from '@/lib/prisma/models/rentRollUnit';
 import { NextRequest } from 'next/server';
 import { extractDataWithLLM } from './aiExtraction';
 import { parseFileToText } from './parsing';

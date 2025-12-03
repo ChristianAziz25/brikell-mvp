@@ -1,4 +1,4 @@
-import { getAllRentRollUnits } from '@/lib/prisma/models/rent-roll';
+import { getAllRentRollUnits } from '@/lib/prisma/models/rentRollUnit';
 import { NextResponse } from 'next/server';
 
 export async function GET() {

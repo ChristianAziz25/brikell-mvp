@@ -1,6 +1,7 @@
+import { openai } from '@ai-sdk/openai';
 import { embedMany } from 'ai';
 
-const embeddingModel = 'openai/text-embedding-3-small';
+const embeddingModel = openai.embedding('text-embedding-3-small');
 
 const generateChunks = (input: string): string[] => {
   return input
