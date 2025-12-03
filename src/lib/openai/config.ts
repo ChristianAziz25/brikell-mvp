@@ -39,29 +39,3 @@ export interface ChatCompletionOptions {
   messages: ChatMessage[];
   stream?: boolean;
 }
-
-export async function createChatCompletion(options: ChatCompletionOptions) {
-  const {
-    model = DEFAULT_MODEL,
-    temperature = DEFAULT_TEMPERATURE,
-    maxTokens = DEFAULT_MAX_TOKENS,
-    messages,
-    stream = false,
-  } = options;
-
-  return openai.chat.completions.create({
-    model,
-    temperature,
-    max_tokens: maxTokens,
-    messages: messages.map((msg) => ({
-      role: msg.role,
-      content: msg.content,
-    })),
-    stream,
-  });
-}
-
-export async function createStreamingChatCompletion(options: ChatCompletionOptions) {
-  return createChatCompletion({ ...options, stream: true });
-}
-
