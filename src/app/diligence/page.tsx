@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useChat } from "@ai-sdk/react";
@@ -11,6 +12,8 @@ const tips = [
   "Ask follow-up questions in the chat",
   "AI can generate charts and graphs",
 ];
+
+const agents = ["capex", "opex", "all"];
 
 export default function Page() {
   const [input, setInput] = useState("");
@@ -90,7 +93,7 @@ export default function Page() {
 
           <div
             ref={messageScrollRef}
-            className="flex-1 space-y-4 overflow-y-auto p-6 min-h-0 no-scrollbar"
+            className="relative flex-1 space-y-4 overflow-y-auto p-6 min-h-0 no-scrollbar"
           >
             {messages.length === 0 && (
               <div className="flex justify-start">
@@ -184,6 +187,13 @@ export default function Page() {
                 </div>
               </div>
             ))}
+            <div className="hidden md:flex items-center gap-2 absolute bottom-0 left-0 p-4">
+              {agents.map((agent) => (
+                <button className="cursor-pointer" key={agent}>
+                  <Badge variant="secondary">{agent}</Badge>
+                </button>
+              ))}
+            </div>
           </div>
 
           <footer className="border-t p-4 shrink-0">
