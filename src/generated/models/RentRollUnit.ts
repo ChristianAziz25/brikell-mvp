@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model RentRollUnit
@@ -59,6 +59,7 @@ export type RentRollUnitSumAggregateOutputType = {
 }
 
 export type RentRollUnitMinAggregateOutputType = {
+  assetId: string | null
   property_build_year: number | null
   property_name: string | null
   unit_address: string | null
@@ -83,9 +84,12 @@ export type RentRollUnitMinAggregateOutputType = {
   units_status: $Enums.RentStatus | null
   tenant_mail1: string | null
   tenant_mail2: string | null
+  created_at: Date | null
+  updated_at: Date | null
 }
 
 export type RentRollUnitMaxAggregateOutputType = {
+  assetId: string | null
   property_build_year: number | null
   property_name: string | null
   unit_address: string | null
@@ -110,9 +114,12 @@ export type RentRollUnitMaxAggregateOutputType = {
   units_status: $Enums.RentStatus | null
   tenant_mail1: string | null
   tenant_mail2: string | null
+  created_at: Date | null
+  updated_at: Date | null
 }
 
 export type RentRollUnitCountAggregateOutputType = {
+  assetId: number
   property_build_year: number
   property_name: number
   unit_address: number
@@ -137,6 +144,8 @@ export type RentRollUnitCountAggregateOutputType = {
   units_status: number
   tenant_mail1: number
   tenant_mail2: number
+  created_at: number
+  updated_at: number
   _all: number
 }
 
@@ -174,6 +183,7 @@ export type RentRollUnitSumAggregateInputType = {
 }
 
 export type RentRollUnitMinAggregateInputType = {
+  assetId?: true
   property_build_year?: true
   property_name?: true
   unit_address?: true
@@ -198,9 +208,12 @@ export type RentRollUnitMinAggregateInputType = {
   units_status?: true
   tenant_mail1?: true
   tenant_mail2?: true
+  created_at?: true
+  updated_at?: true
 }
 
 export type RentRollUnitMaxAggregateInputType = {
+  assetId?: true
   property_build_year?: true
   property_name?: true
   unit_address?: true
@@ -225,9 +238,12 @@ export type RentRollUnitMaxAggregateInputType = {
   units_status?: true
   tenant_mail1?: true
   tenant_mail2?: true
+  created_at?: true
+  updated_at?: true
 }
 
 export type RentRollUnitCountAggregateInputType = {
+  assetId?: true
   property_build_year?: true
   property_name?: true
   unit_address?: true
@@ -252,6 +268,8 @@ export type RentRollUnitCountAggregateInputType = {
   units_status?: true
   tenant_mail1?: true
   tenant_mail2?: true
+  created_at?: true
+  updated_at?: true
   _all?: true
 }
 
@@ -342,6 +360,7 @@ export type RentRollUnitGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 export type RentRollUnitGroupByOutputType = {
+  assetId: string
   property_build_year: number
   property_name: string
   unit_address: string
@@ -366,6 +385,8 @@ export type RentRollUnitGroupByOutputType = {
   units_status: $Enums.RentStatus
   tenant_mail1: string
   tenant_mail2: string
+  created_at: Date
+  updated_at: Date
   _count: RentRollUnitCountAggregateOutputType | null
   _avg: RentRollUnitAvgAggregateOutputType | null
   _sum: RentRollUnitSumAggregateOutputType | null
@@ -392,6 +413,7 @@ export type RentRollUnitWhereInput = {
   AND?: Prisma.RentRollUnitWhereInput | Prisma.RentRollUnitWhereInput[]
   OR?: Prisma.RentRollUnitWhereInput[]
   NOT?: Prisma.RentRollUnitWhereInput | Prisma.RentRollUnitWhereInput[]
+  assetId?: Prisma.StringFilter<"RentRollUnit"> | string
   property_build_year?: Prisma.IntFilter<"RentRollUnit"> | number
   property_name?: Prisma.StringFilter<"RentRollUnit"> | string
   unit_address?: Prisma.StringFilter<"RentRollUnit"> | string
@@ -416,9 +438,13 @@ export type RentRollUnitWhereInput = {
   units_status?: Prisma.EnumRentStatusFilter<"RentRollUnit"> | $Enums.RentStatus
   tenant_mail1?: Prisma.StringFilter<"RentRollUnit"> | string
   tenant_mail2?: Prisma.StringFilter<"RentRollUnit"> | string
+  created_at?: Prisma.DateTimeFilter<"RentRollUnit"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"RentRollUnit"> | Date | string
+  asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
 }
 
 export type RentRollUnitOrderByWithRelationInput = {
+  assetId?: Prisma.SortOrder
   property_build_year?: Prisma.SortOrder
   property_name?: Prisma.SortOrder
   unit_address?: Prisma.SortOrder
@@ -443,6 +469,9 @@ export type RentRollUnitOrderByWithRelationInput = {
   units_status?: Prisma.SortOrder
   tenant_mail1?: Prisma.SortOrder
   tenant_mail2?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
+  asset?: Prisma.AssetOrderByWithRelationInput
 }
 
 export type RentRollUnitWhereUniqueInput = Prisma.AtLeast<{
@@ -450,6 +479,7 @@ export type RentRollUnitWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.RentRollUnitWhereInput | Prisma.RentRollUnitWhereInput[]
   OR?: Prisma.RentRollUnitWhereInput[]
   NOT?: Prisma.RentRollUnitWhereInput | Prisma.RentRollUnitWhereInput[]
+  assetId?: Prisma.StringFilter<"RentRollUnit"> | string
   property_build_year?: Prisma.IntFilter<"RentRollUnit"> | number
   property_name?: Prisma.StringFilter<"RentRollUnit"> | string
   unit_address?: Prisma.StringFilter<"RentRollUnit"> | string
@@ -473,9 +503,13 @@ export type RentRollUnitWhereUniqueInput = Prisma.AtLeast<{
   units_status?: Prisma.EnumRentStatusFilter<"RentRollUnit"> | $Enums.RentStatus
   tenant_mail1?: Prisma.StringFilter<"RentRollUnit"> | string
   tenant_mail2?: Prisma.StringFilter<"RentRollUnit"> | string
+  created_at?: Prisma.DateTimeFilter<"RentRollUnit"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"RentRollUnit"> | Date | string
+  asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
 }, "unit_id" | "unit_id">
 
 export type RentRollUnitOrderByWithAggregationInput = {
+  assetId?: Prisma.SortOrder
   property_build_year?: Prisma.SortOrder
   property_name?: Prisma.SortOrder
   unit_address?: Prisma.SortOrder
@@ -500,6 +534,8 @@ export type RentRollUnitOrderByWithAggregationInput = {
   units_status?: Prisma.SortOrder
   tenant_mail1?: Prisma.SortOrder
   tenant_mail2?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
   _count?: Prisma.RentRollUnitCountOrderByAggregateInput
   _avg?: Prisma.RentRollUnitAvgOrderByAggregateInput
   _max?: Prisma.RentRollUnitMaxOrderByAggregateInput
@@ -511,6 +547,7 @@ export type RentRollUnitScalarWhereWithAggregatesInput = {
   AND?: Prisma.RentRollUnitScalarWhereWithAggregatesInput | Prisma.RentRollUnitScalarWhereWithAggregatesInput[]
   OR?: Prisma.RentRollUnitScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RentRollUnitScalarWhereWithAggregatesInput | Prisma.RentRollUnitScalarWhereWithAggregatesInput[]
+  assetId?: Prisma.StringWithAggregatesFilter<"RentRollUnit"> | string
   property_build_year?: Prisma.IntWithAggregatesFilter<"RentRollUnit"> | number
   property_name?: Prisma.StringWithAggregatesFilter<"RentRollUnit"> | string
   unit_address?: Prisma.StringWithAggregatesFilter<"RentRollUnit"> | string
@@ -535,6 +572,8 @@ export type RentRollUnitScalarWhereWithAggregatesInput = {
   units_status?: Prisma.EnumRentStatusWithAggregatesFilter<"RentRollUnit"> | $Enums.RentStatus
   tenant_mail1?: Prisma.StringWithAggregatesFilter<"RentRollUnit"> | string
   tenant_mail2?: Prisma.StringWithAggregatesFilter<"RentRollUnit"> | string
+  created_at?: Prisma.DateTimeWithAggregatesFilter<"RentRollUnit"> | Date | string
+  updated_at?: Prisma.DateTimeWithAggregatesFilter<"RentRollUnit"> | Date | string
 }
 
 export type RentRollUnitCreateInput = {
@@ -562,9 +601,13 @@ export type RentRollUnitCreateInput = {
   units_status: $Enums.RentStatus
   tenant_mail1: string
   tenant_mail2: string
+  created_at?: Date | string
+  updated_at?: Date | string
+  asset: Prisma.AssetCreateNestedOneWithoutRentRollInput
 }
 
 export type RentRollUnitUncheckedCreateInput = {
+  assetId: string
   property_build_year: number
   property_name: string
   unit_address: string
@@ -589,6 +632,8 @@ export type RentRollUnitUncheckedCreateInput = {
   units_status: $Enums.RentStatus
   tenant_mail1: string
   tenant_mail2: string
+  created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type RentRollUnitUpdateInput = {
@@ -616,9 +661,13 @@ export type RentRollUnitUpdateInput = {
   units_status?: Prisma.EnumRentStatusFieldUpdateOperationsInput | $Enums.RentStatus
   tenant_mail1?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_mail2?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  asset?: Prisma.AssetUpdateOneRequiredWithoutRentRollNestedInput
 }
 
 export type RentRollUnitUncheckedUpdateInput = {
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
   property_build_year?: Prisma.IntFieldUpdateOperationsInput | number
   property_name?: Prisma.StringFieldUpdateOperationsInput | string
   unit_address?: Prisma.StringFieldUpdateOperationsInput | string
@@ -643,9 +692,12 @@ export type RentRollUnitUncheckedUpdateInput = {
   units_status?: Prisma.EnumRentStatusFieldUpdateOperationsInput | $Enums.RentStatus
   tenant_mail1?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_mail2?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RentRollUnitCreateManyInput = {
+  assetId: string
   property_build_year: number
   property_name: string
   unit_address: string
@@ -670,6 +722,8 @@ export type RentRollUnitCreateManyInput = {
   units_status: $Enums.RentStatus
   tenant_mail1: string
   tenant_mail2: string
+  created_at?: Date | string
+  updated_at?: Date | string
 }
 
 export type RentRollUnitUpdateManyMutationInput = {
@@ -697,9 +751,12 @@ export type RentRollUnitUpdateManyMutationInput = {
   units_status?: Prisma.EnumRentStatusFieldUpdateOperationsInput | $Enums.RentStatus
   tenant_mail1?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_mail2?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RentRollUnitUncheckedUpdateManyInput = {
+  assetId?: Prisma.StringFieldUpdateOperationsInput | string
   property_build_year?: Prisma.IntFieldUpdateOperationsInput | number
   property_name?: Prisma.StringFieldUpdateOperationsInput | string
   unit_address?: Prisma.StringFieldUpdateOperationsInput | string
@@ -724,9 +781,22 @@ export type RentRollUnitUncheckedUpdateManyInput = {
   units_status?: Prisma.EnumRentStatusFieldUpdateOperationsInput | $Enums.RentStatus
   tenant_mail1?: Prisma.StringFieldUpdateOperationsInput | string
   tenant_mail2?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RentRollUnitListRelationFilter = {
+  every?: Prisma.RentRollUnitWhereInput
+  some?: Prisma.RentRollUnitWhereInput
+  none?: Prisma.RentRollUnitWhereInput
+}
+
+export type RentRollUnitOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type RentRollUnitCountOrderByAggregateInput = {
+  assetId?: Prisma.SortOrder
   property_build_year?: Prisma.SortOrder
   property_name?: Prisma.SortOrder
   unit_address?: Prisma.SortOrder
@@ -751,6 +821,8 @@ export type RentRollUnitCountOrderByAggregateInput = {
   units_status?: Prisma.SortOrder
   tenant_mail1?: Prisma.SortOrder
   tenant_mail2?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type RentRollUnitAvgOrderByAggregateInput = {
@@ -770,6 +842,7 @@ export type RentRollUnitAvgOrderByAggregateInput = {
 }
 
 export type RentRollUnitMaxOrderByAggregateInput = {
+  assetId?: Prisma.SortOrder
   property_build_year?: Prisma.SortOrder
   property_name?: Prisma.SortOrder
   unit_address?: Prisma.SortOrder
@@ -794,9 +867,12 @@ export type RentRollUnitMaxOrderByAggregateInput = {
   units_status?: Prisma.SortOrder
   tenant_mail1?: Prisma.SortOrder
   tenant_mail2?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type RentRollUnitMinOrderByAggregateInput = {
+  assetId?: Prisma.SortOrder
   property_build_year?: Prisma.SortOrder
   property_name?: Prisma.SortOrder
   unit_address?: Prisma.SortOrder
@@ -821,6 +897,8 @@ export type RentRollUnitMinOrderByAggregateInput = {
   units_status?: Prisma.SortOrder
   tenant_mail1?: Prisma.SortOrder
   tenant_mail2?: Prisma.SortOrder
+  created_at?: Prisma.SortOrder
+  updated_at?: Prisma.SortOrder
 }
 
 export type RentRollUnitSumOrderByAggregateInput = {
@@ -839,17 +917,289 @@ export type RentRollUnitSumOrderByAggregateInput = {
   tenant_number2?: Prisma.SortOrder
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type RentRollUnitCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.RentRollUnitCreateWithoutAssetInput, Prisma.RentRollUnitUncheckedCreateWithoutAssetInput> | Prisma.RentRollUnitCreateWithoutAssetInput[] | Prisma.RentRollUnitUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.RentRollUnitCreateOrConnectWithoutAssetInput | Prisma.RentRollUnitCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.RentRollUnitCreateManyAssetInputEnvelope
+  connect?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+}
+
+export type RentRollUnitUncheckedCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.RentRollUnitCreateWithoutAssetInput, Prisma.RentRollUnitUncheckedCreateWithoutAssetInput> | Prisma.RentRollUnitCreateWithoutAssetInput[] | Prisma.RentRollUnitUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.RentRollUnitCreateOrConnectWithoutAssetInput | Prisma.RentRollUnitCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.RentRollUnitCreateManyAssetInputEnvelope
+  connect?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+}
+
+export type RentRollUnitUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.RentRollUnitCreateWithoutAssetInput, Prisma.RentRollUnitUncheckedCreateWithoutAssetInput> | Prisma.RentRollUnitCreateWithoutAssetInput[] | Prisma.RentRollUnitUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.RentRollUnitCreateOrConnectWithoutAssetInput | Prisma.RentRollUnitCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.RentRollUnitUpsertWithWhereUniqueWithoutAssetInput | Prisma.RentRollUnitUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.RentRollUnitCreateManyAssetInputEnvelope
+  set?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  disconnect?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  delete?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  connect?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  update?: Prisma.RentRollUnitUpdateWithWhereUniqueWithoutAssetInput | Prisma.RentRollUnitUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.RentRollUnitUpdateManyWithWhereWithoutAssetInput | Prisma.RentRollUnitUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.RentRollUnitScalarWhereInput | Prisma.RentRollUnitScalarWhereInput[]
+}
+
+export type RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.RentRollUnitCreateWithoutAssetInput, Prisma.RentRollUnitUncheckedCreateWithoutAssetInput> | Prisma.RentRollUnitCreateWithoutAssetInput[] | Prisma.RentRollUnitUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.RentRollUnitCreateOrConnectWithoutAssetInput | Prisma.RentRollUnitCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.RentRollUnitUpsertWithWhereUniqueWithoutAssetInput | Prisma.RentRollUnitUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.RentRollUnitCreateManyAssetInputEnvelope
+  set?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  disconnect?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  delete?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  connect?: Prisma.RentRollUnitWhereUniqueInput | Prisma.RentRollUnitWhereUniqueInput[]
+  update?: Prisma.RentRollUnitUpdateWithWhereUniqueWithoutAssetInput | Prisma.RentRollUnitUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.RentRollUnitUpdateManyWithWhereWithoutAssetInput | Prisma.RentRollUnitUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.RentRollUnitScalarWhereInput | Prisma.RentRollUnitScalarWhereInput[]
 }
 
 export type EnumRentStatusFieldUpdateOperationsInput = {
   set?: $Enums.RentStatus
 }
 
+export type RentRollUnitCreateWithoutAssetInput = {
+  property_build_year: number
+  property_name: string
+  unit_address: string
+  unit_zipcode: string
+  utilites_cost: number
+  unit_type: string
+  size_sqm: number
+  rooms_amount: number
+  bedrooms_amount: number
+  bathrooms_amount: number
+  rent_current_gri: number
+  rent_budget_tri: number
+  lease_start: string
+  lease_end?: string | null
+  tenant_name1: string
+  tenant_name2: string
+  unit_id: number
+  unit_door: number
+  unit_floor: number
+  tenant_number1: number
+  tenant_number2: number
+  units_status: $Enums.RentStatus
+  tenant_mail1: string
+  tenant_mail2: string
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type RentRollUnitUncheckedCreateWithoutAssetInput = {
+  property_build_year: number
+  property_name: string
+  unit_address: string
+  unit_zipcode: string
+  utilites_cost: number
+  unit_type: string
+  size_sqm: number
+  rooms_amount: number
+  bedrooms_amount: number
+  bathrooms_amount: number
+  rent_current_gri: number
+  rent_budget_tri: number
+  lease_start: string
+  lease_end?: string | null
+  tenant_name1: string
+  tenant_name2: string
+  unit_id: number
+  unit_door: number
+  unit_floor: number
+  tenant_number1: number
+  tenant_number2: number
+  units_status: $Enums.RentStatus
+  tenant_mail1: string
+  tenant_mail2: string
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type RentRollUnitCreateOrConnectWithoutAssetInput = {
+  where: Prisma.RentRollUnitWhereUniqueInput
+  create: Prisma.XOR<Prisma.RentRollUnitCreateWithoutAssetInput, Prisma.RentRollUnitUncheckedCreateWithoutAssetInput>
+}
+
+export type RentRollUnitCreateManyAssetInputEnvelope = {
+  data: Prisma.RentRollUnitCreateManyAssetInput | Prisma.RentRollUnitCreateManyAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type RentRollUnitUpsertWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.RentRollUnitWhereUniqueInput
+  update: Prisma.XOR<Prisma.RentRollUnitUpdateWithoutAssetInput, Prisma.RentRollUnitUncheckedUpdateWithoutAssetInput>
+  create: Prisma.XOR<Prisma.RentRollUnitCreateWithoutAssetInput, Prisma.RentRollUnitUncheckedCreateWithoutAssetInput>
+}
+
+export type RentRollUnitUpdateWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.RentRollUnitWhereUniqueInput
+  data: Prisma.XOR<Prisma.RentRollUnitUpdateWithoutAssetInput, Prisma.RentRollUnitUncheckedUpdateWithoutAssetInput>
+}
+
+export type RentRollUnitUpdateManyWithWhereWithoutAssetInput = {
+  where: Prisma.RentRollUnitScalarWhereInput
+  data: Prisma.XOR<Prisma.RentRollUnitUpdateManyMutationInput, Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetInput>
+}
+
+export type RentRollUnitScalarWhereInput = {
+  AND?: Prisma.RentRollUnitScalarWhereInput | Prisma.RentRollUnitScalarWhereInput[]
+  OR?: Prisma.RentRollUnitScalarWhereInput[]
+  NOT?: Prisma.RentRollUnitScalarWhereInput | Prisma.RentRollUnitScalarWhereInput[]
+  assetId?: Prisma.StringFilter<"RentRollUnit"> | string
+  property_build_year?: Prisma.IntFilter<"RentRollUnit"> | number
+  property_name?: Prisma.StringFilter<"RentRollUnit"> | string
+  unit_address?: Prisma.StringFilter<"RentRollUnit"> | string
+  unit_zipcode?: Prisma.StringFilter<"RentRollUnit"> | string
+  utilites_cost?: Prisma.IntFilter<"RentRollUnit"> | number
+  unit_type?: Prisma.StringFilter<"RentRollUnit"> | string
+  size_sqm?: Prisma.IntFilter<"RentRollUnit"> | number
+  rooms_amount?: Prisma.IntFilter<"RentRollUnit"> | number
+  bedrooms_amount?: Prisma.IntFilter<"RentRollUnit"> | number
+  bathrooms_amount?: Prisma.IntFilter<"RentRollUnit"> | number
+  rent_current_gri?: Prisma.IntFilter<"RentRollUnit"> | number
+  rent_budget_tri?: Prisma.IntFilter<"RentRollUnit"> | number
+  lease_start?: Prisma.StringFilter<"RentRollUnit"> | string
+  lease_end?: Prisma.StringNullableFilter<"RentRollUnit"> | string | null
+  tenant_name1?: Prisma.StringFilter<"RentRollUnit"> | string
+  tenant_name2?: Prisma.StringFilter<"RentRollUnit"> | string
+  unit_id?: Prisma.IntFilter<"RentRollUnit"> | number
+  unit_door?: Prisma.IntFilter<"RentRollUnit"> | number
+  unit_floor?: Prisma.IntFilter<"RentRollUnit"> | number
+  tenant_number1?: Prisma.IntFilter<"RentRollUnit"> | number
+  tenant_number2?: Prisma.IntFilter<"RentRollUnit"> | number
+  units_status?: Prisma.EnumRentStatusFilter<"RentRollUnit"> | $Enums.RentStatus
+  tenant_mail1?: Prisma.StringFilter<"RentRollUnit"> | string
+  tenant_mail2?: Prisma.StringFilter<"RentRollUnit"> | string
+  created_at?: Prisma.DateTimeFilter<"RentRollUnit"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"RentRollUnit"> | Date | string
+}
+
+export type RentRollUnitCreateManyAssetInput = {
+  property_build_year: number
+  property_name: string
+  unit_address: string
+  unit_zipcode: string
+  utilites_cost: number
+  unit_type: string
+  size_sqm: number
+  rooms_amount: number
+  bedrooms_amount: number
+  bathrooms_amount: number
+  rent_current_gri: number
+  rent_budget_tri: number
+  lease_start: string
+  lease_end?: string | null
+  tenant_name1: string
+  tenant_name2: string
+  unit_id: number
+  unit_door: number
+  unit_floor: number
+  tenant_number1: number
+  tenant_number2: number
+  units_status: $Enums.RentStatus
+  tenant_mail1: string
+  tenant_mail2: string
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type RentRollUnitUpdateWithoutAssetInput = {
+  property_build_year?: Prisma.IntFieldUpdateOperationsInput | number
+  property_name?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_address?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_zipcode?: Prisma.StringFieldUpdateOperationsInput | string
+  utilites_cost?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_type?: Prisma.StringFieldUpdateOperationsInput | string
+  size_sqm?: Prisma.IntFieldUpdateOperationsInput | number
+  rooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  bedrooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  rent_current_gri?: Prisma.IntFieldUpdateOperationsInput | number
+  rent_budget_tri?: Prisma.IntFieldUpdateOperationsInput | number
+  lease_start?: Prisma.StringFieldUpdateOperationsInput | string
+  lease_end?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenant_name1?: Prisma.StringFieldUpdateOperationsInput | string
+  tenant_name2?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_door?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_floor?: Prisma.IntFieldUpdateOperationsInput | number
+  tenant_number1?: Prisma.IntFieldUpdateOperationsInput | number
+  tenant_number2?: Prisma.IntFieldUpdateOperationsInput | number
+  units_status?: Prisma.EnumRentStatusFieldUpdateOperationsInput | $Enums.RentStatus
+  tenant_mail1?: Prisma.StringFieldUpdateOperationsInput | string
+  tenant_mail2?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RentRollUnitUncheckedUpdateWithoutAssetInput = {
+  property_build_year?: Prisma.IntFieldUpdateOperationsInput | number
+  property_name?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_address?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_zipcode?: Prisma.StringFieldUpdateOperationsInput | string
+  utilites_cost?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_type?: Prisma.StringFieldUpdateOperationsInput | string
+  size_sqm?: Prisma.IntFieldUpdateOperationsInput | number
+  rooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  bedrooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  rent_current_gri?: Prisma.IntFieldUpdateOperationsInput | number
+  rent_budget_tri?: Prisma.IntFieldUpdateOperationsInput | number
+  lease_start?: Prisma.StringFieldUpdateOperationsInput | string
+  lease_end?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenant_name1?: Prisma.StringFieldUpdateOperationsInput | string
+  tenant_name2?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_door?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_floor?: Prisma.IntFieldUpdateOperationsInput | number
+  tenant_number1?: Prisma.IntFieldUpdateOperationsInput | number
+  tenant_number2?: Prisma.IntFieldUpdateOperationsInput | number
+  units_status?: Prisma.EnumRentStatusFieldUpdateOperationsInput | $Enums.RentStatus
+  tenant_mail1?: Prisma.StringFieldUpdateOperationsInput | string
+  tenant_mail2?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RentRollUnitUncheckedUpdateManyWithoutAssetInput = {
+  property_build_year?: Prisma.IntFieldUpdateOperationsInput | number
+  property_name?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_address?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_zipcode?: Prisma.StringFieldUpdateOperationsInput | string
+  utilites_cost?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_type?: Prisma.StringFieldUpdateOperationsInput | string
+  size_sqm?: Prisma.IntFieldUpdateOperationsInput | number
+  rooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  bedrooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  bathrooms_amount?: Prisma.IntFieldUpdateOperationsInput | number
+  rent_current_gri?: Prisma.IntFieldUpdateOperationsInput | number
+  rent_budget_tri?: Prisma.IntFieldUpdateOperationsInput | number
+  lease_start?: Prisma.StringFieldUpdateOperationsInput | string
+  lease_end?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenant_name1?: Prisma.StringFieldUpdateOperationsInput | string
+  tenant_name2?: Prisma.StringFieldUpdateOperationsInput | string
+  unit_id?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_door?: Prisma.IntFieldUpdateOperationsInput | number
+  unit_floor?: Prisma.IntFieldUpdateOperationsInput | number
+  tenant_number1?: Prisma.IntFieldUpdateOperationsInput | number
+  tenant_number2?: Prisma.IntFieldUpdateOperationsInput | number
+  units_status?: Prisma.EnumRentStatusFieldUpdateOperationsInput | $Enums.RentStatus
+  tenant_mail1?: Prisma.StringFieldUpdateOperationsInput | string
+  tenant_mail2?: Prisma.StringFieldUpdateOperationsInput | string
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 
 export type RentRollUnitSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  assetId?: boolean
   property_build_year?: boolean
   property_name?: boolean
   unit_address?: boolean
@@ -874,9 +1224,13 @@ export type RentRollUnitSelect<ExtArgs extends runtime.Types.Extensions.Internal
   units_status?: boolean
   tenant_mail1?: boolean
   tenant_mail2?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["rentRollUnit"]>
 
 export type RentRollUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  assetId?: boolean
   property_build_year?: boolean
   property_name?: boolean
   unit_address?: boolean
@@ -901,9 +1255,13 @@ export type RentRollUnitSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   units_status?: boolean
   tenant_mail1?: boolean
   tenant_mail2?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["rentRollUnit"]>
 
 export type RentRollUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  assetId?: boolean
   property_build_year?: boolean
   property_name?: boolean
   unit_address?: boolean
@@ -928,9 +1286,13 @@ export type RentRollUnitSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   units_status?: boolean
   tenant_mail1?: boolean
   tenant_mail2?: boolean
+  created_at?: boolean
+  updated_at?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["rentRollUnit"]>
 
 export type RentRollUnitSelectScalar = {
+  assetId?: boolean
   property_build_year?: boolean
   property_name?: boolean
   unit_address?: boolean
@@ -955,14 +1317,28 @@ export type RentRollUnitSelectScalar = {
   units_status?: boolean
   tenant_mail1?: boolean
   tenant_mail2?: boolean
+  created_at?: boolean
+  updated_at?: boolean
 }
 
-export type RentRollUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"property_build_year" | "property_name" | "unit_address" | "unit_zipcode" | "utilites_cost" | "unit_type" | "size_sqm" | "rooms_amount" | "bedrooms_amount" | "bathrooms_amount" | "rent_current_gri" | "rent_budget_tri" | "lease_start" | "lease_end" | "tenant_name1" | "tenant_name2" | "unit_id" | "unit_door" | "unit_floor" | "tenant_number1" | "tenant_number2" | "units_status" | "tenant_mail1" | "tenant_mail2", ExtArgs["result"]["rentRollUnit"]>
+export type RentRollUnitOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"assetId" | "property_build_year" | "property_name" | "unit_address" | "unit_zipcode" | "utilites_cost" | "unit_type" | "size_sqm" | "rooms_amount" | "bedrooms_amount" | "bathrooms_amount" | "rent_current_gri" | "rent_budget_tri" | "lease_start" | "lease_end" | "tenant_name1" | "tenant_name2" | "unit_id" | "unit_door" | "unit_floor" | "tenant_number1" | "tenant_number2" | "units_status" | "tenant_mail1" | "tenant_mail2" | "created_at" | "updated_at", ExtArgs["result"]["rentRollUnit"]>
+export type RentRollUnitInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
+export type RentRollUnitIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
+export type RentRollUnitIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
 
 export type $RentRollUnitPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RentRollUnit"
-  objects: {}
+  objects: {
+    asset: Prisma.$AssetPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    assetId: string
     property_build_year: number
     property_name: string
     unit_address: string
@@ -987,6 +1363,8 @@ export type $RentRollUnitPayload<ExtArgs extends runtime.Types.Extensions.Intern
     units_status: $Enums.RentStatus
     tenant_mail1: string
     tenant_mail2: string
+    created_at: Date
+    updated_at: Date
   }, ExtArgs["result"]["rentRollUnit"]>
   composites: {}
 }
@@ -1070,8 +1448,8 @@ export interface RentRollUnitDelegate<ExtArgs extends runtime.Types.Extensions.I
    * // Get first 10 RentRollUnits
    * const rentRollUnits = await prisma.rentRollUnit.findMany({ take: 10 })
    * 
-   * // Only select the `property_build_year`
-   * const rentRollUnitWithProperty_build_yearOnly = await prisma.rentRollUnit.findMany({ select: { property_build_year: true } })
+   * // Only select the `assetId`
+   * const rentRollUnitWithAssetIdOnly = await prisma.rentRollUnit.findMany({ select: { assetId: true } })
    * 
    */
   findMany<T extends RentRollUnitFindManyArgs>(args?: Prisma.SelectSubset<T, RentRollUnitFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentRollUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -1115,9 +1493,9 @@ export interface RentRollUnitDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Create many RentRollUnits and only return the `property_build_year`
-   * const rentRollUnitWithProperty_build_yearOnly = await prisma.rentRollUnit.createManyAndReturn({
-   *   select: { property_build_year: true },
+   * // Create many RentRollUnits and only return the `assetId`
+   * const rentRollUnitWithAssetIdOnly = await prisma.rentRollUnit.createManyAndReturn({
+   *   select: { assetId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -1206,9 +1584,9 @@ export interface RentRollUnitDelegate<ExtArgs extends runtime.Types.Extensions.I
    *   ]
    * })
    * 
-   * // Update zero or more RentRollUnits and only return the `property_build_year`
-   * const rentRollUnitWithProperty_build_yearOnly = await prisma.rentRollUnit.updateManyAndReturn({
-   *   select: { property_build_year: true },
+   * // Update zero or more RentRollUnits and only return the `assetId`
+   * const rentRollUnitWithAssetIdOnly = await prisma.rentRollUnit.updateManyAndReturn({
+   *   select: { assetId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1381,6 +1759,7 @@ readonly fields: RentRollUnitFieldRefs;
  */
 export interface Prisma__RentRollUnitClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  asset<T extends Prisma.AssetDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetDefaultArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1410,6 +1789,7 @@ export interface Prisma__RentRollUnitClient<T, Null = never, ExtArgs extends run
  * Fields of the RentRollUnit model
  */
 export interface RentRollUnitFieldRefs {
+  readonly assetId: Prisma.FieldRef<"RentRollUnit", 'String'>
   readonly property_build_year: Prisma.FieldRef<"RentRollUnit", 'Int'>
   readonly property_name: Prisma.FieldRef<"RentRollUnit", 'String'>
   readonly unit_address: Prisma.FieldRef<"RentRollUnit", 'String'>
@@ -1434,6 +1814,8 @@ export interface RentRollUnitFieldRefs {
   readonly units_status: Prisma.FieldRef<"RentRollUnit", 'RentStatus'>
   readonly tenant_mail1: Prisma.FieldRef<"RentRollUnit", 'String'>
   readonly tenant_mail2: Prisma.FieldRef<"RentRollUnit", 'String'>
+  readonly created_at: Prisma.FieldRef<"RentRollUnit", 'DateTime'>
+  readonly updated_at: Prisma.FieldRef<"RentRollUnit", 'DateTime'>
 }
     
 
@@ -1450,6 +1832,10 @@ export type RentRollUnitFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.
    * Omit specific fields from the RentRollUnit
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
   /**
    * Filter, which RentRollUnit to fetch.
    */
@@ -1469,6 +1855,10 @@ export type RentRollUnitFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Exte
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
+  /**
    * Filter, which RentRollUnit to fetch.
    */
   where: Prisma.RentRollUnitWhereUniqueInput
@@ -1486,6 +1876,10 @@ export type RentRollUnitFindFirstArgs<ExtArgs extends runtime.Types.Extensions.I
    * Omit specific fields from the RentRollUnit
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
   /**
    * Filter, which RentRollUnit to fetch.
    */
@@ -1535,6 +1929,10 @@ export type RentRollUnitFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Exten
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
+  /**
    * Filter, which RentRollUnit to fetch.
    */
   where?: Prisma.RentRollUnitWhereInput
@@ -1583,6 +1981,10 @@ export type RentRollUnitFindManyArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
+  /**
    * Filter, which RentRollUnits to fetch.
    */
   where?: Prisma.RentRollUnitWhereInput
@@ -1626,6 +2028,10 @@ export type RentRollUnitCreateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
+  /**
    * The data needed to create a RentRollUnit.
    */
   data: Prisma.XOR<Prisma.RentRollUnitCreateInput, Prisma.RentRollUnitUncheckedCreateInput>
@@ -1659,6 +2065,10 @@ export type RentRollUnitCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    */
   data: Prisma.RentRollUnitCreateManyInput | Prisma.RentRollUnitCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1673,6 +2083,10 @@ export type RentRollUnitUpdateArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the RentRollUnit
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
   /**
    * The data needed to update a RentRollUnit.
    */
@@ -1725,6 +2139,10 @@ export type RentRollUnitUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many RentRollUnits to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1739,6 +2157,10 @@ export type RentRollUnitUpsertArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the RentRollUnit
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
   /**
    * The filter to search for the RentRollUnit to update in case it exists.
    */
@@ -1765,6 +2187,10 @@ export type RentRollUnitDeleteArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * Omit specific fields from the RentRollUnit
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
   /**
    * Filter which RentRollUnit to delete.
    */
@@ -1797,4 +2223,8 @@ export type RentRollUnitDefaultArgs<ExtArgs extends runtime.Types.Extensions.Int
    * Omit specific fields from the RentRollUnit
    */
   omit?: Prisma.RentRollUnitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RentRollUnitInclude<ExtArgs> | null
 }

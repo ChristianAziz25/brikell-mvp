@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Opex
@@ -512,6 +512,7 @@ export type OpexWhereInput = {
   created_at?: Prisma.DateTimeFilter<"Opex"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Opex"> | Date | string
   assetId?: Prisma.StringFilter<"Opex"> | string
+  asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
 }
 
 export type OpexOrderByWithRelationInput = {
@@ -545,11 +546,12 @@ export type OpexOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
+  asset?: Prisma.AssetOrderByWithRelationInput
 }
 
 export type OpexWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  assetId?: string
+  assetId_opex_year?: Prisma.OpexAssetIdOpex_yearCompoundUniqueInput
   AND?: Prisma.OpexWhereInput | Prisma.OpexWhereInput[]
   OR?: Prisma.OpexWhereInput[]
   NOT?: Prisma.OpexWhereInput | Prisma.OpexWhereInput[]
@@ -581,7 +583,9 @@ export type OpexWhereUniqueInput = Prisma.AtLeast<{
   budget_total_opex?: Prisma.IntFilter<"Opex"> | number
   created_at?: Prisma.DateTimeFilter<"Opex"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Opex"> | Date | string
-}, "id" | "id" | "assetId">
+  assetId?: Prisma.StringFilter<"Opex"> | string
+  asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
+}, "id" | "id" | "assetId_opex_year">
 
 export type OpexOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -687,7 +691,7 @@ export type OpexCreateInput = {
   budget_total_opex: number
   created_at?: Date | string
   updated_at?: Date | string
-  assetId: string
+  asset: Prisma.AssetCreateNestedOneWithoutOpexInput
 }
 
 export type OpexUncheckedCreateInput = {
@@ -753,7 +757,7 @@ export type OpexUpdateInput = {
   budget_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  asset?: Prisma.AssetUpdateOneRequiredWithoutOpexNestedInput
 }
 
 export type OpexUncheckedUpdateInput = {
@@ -852,7 +856,6 @@ export type OpexUpdateManyMutationInput = {
   budget_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type OpexUncheckedUpdateManyInput = {
@@ -886,6 +889,21 @@ export type OpexUncheckedUpdateManyInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type OpexListRelationFilter = {
+  every?: Prisma.OpexWhereInput
+  some?: Prisma.OpexWhereInput
+  none?: Prisma.OpexWhereInput
+}
+
+export type OpexOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type OpexAssetIdOpex_yearCompoundUniqueInput = {
+  assetId: string
+  opex_year: number
 }
 
 export type OpexCountOrderByAggregateInput = {
@@ -1043,6 +1061,302 @@ export type OpexSumOrderByAggregateInput = {
   budget_total_opex?: Prisma.SortOrder
 }
 
+export type OpexCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.OpexCreateWithoutAssetInput, Prisma.OpexUncheckedCreateWithoutAssetInput> | Prisma.OpexCreateWithoutAssetInput[] | Prisma.OpexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.OpexCreateOrConnectWithoutAssetInput | Prisma.OpexCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.OpexCreateManyAssetInputEnvelope
+  connect?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+}
+
+export type OpexUncheckedCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.OpexCreateWithoutAssetInput, Prisma.OpexUncheckedCreateWithoutAssetInput> | Prisma.OpexCreateWithoutAssetInput[] | Prisma.OpexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.OpexCreateOrConnectWithoutAssetInput | Prisma.OpexCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.OpexCreateManyAssetInputEnvelope
+  connect?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+}
+
+export type OpexUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.OpexCreateWithoutAssetInput, Prisma.OpexUncheckedCreateWithoutAssetInput> | Prisma.OpexCreateWithoutAssetInput[] | Prisma.OpexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.OpexCreateOrConnectWithoutAssetInput | Prisma.OpexCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.OpexUpsertWithWhereUniqueWithoutAssetInput | Prisma.OpexUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.OpexCreateManyAssetInputEnvelope
+  set?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  disconnect?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  delete?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  connect?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  update?: Prisma.OpexUpdateWithWhereUniqueWithoutAssetInput | Prisma.OpexUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.OpexUpdateManyWithWhereWithoutAssetInput | Prisma.OpexUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.OpexScalarWhereInput | Prisma.OpexScalarWhereInput[]
+}
+
+export type OpexUncheckedUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.OpexCreateWithoutAssetInput, Prisma.OpexUncheckedCreateWithoutAssetInput> | Prisma.OpexCreateWithoutAssetInput[] | Prisma.OpexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.OpexCreateOrConnectWithoutAssetInput | Prisma.OpexCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.OpexUpsertWithWhereUniqueWithoutAssetInput | Prisma.OpexUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.OpexCreateManyAssetInputEnvelope
+  set?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  disconnect?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  delete?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  connect?: Prisma.OpexWhereUniqueInput | Prisma.OpexWhereUniqueInput[]
+  update?: Prisma.OpexUpdateWithWhereUniqueWithoutAssetInput | Prisma.OpexUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.OpexUpdateManyWithWhereWithoutAssetInput | Prisma.OpexUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.OpexScalarWhereInput | Prisma.OpexScalarWhereInput[]
+}
+
+export type OpexCreateWithoutAssetInput = {
+  id?: string
+  asset_name: string
+  opex_year: number
+  actual_delinquency: number
+  actual_property_management_fee: number
+  actual_leasing_fee: number
+  actual_property_taxes: number
+  actual_refuse_collection: number
+  actual_insurance: number
+  actual_cleaning: number
+  actual_facility_management: number
+  actual_service_subscriptions: number
+  actual_common_consumption: number
+  actual_home_owner_association: number
+  actuals_total_opex: number
+  budget_delinquency: number
+  budget_property_management_fee: number
+  budget_leasing_fee: number
+  budget_property_taxes: number
+  budget_refuse_collection: number
+  budget_insurance: number
+  budget_cleaning: number
+  budget_facility_management: number
+  budget_service_subscriptions: number
+  budget_common_consumption: number
+  budget_home_owner_association: number
+  budget_total_opex: number
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type OpexUncheckedCreateWithoutAssetInput = {
+  id?: string
+  asset_name: string
+  opex_year: number
+  actual_delinquency: number
+  actual_property_management_fee: number
+  actual_leasing_fee: number
+  actual_property_taxes: number
+  actual_refuse_collection: number
+  actual_insurance: number
+  actual_cleaning: number
+  actual_facility_management: number
+  actual_service_subscriptions: number
+  actual_common_consumption: number
+  actual_home_owner_association: number
+  actuals_total_opex: number
+  budget_delinquency: number
+  budget_property_management_fee: number
+  budget_leasing_fee: number
+  budget_property_taxes: number
+  budget_refuse_collection: number
+  budget_insurance: number
+  budget_cleaning: number
+  budget_facility_management: number
+  budget_service_subscriptions: number
+  budget_common_consumption: number
+  budget_home_owner_association: number
+  budget_total_opex: number
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type OpexCreateOrConnectWithoutAssetInput = {
+  where: Prisma.OpexWhereUniqueInput
+  create: Prisma.XOR<Prisma.OpexCreateWithoutAssetInput, Prisma.OpexUncheckedCreateWithoutAssetInput>
+}
+
+export type OpexCreateManyAssetInputEnvelope = {
+  data: Prisma.OpexCreateManyAssetInput | Prisma.OpexCreateManyAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type OpexUpsertWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.OpexWhereUniqueInput
+  update: Prisma.XOR<Prisma.OpexUpdateWithoutAssetInput, Prisma.OpexUncheckedUpdateWithoutAssetInput>
+  create: Prisma.XOR<Prisma.OpexCreateWithoutAssetInput, Prisma.OpexUncheckedCreateWithoutAssetInput>
+}
+
+export type OpexUpdateWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.OpexWhereUniqueInput
+  data: Prisma.XOR<Prisma.OpexUpdateWithoutAssetInput, Prisma.OpexUncheckedUpdateWithoutAssetInput>
+}
+
+export type OpexUpdateManyWithWhereWithoutAssetInput = {
+  where: Prisma.OpexScalarWhereInput
+  data: Prisma.XOR<Prisma.OpexUpdateManyMutationInput, Prisma.OpexUncheckedUpdateManyWithoutAssetInput>
+}
+
+export type OpexScalarWhereInput = {
+  AND?: Prisma.OpexScalarWhereInput | Prisma.OpexScalarWhereInput[]
+  OR?: Prisma.OpexScalarWhereInput[]
+  NOT?: Prisma.OpexScalarWhereInput | Prisma.OpexScalarWhereInput[]
+  id?: Prisma.StringFilter<"Opex"> | string
+  asset_name?: Prisma.StringFilter<"Opex"> | string
+  opex_year?: Prisma.IntFilter<"Opex"> | number
+  actual_delinquency?: Prisma.IntFilter<"Opex"> | number
+  actual_property_management_fee?: Prisma.IntFilter<"Opex"> | number
+  actual_leasing_fee?: Prisma.IntFilter<"Opex"> | number
+  actual_property_taxes?: Prisma.IntFilter<"Opex"> | number
+  actual_refuse_collection?: Prisma.IntFilter<"Opex"> | number
+  actual_insurance?: Prisma.IntFilter<"Opex"> | number
+  actual_cleaning?: Prisma.IntFilter<"Opex"> | number
+  actual_facility_management?: Prisma.IntFilter<"Opex"> | number
+  actual_service_subscriptions?: Prisma.IntFilter<"Opex"> | number
+  actual_common_consumption?: Prisma.IntFilter<"Opex"> | number
+  actual_home_owner_association?: Prisma.IntFilter<"Opex"> | number
+  actuals_total_opex?: Prisma.IntFilter<"Opex"> | number
+  budget_delinquency?: Prisma.IntFilter<"Opex"> | number
+  budget_property_management_fee?: Prisma.IntFilter<"Opex"> | number
+  budget_leasing_fee?: Prisma.IntFilter<"Opex"> | number
+  budget_property_taxes?: Prisma.IntFilter<"Opex"> | number
+  budget_refuse_collection?: Prisma.IntFilter<"Opex"> | number
+  budget_insurance?: Prisma.IntFilter<"Opex"> | number
+  budget_cleaning?: Prisma.IntFilter<"Opex"> | number
+  budget_facility_management?: Prisma.IntFilter<"Opex"> | number
+  budget_service_subscriptions?: Prisma.IntFilter<"Opex"> | number
+  budget_common_consumption?: Prisma.IntFilter<"Opex"> | number
+  budget_home_owner_association?: Prisma.IntFilter<"Opex"> | number
+  budget_total_opex?: Prisma.IntFilter<"Opex"> | number
+  created_at?: Prisma.DateTimeFilter<"Opex"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Opex"> | Date | string
+  assetId?: Prisma.StringFilter<"Opex"> | string
+}
+
+export type OpexCreateManyAssetInput = {
+  id?: string
+  asset_name: string
+  opex_year: number
+  actual_delinquency: number
+  actual_property_management_fee: number
+  actual_leasing_fee: number
+  actual_property_taxes: number
+  actual_refuse_collection: number
+  actual_insurance: number
+  actual_cleaning: number
+  actual_facility_management: number
+  actual_service_subscriptions: number
+  actual_common_consumption: number
+  actual_home_owner_association: number
+  actuals_total_opex: number
+  budget_delinquency: number
+  budget_property_management_fee: number
+  budget_leasing_fee: number
+  budget_property_taxes: number
+  budget_refuse_collection: number
+  budget_insurance: number
+  budget_cleaning: number
+  budget_facility_management: number
+  budget_service_subscriptions: number
+  budget_common_consumption: number
+  budget_home_owner_association: number
+  budget_total_opex: number
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type OpexUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  asset_name?: Prisma.StringFieldUpdateOperationsInput | string
+  opex_year?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_property_taxes?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_refuse_collection?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_insurance?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_cleaning?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_facility_management?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
+  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_property_taxes?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_refuse_collection?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_insurance?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_cleaning?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_facility_management?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OpexUncheckedUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  asset_name?: Prisma.StringFieldUpdateOperationsInput | string
+  opex_year?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_property_taxes?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_refuse_collection?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_insurance?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_cleaning?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_facility_management?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
+  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_property_taxes?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_refuse_collection?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_insurance?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_cleaning?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_facility_management?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type OpexUncheckedUpdateManyWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  asset_name?: Prisma.StringFieldUpdateOperationsInput | string
+  opex_year?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_property_taxes?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_refuse_collection?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_insurance?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_cleaning?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_facility_management?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
+  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_property_taxes?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_refuse_collection?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_insurance?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_cleaning?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_facility_management?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
+  budget_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 
 export type OpexSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1076,6 +1390,7 @@ export type OpexSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["opex"]>
 
 export type OpexSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1109,6 +1424,7 @@ export type OpexSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["opex"]>
 
 export type OpexSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1142,6 +1458,7 @@ export type OpexSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["opex"]>
 
 export type OpexSelectScalar = {
@@ -1178,10 +1495,21 @@ export type OpexSelectScalar = {
 }
 
 export type OpexOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "asset_name" | "opex_year" | "actual_delinquency" | "actual_property_management_fee" | "actual_leasing_fee" | "actual_property_taxes" | "actual_refuse_collection" | "actual_insurance" | "actual_cleaning" | "actual_facility_management" | "actual_service_subscriptions" | "actual_common_consumption" | "actual_home_owner_association" | "actuals_total_opex" | "budget_delinquency" | "budget_property_management_fee" | "budget_leasing_fee" | "budget_property_taxes" | "budget_refuse_collection" | "budget_insurance" | "budget_cleaning" | "budget_facility_management" | "budget_service_subscriptions" | "budget_common_consumption" | "budget_home_owner_association" | "budget_total_opex" | "created_at" | "updated_at" | "assetId", ExtArgs["result"]["opex"]>
+export type OpexInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
+export type OpexIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
+export type OpexIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
 
 export type $OpexPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Opex"
-  objects: {}
+  objects: {
+    asset: Prisma.$AssetPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     asset_name: string
@@ -1607,6 +1935,7 @@ readonly fields: OpexFieldRefs;
  */
 export interface Prisma__OpexClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  asset<T extends Prisma.AssetDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetDefaultArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1683,6 +2012,10 @@ export type OpexFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Internal
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
+  /**
    * Filter, which Opex to fetch.
    */
   where: Prisma.OpexWhereUniqueInput
@@ -1701,6 +2034,10 @@ export type OpexFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
+  /**
    * Filter, which Opex to fetch.
    */
   where: Prisma.OpexWhereUniqueInput
@@ -1718,6 +2055,10 @@ export type OpexFindFirstArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    * Omit specific fields from the Opex
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
   /**
    * Filter, which Opex to fetch.
    */
@@ -1767,6 +2108,10 @@ export type OpexFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
+  /**
    * Filter, which Opex to fetch.
    */
   where?: Prisma.OpexWhereInput
@@ -1815,6 +2160,10 @@ export type OpexFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
+  /**
    * Filter, which Opexes to fetch.
    */
   where?: Prisma.OpexWhereInput
@@ -1858,6 +2207,10 @@ export type OpexCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
+  /**
    * The data needed to create a Opex.
    */
   data: Prisma.XOR<Prisma.OpexCreateInput, Prisma.OpexUncheckedCreateInput>
@@ -1891,6 +2244,10 @@ export type OpexCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    */
   data: Prisma.OpexCreateManyInput | Prisma.OpexCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1905,6 +2262,10 @@ export type OpexUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Opex
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
   /**
    * The data needed to update a Opex.
    */
@@ -1957,6 +2318,10 @@ export type OpexUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many Opexes to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1971,6 +2336,10 @@ export type OpexUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Opex
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
   /**
    * The filter to search for the Opex to update in case it exists.
    */
@@ -1997,6 +2366,10 @@ export type OpexDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    * Omit specific fields from the Opex
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
   /**
    * Filter which Opex to delete.
    */
@@ -2029,4 +2402,8 @@ export type OpexDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Opex
    */
   omit?: Prisma.OpexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OpexInclude<ExtArgs> | null
 }

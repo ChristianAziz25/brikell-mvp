@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Capex
@@ -392,6 +392,7 @@ export type CapexWhereInput = {
   created_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   assetId?: Prisma.StringFilter<"Capex"> | string
+  asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
 }
 
 export type CapexOrderByWithRelationInput = {
@@ -415,11 +416,12 @@ export type CapexOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
+  asset?: Prisma.AssetOrderByWithRelationInput
 }
 
 export type CapexWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  assetId?: string
+  assetId_capex_year?: Prisma.CapexAssetIdCapex_yearCompoundUniqueInput
   AND?: Prisma.CapexWhereInput | Prisma.CapexWhereInput[]
   OR?: Prisma.CapexWhereInput[]
   NOT?: Prisma.CapexWhereInput | Prisma.CapexWhereInput[]
@@ -441,7 +443,9 @@ export type CapexWhereUniqueInput = Prisma.AtLeast<{
   total_capex_budget?: Prisma.IntFilter<"Capex"> | number
   created_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
-}, "id" | "id" | "assetId">
+  assetId?: Prisma.StringFilter<"Capex"> | string
+  asset?: Prisma.XOR<Prisma.AssetScalarRelationFilter, Prisma.AssetWhereInput>
+}, "id" | "id" | "assetId_capex_year">
 
 export type CapexOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -517,7 +521,7 @@ export type CapexCreateInput = {
   total_capex_budget: number
   created_at?: Date | string
   updated_at?: Date | string
-  assetId: string
+  asset: Prisma.AssetCreateNestedOneWithoutCapexInput
 }
 
 export type CapexUncheckedCreateInput = {
@@ -563,7 +567,7 @@ export type CapexUpdateInput = {
   total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
+  asset?: Prisma.AssetUpdateOneRequiredWithoutCapexNestedInput
 }
 
 export type CapexUncheckedUpdateInput = {
@@ -632,7 +636,6 @@ export type CapexUpdateManyMutationInput = {
   total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  assetId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type CapexUncheckedUpdateManyInput = {
@@ -656,6 +659,21 @@ export type CapexUncheckedUpdateManyInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type CapexListRelationFilter = {
+  every?: Prisma.CapexWhereInput
+  some?: Prisma.CapexWhereInput
+  none?: Prisma.CapexWhereInput
+}
+
+export type CapexOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type CapexAssetIdCapex_yearCompoundUniqueInput = {
+  assetId: string
+  capex_year: number
 }
 
 export type CapexCountOrderByAggregateInput = {
@@ -763,8 +781,46 @@ export type CapexSumOrderByAggregateInput = {
   total_capex_budget?: Prisma.SortOrder
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type CapexCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.CapexCreateWithoutAssetInput, Prisma.CapexUncheckedCreateWithoutAssetInput> | Prisma.CapexCreateWithoutAssetInput[] | Prisma.CapexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.CapexCreateOrConnectWithoutAssetInput | Prisma.CapexCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.CapexCreateManyAssetInputEnvelope
+  connect?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+}
+
+export type CapexUncheckedCreateNestedManyWithoutAssetInput = {
+  create?: Prisma.XOR<Prisma.CapexCreateWithoutAssetInput, Prisma.CapexUncheckedCreateWithoutAssetInput> | Prisma.CapexCreateWithoutAssetInput[] | Prisma.CapexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.CapexCreateOrConnectWithoutAssetInput | Prisma.CapexCreateOrConnectWithoutAssetInput[]
+  createMany?: Prisma.CapexCreateManyAssetInputEnvelope
+  connect?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+}
+
+export type CapexUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.CapexCreateWithoutAssetInput, Prisma.CapexUncheckedCreateWithoutAssetInput> | Prisma.CapexCreateWithoutAssetInput[] | Prisma.CapexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.CapexCreateOrConnectWithoutAssetInput | Prisma.CapexCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.CapexUpsertWithWhereUniqueWithoutAssetInput | Prisma.CapexUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.CapexCreateManyAssetInputEnvelope
+  set?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  disconnect?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  delete?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  connect?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  update?: Prisma.CapexUpdateWithWhereUniqueWithoutAssetInput | Prisma.CapexUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.CapexUpdateManyWithWhereWithoutAssetInput | Prisma.CapexUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.CapexScalarWhereInput | Prisma.CapexScalarWhereInput[]
+}
+
+export type CapexUncheckedUpdateManyWithoutAssetNestedInput = {
+  create?: Prisma.XOR<Prisma.CapexCreateWithoutAssetInput, Prisma.CapexUncheckedCreateWithoutAssetInput> | Prisma.CapexCreateWithoutAssetInput[] | Prisma.CapexUncheckedCreateWithoutAssetInput[]
+  connectOrCreate?: Prisma.CapexCreateOrConnectWithoutAssetInput | Prisma.CapexCreateOrConnectWithoutAssetInput[]
+  upsert?: Prisma.CapexUpsertWithWhereUniqueWithoutAssetInput | Prisma.CapexUpsertWithWhereUniqueWithoutAssetInput[]
+  createMany?: Prisma.CapexCreateManyAssetInputEnvelope
+  set?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  disconnect?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  delete?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  connect?: Prisma.CapexWhereUniqueInput | Prisma.CapexWhereUniqueInput[]
+  update?: Prisma.CapexUpdateWithWhereUniqueWithoutAssetInput | Prisma.CapexUpdateWithWhereUniqueWithoutAssetInput[]
+  updateMany?: Prisma.CapexUpdateManyWithWhereWithoutAssetInput | Prisma.CapexUpdateManyWithWhereWithoutAssetInput[]
+  deleteMany?: Prisma.CapexScalarWhereInput | Prisma.CapexScalarWhereInput[]
 }
 
 export type IntFieldUpdateOperationsInput = {
@@ -775,8 +831,188 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
+export type CapexCreateWithoutAssetInput = {
+  id?: string
+  asset_name: string
+  capex_year: number
+  common_areas_actuals: number
+  units_renovations_actuals: number
+  elevator_maintnance_actuals: number
+  roof_maintnance_actuals: number
+  fire_safety_actuals: number
+  outdoor_area_actuals: number
+  total_capex_actuals: number
+  common_areas_budget: number
+  units_renovations_budget: number
+  elevator_maintnance_budget: number
+  roof_maintnance_budget: number
+  fire_safety_budget: number
+  outdoor_area_budget: number
+  total_capex_budget: number
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type CapexUncheckedCreateWithoutAssetInput = {
+  id?: string
+  asset_name: string
+  capex_year: number
+  common_areas_actuals: number
+  units_renovations_actuals: number
+  elevator_maintnance_actuals: number
+  roof_maintnance_actuals: number
+  fire_safety_actuals: number
+  outdoor_area_actuals: number
+  total_capex_actuals: number
+  common_areas_budget: number
+  units_renovations_budget: number
+  elevator_maintnance_budget: number
+  roof_maintnance_budget: number
+  fire_safety_budget: number
+  outdoor_area_budget: number
+  total_capex_budget: number
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type CapexCreateOrConnectWithoutAssetInput = {
+  where: Prisma.CapexWhereUniqueInput
+  create: Prisma.XOR<Prisma.CapexCreateWithoutAssetInput, Prisma.CapexUncheckedCreateWithoutAssetInput>
+}
+
+export type CapexCreateManyAssetInputEnvelope = {
+  data: Prisma.CapexCreateManyAssetInput | Prisma.CapexCreateManyAssetInput[]
+  skipDuplicates?: boolean
+}
+
+export type CapexUpsertWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.CapexWhereUniqueInput
+  update: Prisma.XOR<Prisma.CapexUpdateWithoutAssetInput, Prisma.CapexUncheckedUpdateWithoutAssetInput>
+  create: Prisma.XOR<Prisma.CapexCreateWithoutAssetInput, Prisma.CapexUncheckedCreateWithoutAssetInput>
+}
+
+export type CapexUpdateWithWhereUniqueWithoutAssetInput = {
+  where: Prisma.CapexWhereUniqueInput
+  data: Prisma.XOR<Prisma.CapexUpdateWithoutAssetInput, Prisma.CapexUncheckedUpdateWithoutAssetInput>
+}
+
+export type CapexUpdateManyWithWhereWithoutAssetInput = {
+  where: Prisma.CapexScalarWhereInput
+  data: Prisma.XOR<Prisma.CapexUpdateManyMutationInput, Prisma.CapexUncheckedUpdateManyWithoutAssetInput>
+}
+
+export type CapexScalarWhereInput = {
+  AND?: Prisma.CapexScalarWhereInput | Prisma.CapexScalarWhereInput[]
+  OR?: Prisma.CapexScalarWhereInput[]
+  NOT?: Prisma.CapexScalarWhereInput | Prisma.CapexScalarWhereInput[]
+  id?: Prisma.StringFilter<"Capex"> | string
+  asset_name?: Prisma.StringFilter<"Capex"> | string
+  capex_year?: Prisma.IntFilter<"Capex"> | number
+  common_areas_actuals?: Prisma.IntFilter<"Capex"> | number
+  units_renovations_actuals?: Prisma.IntFilter<"Capex"> | number
+  elevator_maintnance_actuals?: Prisma.IntFilter<"Capex"> | number
+  roof_maintnance_actuals?: Prisma.IntFilter<"Capex"> | number
+  fire_safety_actuals?: Prisma.IntFilter<"Capex"> | number
+  outdoor_area_actuals?: Prisma.IntFilter<"Capex"> | number
+  total_capex_actuals?: Prisma.IntFilter<"Capex"> | number
+  common_areas_budget?: Prisma.IntFilter<"Capex"> | number
+  units_renovations_budget?: Prisma.IntFilter<"Capex"> | number
+  elevator_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
+  roof_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
+  fire_safety_budget?: Prisma.IntFilter<"Capex"> | number
+  outdoor_area_budget?: Prisma.IntFilter<"Capex"> | number
+  total_capex_budget?: Prisma.IntFilter<"Capex"> | number
+  created_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
+  updated_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
+  assetId?: Prisma.StringFilter<"Capex"> | string
+}
+
+export type CapexCreateManyAssetInput = {
+  id?: string
+  asset_name: string
+  capex_year: number
+  common_areas_actuals: number
+  units_renovations_actuals: number
+  elevator_maintnance_actuals: number
+  roof_maintnance_actuals: number
+  fire_safety_actuals: number
+  outdoor_area_actuals: number
+  total_capex_actuals: number
+  common_areas_budget: number
+  units_renovations_budget: number
+  elevator_maintnance_budget: number
+  roof_maintnance_budget: number
+  fire_safety_budget: number
+  outdoor_area_budget: number
+  total_capex_budget: number
+  created_at?: Date | string
+  updated_at?: Date | string
+}
+
+export type CapexUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  asset_name?: Prisma.StringFieldUpdateOperationsInput | string
+  capex_year?: Prisma.IntFieldUpdateOperationsInput | number
+  common_areas_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  units_renovations_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  elevator_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CapexUncheckedUpdateWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  asset_name?: Prisma.StringFieldUpdateOperationsInput | string
+  capex_year?: Prisma.IntFieldUpdateOperationsInput | number
+  common_areas_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  units_renovations_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  elevator_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type CapexUncheckedUpdateManyWithoutAssetInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  asset_name?: Prisma.StringFieldUpdateOperationsInput | string
+  capex_year?: Prisma.IntFieldUpdateOperationsInput | number
+  common_areas_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  units_renovations_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  elevator_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
+  common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
@@ -802,6 +1038,7 @@ export type CapexSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["capex"]>
 
 export type CapexSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -825,6 +1062,7 @@ export type CapexSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["capex"]>
 
 export type CapexSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -848,6 +1086,7 @@ export type CapexSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["capex"]>
 
 export type CapexSelectScalar = {
@@ -874,10 +1113,21 @@ export type CapexSelectScalar = {
 }
 
 export type CapexOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "asset_name" | "capex_year" | "common_areas_actuals" | "units_renovations_actuals" | "elevator_maintnance_actuals" | "roof_maintnance_actuals" | "fire_safety_actuals" | "outdoor_area_actuals" | "total_capex_actuals" | "common_areas_budget" | "units_renovations_budget" | "elevator_maintnance_budget" | "roof_maintnance_budget" | "fire_safety_budget" | "outdoor_area_budget" | "total_capex_budget" | "created_at" | "updated_at" | "assetId", ExtArgs["result"]["capex"]>
+export type CapexInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
+export type CapexIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
+export type CapexIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
+}
 
 export type $CapexPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Capex"
-  objects: {}
+  objects: {
+    asset: Prisma.$AssetPayload<ExtArgs>
+  }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     asset_name: string
@@ -1293,6 +1543,7 @@ readonly fields: CapexFieldRefs;
  */
 export interface Prisma__CapexClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  asset<T extends Prisma.AssetDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AssetDefaultArgs<ExtArgs>>): Prisma.Prisma__AssetClient<runtime.Types.Result.GetResult<Prisma.$AssetPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1359,6 +1610,10 @@ export type CapexFindUniqueArgs<ExtArgs extends runtime.Types.Extensions.Interna
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
+  /**
    * Filter, which Capex to fetch.
    */
   where: Prisma.CapexWhereUniqueInput
@@ -1377,6 +1632,10 @@ export type CapexFindUniqueOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
+  /**
    * Filter, which Capex to fetch.
    */
   where: Prisma.CapexWhereUniqueInput
@@ -1394,6 +1653,10 @@ export type CapexFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Omit specific fields from the Capex
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
   /**
    * Filter, which Capex to fetch.
    */
@@ -1443,6 +1706,10 @@ export type CapexFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
+  /**
    * Filter, which Capex to fetch.
    */
   where?: Prisma.CapexWhereInput
@@ -1491,6 +1758,10 @@ export type CapexFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
+  /**
    * Filter, which Capexes to fetch.
    */
   where?: Prisma.CapexWhereInput
@@ -1534,6 +1805,10 @@ export type CapexCreateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
   /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
+  /**
    * The data needed to create a Capex.
    */
   data: Prisma.XOR<Prisma.CapexCreateInput, Prisma.CapexUncheckedCreateInput>
@@ -1567,6 +1842,10 @@ export type CapexCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    */
   data: Prisma.CapexCreateManyInput | Prisma.CapexCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1581,6 +1860,10 @@ export type CapexUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Capex
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
   /**
    * The data needed to update a Capex.
    */
@@ -1633,6 +1916,10 @@ export type CapexUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * Limit how many Capexes to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1647,6 +1934,10 @@ export type CapexUpsertArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Capex
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
   /**
    * The filter to search for the Capex to update in case it exists.
    */
@@ -1673,6 +1964,10 @@ export type CapexDeleteArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Omit specific fields from the Capex
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
   /**
    * Filter which Capex to delete.
    */
@@ -1705,4 +2000,8 @@ export type CapexDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
    * Omit specific fields from the Capex
    */
   omit?: Prisma.CapexOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CapexInclude<ExtArgs> | null
 }

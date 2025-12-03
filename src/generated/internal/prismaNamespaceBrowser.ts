@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.js'
+export type * from './prismaNamespace.js'
 
 export const Decimal = runtime.Decimal
 
@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  Asset: 'Asset',
   Capex: 'Capex',
   Opex: 'Opex',
   RentRollUnit: 'RentRollUnit'
@@ -70,6 +71,19 @@ export const TransactionIsolationLevel = {
 } as const
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const AssetScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  address: 'address',
+  city: 'city',
+  country: 'country',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
 
 
 export const CapexScalarFieldEnum = {
@@ -135,6 +149,7 @@ export type OpexScalarFieldEnum = (typeof OpexScalarFieldEnum)[keyof typeof Opex
 
 
 export const RentRollUnitScalarFieldEnum = {
+  assetId: 'assetId',
   property_build_year: 'property_build_year',
   property_name: 'property_name',
   unit_address: 'unit_address',
@@ -158,7 +173,9 @@ export const RentRollUnitScalarFieldEnum = {
   tenant_number2: 'tenant_number2',
   units_status: 'units_status',
   tenant_mail1: 'tenant_mail1',
-  tenant_mail2: 'tenant_mail2'
+  tenant_mail2: 'tenant_mail2',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
 } as const
 
 export type RentRollUnitScalarFieldEnum = (typeof RentRollUnitScalarFieldEnum)[keyof typeof RentRollUnitScalarFieldEnum]

@@ -8,6 +8,25 @@ datasource db {
   schemas  = ["public"]
 }
 
+model Asset {
+  id      String  @id @default(cuid())
+  name    String
+  address String?
+  city    String?
+  country String?
+
+  // Relations
+  capex    Capex[]
+  opex     Opex[]
+  rentRoll RentRollUnit[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("asset")
+  @@schema("public")
+}
+
 model Capex {
   id                          String   @id @unique @default(cuid())
   asset_name                  String
@@ -28,8 +47,11 @@ model Capex {
   total_capex_budget          Int
   created_at                  DateTime @default(now())
   updated_at                  DateTime @updatedAt
-  assetId                     String   @unique
+  assetId                     String
+  asset                       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
+  // Ensure at most one Capex row per asset per year
+  @@unique([assetId, capex_year])
   @@map("capex")
   @@schema("public")
 }
@@ -64,13 +86,18 @@ model Opex {
   budget_total_opex              Int
   created_at                     DateTime @default(now())
   updated_at                     DateTime @updatedAt
-  assetId                        String   @unique
+  assetId                        String
+  asset                          Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
+  // Ensure at most one Opex row per asset per year
+  @@unique([assetId, opex_year])
   @@map("opex")
   @@schema("public")
 }
 
 model RentRollUnit {
+  assetId             String
+  asset               Asset      @relation(fields: [assetId], references: [id], onDelete: Cascade)
   property_build_year Int
   property_name       String
   unit_address        String
@@ -95,6 +122,8 @@ model RentRollUnit {
   units_status        RentStatus
   tenant_mail1        String
   tenant_mail2        String
+  created_at          DateTime   @default(now())
+  updated_at          DateTime   @updatedAt
 
   @@map("rent_roll_unit")
   @@schema("public")

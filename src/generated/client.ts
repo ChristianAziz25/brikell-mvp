@@ -28,8 +28,8 @@ export { Prisma }
  * @example
  * ```
  * const prisma = new PrismaClient()
- * // Fetch zero or more Capexes
- * const capexes = await prisma.capex.findMany()
+ * // Fetch zero or more Assets
+ * const assets = await prisma.asset.findMany()
  * ```
  * 
  * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
@@ -37,6 +37,11 @@ export { Prisma }
 export const PrismaClient = $Class.getPrismaClientClass()
 export type PrismaClient<LogOpts extends Prisma.LogLevel = never, OmitOpts extends Prisma.PrismaClientOptions["omit"] = Prisma.PrismaClientOptions["omit"], ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = $Class.PrismaClient<LogOpts, OmitOpts, ExtArgs>
 
+/**
+ * Model Asset
+ * 
+ */
+export type Asset = Prisma.AssetModel
 /**
  * Model Capex
  * 
