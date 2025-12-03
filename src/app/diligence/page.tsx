@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import { Loader2, Send, Sparkles, Upload } from "lucide-react";
@@ -94,153 +94,160 @@ export default function Page() {
             </div>
           </header>
 
-          <div
-            ref={messageScrollRef}
-            className="relative flex-1 space-y-4 overflow-y-auto p-6 min-h-0 no-scrollbar"
-          >
-            {messages.length === 0 && (
-              <div className="flex justify-start">
-                <div className="flex max-w-3xl items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
-                    <Sparkles className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                  <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
-                    <p className="text-sm text-foreground">
-                      Hello! I&apos;m your AI analyst. Upload a file and ask me
-                      anything about your data. I can help you analyze trends,
-                      create visualizations, and answer questions about your
-                      information.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${
-                  message.role === "user" ? "justify-end" : "justify-start"
-                }`}
-              >
-                <div className="flex max-w-3xl items-start gap-3">
-                  {message.role === "assistant" && (
+          <div className="relative flex-1 min-h-0">
+            <div
+              ref={messageScrollRef}
+              className="flex-1 h-full space-y-4 overflow-y-auto p-6 pb-16 min-h-0 no-scrollbar"
+            >
+              {messages.length === 0 && (
+                <div className="flex justify-start">
+                  <div className="flex max-w-3xl items-start gap-3">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
                       <Sparkles className="h-4 w-4 text-muted-foreground" />
                     </div>
-                  )}
-                  <div
-                    className={`rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "rounded-tr-sm bg-primary text-primary-foreground"
-                        : "rounded-tl-sm bg-muted"
-                    }`}
-                  >
-                    <div className="text-sm text-foreground whitespace-pre-wrap">
-                      {(() => {
-                        if (
-                          message.role === "assistant" &&
-                          (!message.parts ||
-                            message.parts.length === 0 ||
-                            !message.parts.some((p) => p.type === "text"))
-                        ) {
-                          return (
-                            <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
-                          );
-                        }
-
-                        return message.parts.map((part, i) => {
-                          switch (part.type) {
-                            case "text":
-                              switch (message.role) {
-                                case "assistant":
-                                  return (
-                                    <p
-                                      className="text-chat-machine-color"
-                                      key={`${message.id}-${i}`}
-                                    >
-                                      {part.text}
-                                    </p>
-                                  );
-                                case "user":
-                                  return (
-                                    <p
-                                      className="text-primary-foreground"
-                                      key={`${message.id}-${i}`}
-                                    >
-                                      {part.text}
-                                    </p>
-                                  );
-                                default:
-                                  return null;
-                              }
-                            default:
-                              return null;
-                          }
-                        });
-                      })()}
+                    <div className="rounded-2xl rounded-tl-sm bg-muted px-4 py-3">
+                      <p className="text-sm text-foreground">
+                        Hello! I&apos;m your AI analyst. Upload a file and ask
+                        me anything about your data. I can help you analyze
+                        trends, create visualizations, and answer questions
+                        about your information.
+                      </p>
                     </div>
                   </div>
-                  {message.role === "user" && (
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
-                      <span className="text-xs font-medium text-primary-foreground">
-                        U
-                      </span>
-                    </div>
-                  )}
                 </div>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <div className="hidden md:flex items-center gap-2 p-4">
-              {agents.map((agent) => (
-                <button
-                  className={cn("cursor-pointer")}
-                  key={agent}
-                  onClick={() => setContext(agent as "capex" | "opex" | "all")}
+              )}
+              {messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex ${
+                    message.role === "user" ? "justify-end" : "justify-start"
+                  }`}
                 >
-                  <Badge variant={context === agent ? "default" : "secondary"}>
-                    {agent}
-                  </Badge>
-                </button>
+                  <div className="flex max-w-3xl items-start gap-3">
+                    {message.role === "assistant" && (
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                        <Sparkles className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div
+                      className={`rounded-2xl px-4 py-3 ${
+                        message.role === "user"
+                          ? "rounded-tr-sm bg-primary text-primary-foreground"
+                          : "rounded-tl-sm bg-muted"
+                      }`}
+                    >
+                      <div className="text-sm text-foreground whitespace-pre-wrap">
+                        {(() => {
+                          if (
+                            message.role === "assistant" &&
+                            (!message.parts ||
+                              message.parts.length === 0 ||
+                              !message.parts.some((p) => p.type === "text"))
+                          ) {
+                            return (
+                              <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                            );
+                          }
+
+                          return message.parts.map((part, i) => {
+                            switch (part.type) {
+                              case "text":
+                                switch (message.role) {
+                                  case "assistant":
+                                    return (
+                                      <p
+                                        className="text-chat-machine-color"
+                                        key={`${message.id}-${i}`}
+                                      >
+                                        {part.text}
+                                      </p>
+                                    );
+                                  case "user":
+                                    return (
+                                      <p
+                                        className="text-primary-foreground"
+                                        key={`${message.id}-${i}`}
+                                      >
+                                        {part.text}
+                                      </p>
+                                    );
+                                  default:
+                                    return null;
+                                }
+                              default:
+                                return null;
+                            }
+                          });
+                        })()}
+                      </div>
+                    </div>
+                    {message.role === "user" && (
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
+                        <span className="text-xs font-medium text-primary-foreground">
+                          U
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
               ))}
             </div>
-            <footer className="border-t p-4 shrink-0">
-              <form
-                className="relative"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  if (input.trim()) {
-                    sendMessage(
-                      { text: input },
-                      {
-                        body: {
-                          customKey: context,
-                        },
-                      }
-                    );
-                    setInput("");
-                  }
-                }}
-              >
-                <Input
-                  className="h-12 rounded-2xl pr-12"
-                  placeholder="Ask something about your file..."
-                  value={input}
-                  onChange={(e) => setInput(e.currentTarget.value)}
-                />
-                <Button
-                  type="submit"
-                  size="sm"
-                  className="absolute right-2 top-1/2 flex h-8 -translate-y-1/2 gap-1 rounded-xl px-3"
-                >
-                  Send
-                  <Send className="h-3.5 w-3.5" />
-                </Button>
-              </form>
-            </footer>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-start p-4">
+              <div className="hidden md:flex items-center gap-2 pointer-events-auto">
+                {agents.map((agent) => (
+                  <button
+                    className={cn("cursor-pointer")}
+                    key={agent}
+                    onClick={() =>
+                      setContext(agent as "capex" | "opex" | "all")
+                    }
+                  >
+                    <Badge
+                      variant={context === agent ? "default" : "secondary"}
+                    >
+                      {agent}
+                    </Badge>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
+
+          <footer className="border-t p-4 shrink-0">
+            <form
+              className="relative"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (input.trim()) {
+                  sendMessage(
+                    { text: input },
+                    {
+                      body: {
+                        customKey: context,
+                      },
+                    }
+                  );
+                  setInput("");
+                }
+              }}
+            >
+              <Textarea
+                className="rounded-2xl pr-12"
+                placeholder="Ask something about your file..."
+                value={input}
+                onChange={(e) => setInput(e.currentTarget.value)}
+              />
+              <Button
+                type="submit"
+                size="sm"
+                className="absolute right-2 top-1/2 flex h-8 -translate-y-1/2 gap-1 rounded-xl px-3"
+              >
+                Send
+                <Send className="h-3.5 w-3.5" />
+              </Button>
+            </form>
+          </footer>
         </div>
       </section>
     </div>
