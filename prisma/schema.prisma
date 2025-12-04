@@ -49,14 +49,12 @@ model Capex {
   roof_maintnance_actuals     Int
   fire_safety_actuals         Int
   outdoor_area_actuals        Int
-  total_capex_actuals         Int
   common_areas_budget         Int
   units_renovations_budget    Int
   elevator_maintnance_budget  Int
   roof_maintnance_budget      Int
   fire_safety_budget          Int
   outdoor_area_budget         Int
-  total_capex_budget          Int
   created_at                  DateTime @default(now())
   updated_at                  DateTime @updatedAt
   assetId                     String
@@ -82,7 +80,6 @@ model Opex {
   actual_service_subscriptions   Int
   actual_common_consumption      Int
   actual_home_owner_association  Int
-  actual_total_opex              Int
   budget_delinquency             Int
   budget_property_management_fee Int
   budget_leasing_fee             Int
@@ -94,7 +91,6 @@ model Opex {
   budget_service_subscriptions   Int
   budget_common_consumption      Int
   budget_home_owner_association  Int
-  budget_total_opex              Int
   created_at                     DateTime @default(now())
   updated_at                     DateTime @updatedAt
   assetId                        String

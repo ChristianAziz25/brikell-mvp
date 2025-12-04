@@ -34,14 +34,12 @@ export type CapexAvgAggregateOutputType = {
   roof_maintnance_actuals: number | null
   fire_safety_actuals: number | null
   outdoor_area_actuals: number | null
-  total_capex_actuals: number | null
   common_areas_budget: number | null
   units_renovations_budget: number | null
   elevator_maintnance_budget: number | null
   roof_maintnance_budget: number | null
   fire_safety_budget: number | null
   outdoor_area_budget: number | null
-  total_capex_budget: number | null
 }
 
 export type CapexSumAggregateOutputType = {
@@ -52,14 +50,12 @@ export type CapexSumAggregateOutputType = {
   roof_maintnance_actuals: number | null
   fire_safety_actuals: number | null
   outdoor_area_actuals: number | null
-  total_capex_actuals: number | null
   common_areas_budget: number | null
   units_renovations_budget: number | null
   elevator_maintnance_budget: number | null
   roof_maintnance_budget: number | null
   fire_safety_budget: number | null
   outdoor_area_budget: number | null
-  total_capex_budget: number | null
 }
 
 export type CapexMinAggregateOutputType = {
@@ -72,14 +68,12 @@ export type CapexMinAggregateOutputType = {
   roof_maintnance_actuals: number | null
   fire_safety_actuals: number | null
   outdoor_area_actuals: number | null
-  total_capex_actuals: number | null
   common_areas_budget: number | null
   units_renovations_budget: number | null
   elevator_maintnance_budget: number | null
   roof_maintnance_budget: number | null
   fire_safety_budget: number | null
   outdoor_area_budget: number | null
-  total_capex_budget: number | null
   created_at: Date | null
   updated_at: Date | null
   assetId: string | null
@@ -95,14 +89,12 @@ export type CapexMaxAggregateOutputType = {
   roof_maintnance_actuals: number | null
   fire_safety_actuals: number | null
   outdoor_area_actuals: number | null
-  total_capex_actuals: number | null
   common_areas_budget: number | null
   units_renovations_budget: number | null
   elevator_maintnance_budget: number | null
   roof_maintnance_budget: number | null
   fire_safety_budget: number | null
   outdoor_area_budget: number | null
-  total_capex_budget: number | null
   created_at: Date | null
   updated_at: Date | null
   assetId: string | null
@@ -118,14 +110,12 @@ export type CapexCountAggregateOutputType = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at: number
   updated_at: number
   assetId: number
@@ -141,14 +131,12 @@ export type CapexAvgAggregateInputType = {
   roof_maintnance_actuals?: true
   fire_safety_actuals?: true
   outdoor_area_actuals?: true
-  total_capex_actuals?: true
   common_areas_budget?: true
   units_renovations_budget?: true
   elevator_maintnance_budget?: true
   roof_maintnance_budget?: true
   fire_safety_budget?: true
   outdoor_area_budget?: true
-  total_capex_budget?: true
 }
 
 export type CapexSumAggregateInputType = {
@@ -159,14 +147,12 @@ export type CapexSumAggregateInputType = {
   roof_maintnance_actuals?: true
   fire_safety_actuals?: true
   outdoor_area_actuals?: true
-  total_capex_actuals?: true
   common_areas_budget?: true
   units_renovations_budget?: true
   elevator_maintnance_budget?: true
   roof_maintnance_budget?: true
   fire_safety_budget?: true
   outdoor_area_budget?: true
-  total_capex_budget?: true
 }
 
 export type CapexMinAggregateInputType = {
@@ -179,14 +165,12 @@ export type CapexMinAggregateInputType = {
   roof_maintnance_actuals?: true
   fire_safety_actuals?: true
   outdoor_area_actuals?: true
-  total_capex_actuals?: true
   common_areas_budget?: true
   units_renovations_budget?: true
   elevator_maintnance_budget?: true
   roof_maintnance_budget?: true
   fire_safety_budget?: true
   outdoor_area_budget?: true
-  total_capex_budget?: true
   created_at?: true
   updated_at?: true
   assetId?: true
@@ -202,14 +186,12 @@ export type CapexMaxAggregateInputType = {
   roof_maintnance_actuals?: true
   fire_safety_actuals?: true
   outdoor_area_actuals?: true
-  total_capex_actuals?: true
   common_areas_budget?: true
   units_renovations_budget?: true
   elevator_maintnance_budget?: true
   roof_maintnance_budget?: true
   fire_safety_budget?: true
   outdoor_area_budget?: true
-  total_capex_budget?: true
   created_at?: true
   updated_at?: true
   assetId?: true
@@ -225,14 +207,12 @@ export type CapexCountAggregateInputType = {
   roof_maintnance_actuals?: true
   fire_safety_actuals?: true
   outdoor_area_actuals?: true
-  total_capex_actuals?: true
   common_areas_budget?: true
   units_renovations_budget?: true
   elevator_maintnance_budget?: true
   roof_maintnance_budget?: true
   fire_safety_budget?: true
   outdoor_area_budget?: true
-  total_capex_budget?: true
   created_at?: true
   updated_at?: true
   assetId?: true
@@ -335,14 +315,12 @@ export type CapexGroupByOutputType = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at: Date
   updated_at: Date
   assetId: string
@@ -381,14 +359,12 @@ export type CapexWhereInput = {
   roof_maintnance_actuals?: Prisma.IntFilter<"Capex"> | number
   fire_safety_actuals?: Prisma.IntFilter<"Capex"> | number
   outdoor_area_actuals?: Prisma.IntFilter<"Capex"> | number
-  total_capex_actuals?: Prisma.IntFilter<"Capex"> | number
   common_areas_budget?: Prisma.IntFilter<"Capex"> | number
   units_renovations_budget?: Prisma.IntFilter<"Capex"> | number
   elevator_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
   roof_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
   fire_safety_budget?: Prisma.IntFilter<"Capex"> | number
   outdoor_area_budget?: Prisma.IntFilter<"Capex"> | number
-  total_capex_budget?: Prisma.IntFilter<"Capex"> | number
   created_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   assetId?: Prisma.StringFilter<"Capex"> | string
@@ -405,14 +381,12 @@ export type CapexOrderByWithRelationInput = {
   roof_maintnance_actuals?: Prisma.SortOrder
   fire_safety_actuals?: Prisma.SortOrder
   outdoor_area_actuals?: Prisma.SortOrder
-  total_capex_actuals?: Prisma.SortOrder
   common_areas_budget?: Prisma.SortOrder
   units_renovations_budget?: Prisma.SortOrder
   elevator_maintnance_budget?: Prisma.SortOrder
   roof_maintnance_budget?: Prisma.SortOrder
   fire_safety_budget?: Prisma.SortOrder
   outdoor_area_budget?: Prisma.SortOrder
-  total_capex_budget?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
@@ -433,14 +407,12 @@ export type CapexWhereUniqueInput = Prisma.AtLeast<{
   roof_maintnance_actuals?: Prisma.IntFilter<"Capex"> | number
   fire_safety_actuals?: Prisma.IntFilter<"Capex"> | number
   outdoor_area_actuals?: Prisma.IntFilter<"Capex"> | number
-  total_capex_actuals?: Prisma.IntFilter<"Capex"> | number
   common_areas_budget?: Prisma.IntFilter<"Capex"> | number
   units_renovations_budget?: Prisma.IntFilter<"Capex"> | number
   elevator_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
   roof_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
   fire_safety_budget?: Prisma.IntFilter<"Capex"> | number
   outdoor_area_budget?: Prisma.IntFilter<"Capex"> | number
-  total_capex_budget?: Prisma.IntFilter<"Capex"> | number
   created_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   assetId?: Prisma.StringFilter<"Capex"> | string
@@ -457,14 +429,12 @@ export type CapexOrderByWithAggregationInput = {
   roof_maintnance_actuals?: Prisma.SortOrder
   fire_safety_actuals?: Prisma.SortOrder
   outdoor_area_actuals?: Prisma.SortOrder
-  total_capex_actuals?: Prisma.SortOrder
   common_areas_budget?: Prisma.SortOrder
   units_renovations_budget?: Prisma.SortOrder
   elevator_maintnance_budget?: Prisma.SortOrder
   roof_maintnance_budget?: Prisma.SortOrder
   fire_safety_budget?: Prisma.SortOrder
   outdoor_area_budget?: Prisma.SortOrder
-  total_capex_budget?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
@@ -488,14 +458,12 @@ export type CapexScalarWhereWithAggregatesInput = {
   roof_maintnance_actuals?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   fire_safety_actuals?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   outdoor_area_actuals?: Prisma.IntWithAggregatesFilter<"Capex"> | number
-  total_capex_actuals?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   common_areas_budget?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   units_renovations_budget?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   elevator_maintnance_budget?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   roof_maintnance_budget?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   fire_safety_budget?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   outdoor_area_budget?: Prisma.IntWithAggregatesFilter<"Capex"> | number
-  total_capex_budget?: Prisma.IntWithAggregatesFilter<"Capex"> | number
   created_at?: Prisma.DateTimeWithAggregatesFilter<"Capex"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"Capex"> | Date | string
   assetId?: Prisma.StringWithAggregatesFilter<"Capex"> | string
@@ -511,14 +479,12 @@ export type CapexCreateInput = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at?: Date | string
   updated_at?: Date | string
   asset: Prisma.AssetCreateNestedOneWithoutCapexInput
@@ -534,14 +500,12 @@ export type CapexUncheckedCreateInput = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at?: Date | string
   updated_at?: Date | string
   assetId: string
@@ -557,14 +521,12 @@ export type CapexUpdateInput = {
   roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
   units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
   elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   asset?: Prisma.AssetUpdateOneRequiredWithoutCapexNestedInput
@@ -580,14 +542,12 @@ export type CapexUncheckedUpdateInput = {
   roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
   units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
   elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -603,14 +563,12 @@ export type CapexCreateManyInput = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at?: Date | string
   updated_at?: Date | string
   assetId: string
@@ -626,14 +584,12 @@ export type CapexUpdateManyMutationInput = {
   roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
   units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
   elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -648,14 +604,12 @@ export type CapexUncheckedUpdateManyInput = {
   roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
   units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
   elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   assetId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -686,14 +640,12 @@ export type CapexCountOrderByAggregateInput = {
   roof_maintnance_actuals?: Prisma.SortOrder
   fire_safety_actuals?: Prisma.SortOrder
   outdoor_area_actuals?: Prisma.SortOrder
-  total_capex_actuals?: Prisma.SortOrder
   common_areas_budget?: Prisma.SortOrder
   units_renovations_budget?: Prisma.SortOrder
   elevator_maintnance_budget?: Prisma.SortOrder
   roof_maintnance_budget?: Prisma.SortOrder
   fire_safety_budget?: Prisma.SortOrder
   outdoor_area_budget?: Prisma.SortOrder
-  total_capex_budget?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
@@ -707,14 +659,12 @@ export type CapexAvgOrderByAggregateInput = {
   roof_maintnance_actuals?: Prisma.SortOrder
   fire_safety_actuals?: Prisma.SortOrder
   outdoor_area_actuals?: Prisma.SortOrder
-  total_capex_actuals?: Prisma.SortOrder
   common_areas_budget?: Prisma.SortOrder
   units_renovations_budget?: Prisma.SortOrder
   elevator_maintnance_budget?: Prisma.SortOrder
   roof_maintnance_budget?: Prisma.SortOrder
   fire_safety_budget?: Prisma.SortOrder
   outdoor_area_budget?: Prisma.SortOrder
-  total_capex_budget?: Prisma.SortOrder
 }
 
 export type CapexMaxOrderByAggregateInput = {
@@ -727,14 +677,12 @@ export type CapexMaxOrderByAggregateInput = {
   roof_maintnance_actuals?: Prisma.SortOrder
   fire_safety_actuals?: Prisma.SortOrder
   outdoor_area_actuals?: Prisma.SortOrder
-  total_capex_actuals?: Prisma.SortOrder
   common_areas_budget?: Prisma.SortOrder
   units_renovations_budget?: Prisma.SortOrder
   elevator_maintnance_budget?: Prisma.SortOrder
   roof_maintnance_budget?: Prisma.SortOrder
   fire_safety_budget?: Prisma.SortOrder
   outdoor_area_budget?: Prisma.SortOrder
-  total_capex_budget?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
@@ -750,14 +698,12 @@ export type CapexMinOrderByAggregateInput = {
   roof_maintnance_actuals?: Prisma.SortOrder
   fire_safety_actuals?: Prisma.SortOrder
   outdoor_area_actuals?: Prisma.SortOrder
-  total_capex_actuals?: Prisma.SortOrder
   common_areas_budget?: Prisma.SortOrder
   units_renovations_budget?: Prisma.SortOrder
   elevator_maintnance_budget?: Prisma.SortOrder
   roof_maintnance_budget?: Prisma.SortOrder
   fire_safety_budget?: Prisma.SortOrder
   outdoor_area_budget?: Prisma.SortOrder
-  total_capex_budget?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
@@ -771,14 +717,12 @@ export type CapexSumOrderByAggregateInput = {
   roof_maintnance_actuals?: Prisma.SortOrder
   fire_safety_actuals?: Prisma.SortOrder
   outdoor_area_actuals?: Prisma.SortOrder
-  total_capex_actuals?: Prisma.SortOrder
   common_areas_budget?: Prisma.SortOrder
   units_renovations_budget?: Prisma.SortOrder
   elevator_maintnance_budget?: Prisma.SortOrder
   roof_maintnance_budget?: Prisma.SortOrder
   fire_safety_budget?: Prisma.SortOrder
   outdoor_area_budget?: Prisma.SortOrder
-  total_capex_budget?: Prisma.SortOrder
 }
 
 export type CapexCreateNestedManyWithoutAssetInput = {
@@ -833,14 +777,12 @@ export type CapexCreateWithoutAssetInput = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -855,14 +797,12 @@ export type CapexUncheckedCreateWithoutAssetInput = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -906,14 +846,12 @@ export type CapexScalarWhereInput = {
   roof_maintnance_actuals?: Prisma.IntFilter<"Capex"> | number
   fire_safety_actuals?: Prisma.IntFilter<"Capex"> | number
   outdoor_area_actuals?: Prisma.IntFilter<"Capex"> | number
-  total_capex_actuals?: Prisma.IntFilter<"Capex"> | number
   common_areas_budget?: Prisma.IntFilter<"Capex"> | number
   units_renovations_budget?: Prisma.IntFilter<"Capex"> | number
   elevator_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
   roof_maintnance_budget?: Prisma.IntFilter<"Capex"> | number
   fire_safety_budget?: Prisma.IntFilter<"Capex"> | number
   outdoor_area_budget?: Prisma.IntFilter<"Capex"> | number
-  total_capex_budget?: Prisma.IntFilter<"Capex"> | number
   created_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Capex"> | Date | string
   assetId?: Prisma.StringFilter<"Capex"> | string
@@ -929,14 +867,12 @@ export type CapexCreateManyAssetInput = {
   roof_maintnance_actuals: number
   fire_safety_actuals: number
   outdoor_area_actuals: number
-  total_capex_actuals: number
   common_areas_budget: number
   units_renovations_budget: number
   elevator_maintnance_budget: number
   roof_maintnance_budget: number
   fire_safety_budget: number
   outdoor_area_budget: number
-  total_capex_budget: number
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -951,14 +887,12 @@ export type CapexUpdateWithoutAssetInput = {
   roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
   units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
   elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -973,14 +907,12 @@ export type CapexUncheckedUpdateWithoutAssetInput = {
   roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
   units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
   elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -995,14 +927,12 @@ export type CapexUncheckedUpdateManyWithoutAssetInput = {
   roof_maintnance_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_actuals?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_actuals?: Prisma.IntFieldUpdateOperationsInput | number
   common_areas_budget?: Prisma.IntFieldUpdateOperationsInput | number
   units_renovations_budget?: Prisma.IntFieldUpdateOperationsInput | number
   elevator_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   roof_maintnance_budget?: Prisma.IntFieldUpdateOperationsInput | number
   fire_safety_budget?: Prisma.IntFieldUpdateOperationsInput | number
   outdoor_area_budget?: Prisma.IntFieldUpdateOperationsInput | number
-  total_capex_budget?: Prisma.IntFieldUpdateOperationsInput | number
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1019,14 +949,12 @@ export type CapexSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   roof_maintnance_actuals?: boolean
   fire_safety_actuals?: boolean
   outdoor_area_actuals?: boolean
-  total_capex_actuals?: boolean
   common_areas_budget?: boolean
   units_renovations_budget?: boolean
   elevator_maintnance_budget?: boolean
   roof_maintnance_budget?: boolean
   fire_safety_budget?: boolean
   outdoor_area_budget?: boolean
-  total_capex_budget?: boolean
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
@@ -1043,14 +971,12 @@ export type CapexSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   roof_maintnance_actuals?: boolean
   fire_safety_actuals?: boolean
   outdoor_area_actuals?: boolean
-  total_capex_actuals?: boolean
   common_areas_budget?: boolean
   units_renovations_budget?: boolean
   elevator_maintnance_budget?: boolean
   roof_maintnance_budget?: boolean
   fire_safety_budget?: boolean
   outdoor_area_budget?: boolean
-  total_capex_budget?: boolean
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
@@ -1067,14 +993,12 @@ export type CapexSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   roof_maintnance_actuals?: boolean
   fire_safety_actuals?: boolean
   outdoor_area_actuals?: boolean
-  total_capex_actuals?: boolean
   common_areas_budget?: boolean
   units_renovations_budget?: boolean
   elevator_maintnance_budget?: boolean
   roof_maintnance_budget?: boolean
   fire_safety_budget?: boolean
   outdoor_area_budget?: boolean
-  total_capex_budget?: boolean
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
@@ -1091,20 +1015,18 @@ export type CapexSelectScalar = {
   roof_maintnance_actuals?: boolean
   fire_safety_actuals?: boolean
   outdoor_area_actuals?: boolean
-  total_capex_actuals?: boolean
   common_areas_budget?: boolean
   units_renovations_budget?: boolean
   elevator_maintnance_budget?: boolean
   roof_maintnance_budget?: boolean
   fire_safety_budget?: boolean
   outdoor_area_budget?: boolean
-  total_capex_budget?: boolean
   created_at?: boolean
   updated_at?: boolean
   assetId?: boolean
 }
 
-export type CapexOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "asset_name" | "capex_year" | "common_areas_actuals" | "units_renovations_actuals" | "elevator_maintnance_actuals" | "roof_maintnance_actuals" | "fire_safety_actuals" | "outdoor_area_actuals" | "total_capex_actuals" | "common_areas_budget" | "units_renovations_budget" | "elevator_maintnance_budget" | "roof_maintnance_budget" | "fire_safety_budget" | "outdoor_area_budget" | "total_capex_budget" | "created_at" | "updated_at" | "assetId", ExtArgs["result"]["capex"]>
+export type CapexOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "asset_name" | "capex_year" | "common_areas_actuals" | "units_renovations_actuals" | "elevator_maintnance_actuals" | "roof_maintnance_actuals" | "fire_safety_actuals" | "outdoor_area_actuals" | "common_areas_budget" | "units_renovations_budget" | "elevator_maintnance_budget" | "roof_maintnance_budget" | "fire_safety_budget" | "outdoor_area_budget" | "created_at" | "updated_at" | "assetId", ExtArgs["result"]["capex"]>
 export type CapexInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }
@@ -1130,14 +1052,12 @@ export type $CapexPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     roof_maintnance_actuals: number
     fire_safety_actuals: number
     outdoor_area_actuals: number
-    total_capex_actuals: number
     common_areas_budget: number
     units_renovations_budget: number
     elevator_maintnance_budget: number
     roof_maintnance_budget: number
     fire_safety_budget: number
     outdoor_area_budget: number
-    total_capex_budget: number
     created_at: Date
     updated_at: Date
     assetId: string
@@ -1574,14 +1494,12 @@ export interface CapexFieldRefs {
   readonly roof_maintnance_actuals: Prisma.FieldRef<"Capex", 'Int'>
   readonly fire_safety_actuals: Prisma.FieldRef<"Capex", 'Int'>
   readonly outdoor_area_actuals: Prisma.FieldRef<"Capex", 'Int'>
-  readonly total_capex_actuals: Prisma.FieldRef<"Capex", 'Int'>
   readonly common_areas_budget: Prisma.FieldRef<"Capex", 'Int'>
   readonly units_renovations_budget: Prisma.FieldRef<"Capex", 'Int'>
   readonly elevator_maintnance_budget: Prisma.FieldRef<"Capex", 'Int'>
   readonly roof_maintnance_budget: Prisma.FieldRef<"Capex", 'Int'>
   readonly fire_safety_budget: Prisma.FieldRef<"Capex", 'Int'>
   readonly outdoor_area_budget: Prisma.FieldRef<"Capex", 'Int'>
-  readonly total_capex_budget: Prisma.FieldRef<"Capex", 'Int'>
   readonly created_at: Prisma.FieldRef<"Capex", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"Capex", 'DateTime'>
   readonly assetId: Prisma.FieldRef<"Capex", 'String'>

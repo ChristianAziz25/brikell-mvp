@@ -81,7 +81,7 @@ export default function MyAssets() {
   const triColumns: ColumnDef<TableRow>[] = useMemo(
     () => [
       {
-        id: "metric-group",
+        id: "tri-group",
         header: "Line Item",
         size: COLUMN_WIDTHS.metric,
         minSize: COLUMN_WIDTHS.metric,
@@ -283,17 +283,17 @@ export default function MyAssets() {
   const capexColumns: ColumnDef<TableRow>[] = useMemo(
     () => [
       {
-        id: "metric-group",
+        id: "capex-group",
         header: "Capital Expenditures (CapEx)",
         size: COLUMN_WIDTHS.metric,
         minSize: COLUMN_WIDTHS.metric,
+        footer: () => <div className="text-left w-40">Total</div>,
         columns: [
           {
             accessorKey: "metric",
             header: "",
             size: COLUMN_WIDTHS.metric,
             minSize: COLUMN_WIDTHS.metric,
-            footer: () => <div className="text-center w-40">Total</div>,
             cell: ({ row }) => (
               <div className="text-left w-40">{row.original.metric}</div>
             ),
@@ -353,7 +353,7 @@ export default function MyAssets() {
   const opexColumns: ColumnDef<TableRow>[] = useMemo(
     () => [
       {
-        id: "metric-group",
+        id: "opex-group",
         header: "Operating Expenses (OPEX)",
         size: COLUMN_WIDTHS.metric,
         minSize: COLUMN_WIDTHS.metric,
@@ -435,6 +435,173 @@ export default function MyAssets() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const netIncomeData: TableRow[] = useMemo(() => {
+    if (!activeAsset) return [];
+    return [
+      {
+        metric: "Net Income",
+        ...years.reduce((acc, year) => {
+          acc[year] = [0, 0];
+          return acc;
+        }, {} as Record<string, number[]>),
+      },
+    ];
+  }, [activeAsset, years]);
+
+  const netIncomeColumns: ColumnDef<TableRow>[] = useMemo(
+    () => [
+      {
+        id: "net-income-group",
+        header: "Net Income",
+        size: COLUMN_WIDTHS.metric,
+        minSize: COLUMN_WIDTHS.metric,
+        columns: [
+          {
+            accessorKey: "metric",
+            header: "",
+            size: COLUMN_WIDTHS.metric,
+            minSize: COLUMN_WIDTHS.metric,
+            cell: ({ row }) => (
+              <div className="text-left w-40">{row.original.metric}</div>
+            ),
+          },
+        ],
+      },
+      ...years.map((year) => ({
+        id: `${year}-group`,
+        header: () => {
+          return (
+            <div className="flex flex-row gap-8">
+              <div className="text-center w-full">{year}</div>
+              <div className="text-center w-full">{year}</div>
+            </div>
+          );
+        },
+        size: COLUMN_WIDTHS.year * 2,
+        minSize: COLUMN_WIDTHS.year * 2,
+        columns: [
+          {
+            id: `${year}-actual`,
+            header: () => <div className="text-center">Actual</div>,
+            size: COLUMN_WIDTHS.year,
+            minSize: COLUMN_WIDTHS.year,
+            cell: () => {
+              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
+              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
+
+              const triAmountRow = triRows.find(
+                (r) => r.original.metric === "triAmount"
+              );
+              const vacancyLossRow = triRows.find(
+                (r) => r.original.metric === "vacancyLoss"
+              );
+
+              const triBase = triAmountRow?.original[year];
+              const vacancyBase = vacancyLossRow?.original[year];
+
+              const triNumber =
+                typeof triBase === "number"
+                  ? triBase
+                  : Array.isArray(triBase)
+                  ? Number(triBase[0])
+                  : undefined;
+
+              const vacancyNumber =
+                typeof vacancyBase === "number"
+                  ? vacancyBase
+                  : Array.isArray(vacancyBase)
+                  ? Number(vacancyBase[0])
+                  : undefined;
+
+              const gri =
+                triNumber != null && vacancyNumber != null
+                  ? triNumber - vacancyNumber
+                  : undefined;
+
+              const totalOpex = opexRows.reduce((sum, row) => {
+                const value = row.original[year];
+                const actual = Array.isArray(value) ? value[0] : value;
+                const numValue =
+                  typeof actual === "number" ? actual : Number(actual) || 0;
+                return sum + numValue;
+              }, 0);
+
+              const netIncome = gri != null ? gri - totalOpex : undefined;
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">{netIncome ?? "-"}</span>
+                </div>
+              );
+            },
+          },
+          {
+            id: `${year}-budget`,
+            header: () => <div className="text-center">Budget</div>,
+            size: COLUMN_WIDTHS.year,
+            minSize: COLUMN_WIDTHS.year,
+            cell: () => {
+              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
+              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
+
+              const triAmountRow = triRows.find(
+                (r) => r.original.metric === "triAmount"
+              );
+              const vacancyLossRow = triRows.find(
+                (r) => r.original.metric === "vacancyLoss"
+              );
+
+              const triBase = triAmountRow?.original[year];
+              const vacancyBase = vacancyLossRow?.original[year];
+
+              const triNumber =
+                typeof triBase === "number"
+                  ? triBase
+                  : Array.isArray(triBase)
+                  ? Number(triBase[1])
+                  : undefined;
+
+              const vacancyNumber =
+                typeof vacancyBase === "number"
+                  ? vacancyBase
+                  : Array.isArray(vacancyBase)
+                  ? Number(vacancyBase[1])
+                  : undefined;
+
+              const gri =
+                triNumber != null && vacancyNumber != null
+                  ? triNumber - vacancyNumber
+                  : undefined;
+
+              const totalOpex = opexRows.reduce((sum, row) => {
+                const value = row.original[year];
+                const budget = Array.isArray(value) ? value[1] : value;
+                const numValue =
+                  typeof budget === "number" ? budget : Number(budget) || 0;
+                return sum + numValue;
+              }, 0);
+
+              const netIncome = gri != null ? gri - totalOpex : undefined;
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">{netIncome ?? "-"}</span>
+                </div>
+              );
+            },
+          },
+        ],
+      })),
+    ],
+    [years, triTable, opexTable]
+  );
+
+  const netIncomeTable = useReactTable({
+    data: netIncomeData,
+    columns: netIncomeColumns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
@@ -461,13 +628,22 @@ export default function MyAssets() {
           </section>
 
           <section className="space-y-3">
-            <section className="space-y-3">
-              <Table
-                table={opexTable}
-                columnCount={opexTable.getAllLeafColumns().length}
-                isLoading={isLoading}
-              />
-            </section>
+            <Table
+              table={opexTable}
+              columnCount={opexTable.getAllLeafColumns().length}
+              isLoading={isLoading}
+            />
+          </section>
+
+          <section className="space-y-3">
+            <Table
+              table={netIncomeTable}
+              columnCount={netIncomeTable.getAllLeafColumns().length}
+              isLoading={isLoading}
+            />
+          </section>
+
+          <section className="space-y-3">
             <Table
               table={capexTable}
               columnCount={capexTable.getAllLeafColumns().length}

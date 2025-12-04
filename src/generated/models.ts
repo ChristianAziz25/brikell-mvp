@@ -8,9 +8,9 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Asset.js'
-export type * from './models/TheoreticalRentalIncome.js'
-export type * from './models/Capex.js'
-export type * from './models/Opex.js'
-export type * from './models/RentRollUnit.js'
-export type * from './commonInputTypes.js'
+export type * from './models/Asset'
+export type * from './models/TheoreticalRentalIncome'
+export type * from './models/Capex'
+export type * from './models/Opex'
+export type * from './models/RentRollUnit'
+export type * from './commonInputTypes'

@@ -7,15 +7,6 @@ import {
   theoreticalRentalIncData,
 } from "./fakeData";
 
-const parseMoneyToInt = (value: number | string): number => {
-  if (typeof value === "number") {
-    return Math.round(value);
-  }
-  const cleaned = value.replace(/[^\d]/g, "");
-  const parsed = parseInt(cleaned, 10);
-  return Number.isNaN(parsed) ? 0 : parsed;
-};
-
 async function main() {
   // Clear existing data in correct FK order
   await prisma.rentRollUnit.deleteMany();
@@ -120,14 +111,12 @@ async function main() {
         roof_maintnance_actuals: row.roof_maintnance_actuals,
         fire_safety_actuals: row.fire_safety_actuals,
         outdoor_area_actuals: row.outdoor_area_actuals,
-        total_capex_actuals: parseMoneyToInt(row.total_capex_actuals),
         common_areas_budget: row.common_areas_budget,
         units_renovations_budget: row.units_renovations_budget,
         elevator_maintnance_budget: row.elevator_maintnance_budget,
         roof_maintnance_budget: row.roof_maintnance_budget,
         fire_safety_budget: row.fire_safety_budget,
         outdoor_area_budget: row.outdoor_area_budget,
-        total_capex_budget: parseMoneyToInt(row.total_capex_budget),
       },
     });
   }
@@ -153,7 +142,6 @@ async function main() {
         actual_service_subscriptions: row.actual_service_subscriptions,
         actual_common_consumption: row.actual_common_consumption,
         actual_home_owner_association: row.actual_home_owner_association,
-        actual_total_opex: parseMoneyToInt(row.actuals_total_opex),
         budget_delinquency: row.budget_delinquency,
         budget_property_management_fee: row.budget_property_management_fee,
         budget_leasing_fee: row.budget_leasing_fee,
@@ -165,7 +153,6 @@ async function main() {
         budget_service_subscriptions: row.budget_service_subscriptions,
         budget_common_consumption: row.budget_common_consumption,
         budget_home_owner_association: row.budget_home_owner_association,
-        budget_total_opex: parseMoneyToInt(row.budget_total_opex),
       },
     });
   }
