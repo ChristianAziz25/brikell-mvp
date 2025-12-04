@@ -98,6 +98,7 @@ export function Table<TData extends RowData>({
             {(() => {
               const footerGroups = table.getFooterGroups();
               const leafGroup = footerGroups[footerGroups.length - 1];
+              console.log(leafGroup);
 
               if (!leafGroup) return null;
 

@@ -19,36 +19,131 @@ interface TableData {
     opex: TableRow[];
 }
 
+const parseNumber = (raw: unknown): number | undefined => {
+    if (raw === undefined || raw === null) return undefined;
+    if (typeof raw === "number") return raw;
+    const first = String(raw).split(",")[0] ?? "";
+    const parsed = Number.parseFloat(first);
+    return Number.isNaN(parsed) ? undefined : parsed;
+};
+
+const buildActualBudgetArray = (
+    actualRaw: unknown,
+    budgetRaw: unknown
+): number[] | undefined => {
+    const actualParsed = parseNumber(actualRaw);
+    const budgetParsed = parseNumber(budgetRaw);
+
+    const arr: number[] = [];
+
+    if (actualParsed !== undefined) {
+        arr[0] = actualParsed;
+    }
+    if (budgetParsed !== undefined) {
+        arr[1] = budgetParsed;
+    }
+
+    return arr.length > 0 ? arr : undefined;
+};
+
+const hasActualBudgetPattern = (keys: string[]): boolean => {
+    const hasCapexPattern = keys.some(
+        (key) => key.endsWith("_actuals") || key.endsWith("_budget")
+    );
+    
+    const hasOpexPattern = keys.some(
+        (key) => key.startsWith("actual_") || key.startsWith("budget_")
+    );
+
+    return hasCapexPattern || hasOpexPattern;
+};
+
 export async function getTableData(asset: Asset & { tri: TheoreticalRentalIncome[] } & { capex: Capex[] } & { opex: Opex[] }): Promise<TableData> {
     const triTableData: TableRow[] = [];
     const capexTableData: TableRow[] = [];
     const opexTableData: TableRow[] = [];
-    const allTriKeys = Object.keys(asset.tri[0]);
-    const allCapexKeys = Object.keys(asset.capex[0]);
-    const allOpexKeys = Object.keys(asset.opex[0]);
+    const allTriKeys = Object.keys(asset.tri[0] ?? {});
+    const allCapexKeys = Object.keys(asset.capex[0] ?? {});
+    const allOpexKeys = Object.keys(asset.opex[0] ?? {});
 
     const triMetricKeys = allTriKeys.filter((key) => !triExcluded.includes(key));
     const capexMetricKeys = allCapexKeys.filter((key) => !capexExcluded.includes(key));
     const opexMetricKeys = allOpexKeys.filter((key) => !opexExcluded.includes(key));
 
-    const parseNumber = (raw: unknown): number | undefined => {
-        if (raw === undefined || raw === null) return undefined;
-        if (typeof raw === "number") return raw;
-        const first = String(raw).split(",")[0] ?? "";
-        const parsed = Number.parseFloat(first);
-        return Number.isNaN(parsed) ? undefined : parsed;
-    };
+    const triHasActualBudget = hasActualBudgetPattern(triMetricKeys);
 
     triMetricKeys.forEach((key) => {
+        if (triHasActualBudget) {
+            const segments = key.split("_");
+            const lastSegment = segments[segments.length - 1];
+            const firstSegment = segments[0];
+            const mainKey = segments.slice(0, -1).join("_");
+            const mainKeyFromFirst = segments.slice(1).join("_");
+
+            if (lastSegment === "actuals" || lastSegment === "budget") {
+                if (lastSegment === "budget") {
+                    const actualKeyForMain = `${mainKey}_actuals`;
+                    if (allTriKeys.includes(actualKeyForMain)) {
+                        return;
+                    }
+                }
+
+                const actualKey = `${mainKey}_actuals`;
+                const budgetKey = `${mainKey}_budget`;
+
+                triTableData.push({
+                    metric: mainKey,
+                    ...asset.tri.reduce((acc, tri) => {
+                        const yearKey = tri.triYear.toString();
+                        const actualRaw = tri[actualKey as keyof TheoreticalRentalIncome];
+                        const budgetRaw = tri[budgetKey as keyof TheoreticalRentalIncome];
+                        const arr = buildActualBudgetArray(actualRaw, budgetRaw);
+                        if (arr) {
+                            acc[yearKey] = arr;
+                        }
+                        return acc;
+                    }, {} as Record<string, number[]>),
+                });
+                return;
+            }
+
+            if (firstSegment === "actual" || firstSegment === "budget") {
+                if (firstSegment === "budget") {
+                    const actualKeyForMain = `actual_${mainKeyFromFirst}`;
+                    if (allTriKeys.includes(actualKeyForMain)) {
+                        return;
+                    }
+                }
+
+                const actualKey = `actual_${mainKeyFromFirst}`;
+                const budgetKey = `budget_${mainKeyFromFirst}`;
+
+                triTableData.push({
+                    metric: mainKeyFromFirst,
+                    ...asset.tri.reduce((acc, tri) => {
+                        const yearKey = tri.triYear.toString();
+                        const actualRaw = tri[actualKey as keyof TheoreticalRentalIncome];
+                        const budgetRaw = tri[budgetKey as keyof TheoreticalRentalIncome];
+                        const arr = buildActualBudgetArray(actualRaw, budgetRaw);
+                        if (arr) {
+                            acc[yearKey] = arr;
+                        }
+                        return acc;
+                    }, {} as Record<string, number[]>),
+                });
+                return;
+            }
+        }
+
         triTableData.push({
             metric: key,
             ...asset.tri.reduce((acc, tri) => {
                 const value = tri[key as keyof TheoreticalRentalIncome];
                 if (typeof value === "number") {
-                    acc[tri.triYear.toString()] = value;
+                    acc[tri.triYear.toString()] = [value, value];
                 }
                 return acc;
-            }, {} as Record<string, number>),
+            }, {} as Record<string, number[]>),
         });
     });
 
@@ -57,7 +152,6 @@ export async function getTableData(asset: Asset & { tri: TheoreticalRentalIncome
         const lastSegment = segments[segments.length - 1];
         const mainKey = segments.slice(0, -1).join("_");
 
-        // If key is not an actuals/budget metric, keep the simple scalar behaviour.
         if (lastSegment !== "actuals" && lastSegment !== "budget") {
             capexTableData.push({
                 metric: key,
@@ -74,8 +168,6 @@ export async function getTableData(asset: Asset & { tri: TheoreticalRentalIncome
             return;
         }
 
-        // Avoid creating the row twice: if we're on a "*_budget" field and there
-        // is a corresponding "*_actuals" key, handle this mainKey when we see that.
         if (lastSegment === "budget") {
             const actualKeyForMain = `${mainKey}_actuals`;
             if (allCapexKeys.includes(actualKeyForMain)) {
@@ -90,27 +182,12 @@ export async function getTableData(asset: Asset & { tri: TheoreticalRentalIncome
             metric: mainKey,
             ...asset.capex.reduce((acc, capex) => {
                 const yearKey = capex.capex_year.toString();
-
                 const actualRaw = capex[actualKey as keyof Capex];
                 const budgetRaw = capex[budgetKey as keyof Capex];
-
-                const actualParsed = parseNumber(actualRaw);
-                const budgetParsed = parseNumber(budgetRaw);
-
-                const arr: number[] = [];
-
-                // Ensure "actual" is always index 0 and "budget" is index 1.
-                if (actualParsed !== undefined) {
-                    arr[0] = actualParsed;
-                }
-                if (budgetParsed !== undefined) {
-                    arr[1] = budgetParsed;
-                }
-
-                if (arr.length > 0) {
+                const arr = buildActualBudgetArray(actualRaw, budgetRaw);
+                if (arr) {
                     acc[yearKey] = arr;
                 }
-
                 return acc;
             }, {} as Record<string, number[]>),
         });
@@ -151,26 +228,12 @@ export async function getTableData(asset: Asset & { tri: TheoreticalRentalIncome
             metric: mainKey,
             ...asset.opex.reduce((acc, opex) => {
                 const yearKey = opex.opex_year.toString();
-
                 const actualRaw = opex[actualKey as keyof Opex];
                 const budgetRaw = opex[budgetKey as keyof Opex];
-
-                const actualParsed = parseNumber(actualRaw);
-                const budgetParsed = parseNumber(budgetRaw);
-
-                const arr: number[] = [];
-
-                if (actualParsed !== undefined) {
-                    arr[0] = actualParsed;
-                }
-                if (budgetParsed !== undefined) {
-                    arr[1] = budgetParsed;
-                }
-
-                if (arr.length > 0) {
+                const arr = buildActualBudgetArray(actualRaw, budgetRaw);
+                if (arr) {
                     acc[yearKey] = arr;
                 }
-
                 return acc;
             }, {} as Record<string, number[]>),
         });

@@ -85,13 +85,13 @@ export default function MyAssets() {
         header: "Line Item",
         size: COLUMN_WIDTHS.metric,
         minSize: COLUMN_WIDTHS.metric,
+        footer: () => <div className="text-left w-40">GRI</div>,
         columns: [
           {
             accessorKey: "metric",
             header: "", // second-row header under Metric should be empty
             size: COLUMN_WIDTHS.metric,
             minSize: COLUMN_WIDTHS.metric,
-            footer: () => <div className="text-center w-40">GRI</div>,
             cell: ({ row }) => (
               <div className="text-left w-40">{row.original.metric}</div>
             ),
@@ -110,6 +110,63 @@ export default function MyAssets() {
         },
         size: COLUMN_WIDTHS.year * 2,
         minSize: COLUMN_WIDTHS.year * 2,
+        footer: ({ table }: { table: TanStackTable<TableRow> }) => {
+          const rows = table.getRowModel().rows as Row<TableRow>[];
+          const triAmountRow = rows.find(
+            (r) => r.original.metric === "triAmount"
+          );
+          const vacancyLossRow = rows.find(
+            (r) => r.original.metric === "vacancyLoss"
+          );
+
+          console.log(triAmountRow?.original[year]);
+          const [triBase1, triBase2] = triAmountRow?.original[year] as number[];
+          const [vacancyBase1, vacancyBase2] = vacancyLossRow?.original[
+            year
+          ] as number[];
+
+          const triNumber1 =
+            typeof triBase1 === "number"
+              ? triBase1
+              : Array.isArray(triBase1)
+              ? Number(triBase1[0])
+              : undefined;
+          const triNumber2 =
+            typeof triBase2 === "number"
+              ? triBase2
+              : Array.isArray(triBase2)
+              ? Number(triBase2[0])
+              : undefined;
+
+          const vacancyNumber1 =
+            typeof vacancyBase1 === "number"
+              ? vacancyBase1
+              : Array.isArray(vacancyBase1)
+              ? Number(vacancyBase1[0])
+              : undefined;
+          const vacancyNumber2 =
+            typeof vacancyBase2 === "number"
+              ? vacancyBase2
+              : Array.isArray(vacancyBase2)
+              ? Number(vacancyBase2[0])
+              : undefined;
+
+          const gri1 =
+            triNumber1 != null && vacancyNumber1 != null
+              ? triNumber1 - vacancyNumber1
+              : undefined;
+          const gri2 =
+            triNumber2 != null && vacancyNumber2 != null
+              ? triNumber2 - vacancyNumber2
+              : undefined;
+
+          return (
+            <div className="flex flex-row gap-8">
+              <div className="text-center w-full">{gri1 ?? "-"}</div>
+              <div className="text-center w-full">{gri2 ?? "-"}</div>
+            </div>
+          );
+        },
         columns: [
           {
             id: `${year}-actual`,
@@ -117,7 +174,7 @@ export default function MyAssets() {
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
             footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              // GRI (Gross Rental Income) = TRI - vacancyLoss
+              // GRI (Gross Rental Income) = TRI - vacancyLoss for Actual
               const rows = table.getRowModel().rows as Row<TableRow>[];
               const triAmountRow = rows.find(
                 (r) => r.original.metric === "triAmount"
@@ -156,9 +213,10 @@ export default function MyAssets() {
             },
             cell: ({ row }: { row: Row<TableRow> }) => {
               const value = row.original[year];
+              const actual = Array.isArray(value) ? value[0] : value;
               return (
                 <div className="text-center max-w-40">
-                  <span className="">{value ?? "-"}</span>
+                  <span className="">{actual ?? "-"}</span>
                 </div>
               );
             },
@@ -169,7 +227,7 @@ export default function MyAssets() {
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
             footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              // Show GRI in both Actual and Budget footer columns for alignment
+              // GRI (Gross Rental Income) = TRI - vacancyLoss for Budget
               const rows = table.getRowModel().rows as Row<TableRow>[];
               const triAmountRow = rows.find(
                 (r) => r.original.metric === "triAmount"
@@ -185,14 +243,14 @@ export default function MyAssets() {
                 typeof triBase === "number"
                   ? triBase
                   : Array.isArray(triBase)
-                  ? Number(triBase[0])
+                  ? Number(triBase[1])
                   : undefined;
 
               const vacancyNumber =
                 typeof vacancyBase === "number"
                   ? vacancyBase
                   : Array.isArray(vacancyBase)
-                  ? Number(vacancyBase[0])
+                  ? Number(vacancyBase[1])
                   : undefined;
 
               const gri =
@@ -208,9 +266,10 @@ export default function MyAssets() {
             },
             cell: ({ row }: { row: Row<TableRow> }) => {
               const value = row.original[year];
+              const budget = Array.isArray(value) ? value[1] : value;
               return (
                 <div className="text-center max-w-40">
-                  <span className="">{value ?? "-"}</span>
+                  <span className="">{budget ?? "-"}</span>
                 </div>
               );
             },
@@ -332,7 +391,7 @@ export default function MyAssets() {
               const value = row.original[year];
               const actual = Array.isArray(value) ? value[0] : value;
               return (
-                <div className="text-right max-w-40">
+                <div className="text-center max-w-40">
                   <span className="">{actual ?? "-"}</span>
                 </div>
               );
@@ -347,7 +406,7 @@ export default function MyAssets() {
               const value = row.original[year];
               const budget = Array.isArray(value) ? value[1] : undefined;
               return (
-                <div className="text-right max-w-40">
+                <div className="text-center max-w-40">
                   <span className="">{budget ?? "-"}</span>
                 </div>
               );
