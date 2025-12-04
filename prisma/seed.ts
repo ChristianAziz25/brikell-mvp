@@ -1,6 +1,11 @@
 import prisma from "@/lib/prisma/client";
 import { RentStatus } from "../src/generated/enums";
-import { capexData, opexData, rentRollData } from "./fakeData";
+import {
+  capexData,
+  opexData,
+  rentRollData,
+  theoreticalRentalIncData,
+} from "./fakeData";
 
 const parseMoneyToInt = (value: number | string): number => {
   if (typeof value === "number") {
@@ -161,6 +166,23 @@ async function main() {
         budget_common_consumption: row.budget_common_consumption,
         budget_home_owner_association: row.budget_home_owner_association,
         budget_total_opex: parseMoneyToInt(row.budget_total_opex),
+      },
+    });
+  }
+
+  // Seed Theoretical Rental Income (TRI) using the static fake data
+  // The data in `theoreticalRentalIncData` is already varied to look realistic,
+  // so we just insert it as-is.
+  for (const row of theoreticalRentalIncData) {
+    const assetId = assetIdByName.get(row.asset_name);
+    if (!assetId) continue;
+
+    await prisma.theoreticalRentalIncome.create({
+      data: {
+        assetId,
+        triYear: row.tri_year,
+        triAmount: row.tri_amount,
+        vacancyLoss: row.vacancy_loss,
       },
     });
   }

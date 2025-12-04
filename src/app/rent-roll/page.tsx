@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { RentRollUnitModel } from "@/generated/models/RentRollUnit";
 import { cn } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -25,7 +26,7 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDown, DownloadIcon, Plus, Upload, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
-import type { RentRollUnit, RentStatus } from "../type/rent-roll";
+import type { RentStatus } from "../type/rent-roll";
 
 const rentStatusVariants: Record<RentStatus, string> = {
   occupied: "bg-foreground text-background border-0",
@@ -33,7 +34,7 @@ const rentStatusVariants: Record<RentStatus, string> = {
   terminated: "bg-muted text-muted-foreground border border-border",
 };
 
-async function fetchRentRollData(): Promise<RentRollUnit[]> {
+async function fetchRentRollData(): Promise<RentRollUnitModel[]> {
   const response = await fetch("/api/rent-roll");
 
   if (!response.ok) {
@@ -47,7 +48,7 @@ async function fetchRentRollData(): Promise<RentRollUnit[]> {
     throw new Error("Invalid response format");
   }
 
-  return data as RentRollUnit[];
+  return data as RentRollUnitModel[];
 }
 
 export default function Page() {
@@ -59,7 +60,7 @@ export default function Page() {
   const [showFilter, setShowFilter] = useState(false);
   const [isUploading, setIsUploading] = useState(false); // <- new state
 
-  const { data: rentRollData = [], isLoading } = useQuery<RentRollUnit[]>({
+  const { data: rentRollData = [], isLoading } = useQuery<RentRollUnitModel[]>({
     queryKey: ["rentRollData"],
     queryFn: fetchRentRollData,
   });
@@ -88,7 +89,7 @@ export default function Page() {
     }
   };
 
-  const columns = useMemo<ColumnDef<RentRollUnit>[]>(
+  const columns = useMemo<ColumnDef<RentRollUnitModel>[]>(
     () => [
       {
         accessorKey: "unit_id",

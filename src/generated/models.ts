@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Asset.js'
+export type * from './models/TheoreticalRentalIncome.js'
 export type * from './models/Capex.js'
 export type * from './models/Opex.js'
 export type * from './models/RentRollUnit.js'

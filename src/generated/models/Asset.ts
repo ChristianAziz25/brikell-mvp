@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Asset
@@ -198,6 +198,7 @@ export type AssetWhereInput = {
   country?: Prisma.StringNullableFilter<"Asset"> | string | null
   created_at?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Asset"> | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeListRelationFilter
   capex?: Prisma.CapexListRelationFilter
   opex?: Prisma.OpexListRelationFilter
   rentRoll?: Prisma.RentRollUnitListRelationFilter
@@ -211,6 +212,7 @@ export type AssetOrderByWithRelationInput = {
   country?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
+  tri?: Prisma.TheoreticalRentalIncomeOrderByRelationAggregateInput
   capex?: Prisma.CapexOrderByRelationAggregateInput
   opex?: Prisma.OpexOrderByRelationAggregateInput
   rentRoll?: Prisma.RentRollUnitOrderByRelationAggregateInput
@@ -227,6 +229,7 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   country?: Prisma.StringNullableFilter<"Asset"> | string | null
   created_at?: Prisma.DateTimeFilter<"Asset"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"Asset"> | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeListRelationFilter
   capex?: Prisma.CapexListRelationFilter
   opex?: Prisma.OpexListRelationFilter
   rentRoll?: Prisma.RentRollUnitListRelationFilter
@@ -266,6 +269,7 @@ export type AssetCreateInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
   capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
@@ -279,6 +283,7 @@ export type AssetUncheckedCreateInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
   capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
@@ -292,6 +297,7 @@ export type AssetUpdateInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
   capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
@@ -305,6 +311,7 @@ export type AssetUncheckedUpdateInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
   capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
@@ -387,6 +394,20 @@ export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
 
+export type AssetCreateNestedOneWithoutTriInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutTriInput, Prisma.AssetUncheckedCreateWithoutTriInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutTriInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneRequiredWithoutTriNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutTriInput, Prisma.AssetUncheckedCreateWithoutTriInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutTriInput
+  upsert?: Prisma.AssetUpsertWithoutTriInput
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutTriInput, Prisma.AssetUpdateWithoutTriInput>, Prisma.AssetUncheckedUpdateWithoutTriInput>
+}
+
 export type AssetCreateNestedOneWithoutCapexInput = {
   create?: Prisma.XOR<Prisma.AssetCreateWithoutCapexInput, Prisma.AssetUncheckedCreateWithoutCapexInput>
   connectOrCreate?: Prisma.AssetCreateOrConnectWithoutCapexInput
@@ -429,6 +450,74 @@ export type AssetUpdateOneRequiredWithoutRentRollNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutRentRollInput, Prisma.AssetUpdateWithoutRentRollInput>, Prisma.AssetUncheckedUpdateWithoutRentRollInput>
 }
 
+export type AssetCreateWithoutTriInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutTriInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutTriInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutTriInput, Prisma.AssetUncheckedCreateWithoutTriInput>
+}
+
+export type AssetUpsertWithoutTriInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutTriInput, Prisma.AssetUncheckedUpdateWithoutTriInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutTriInput, Prisma.AssetUncheckedCreateWithoutTriInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutTriInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutTriInput, Prisma.AssetUncheckedUpdateWithoutTriInput>
+}
+
+export type AssetUpdateWithoutTriInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutTriInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
+}
+
 export type AssetCreateWithoutCapexInput = {
   id?: string
   name: string
@@ -437,6 +526,7 @@ export type AssetCreateWithoutCapexInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
 }
@@ -449,6 +539,7 @@ export type AssetUncheckedCreateWithoutCapexInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
 }
@@ -477,6 +568,7 @@ export type AssetUpdateWithoutCapexInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
 }
@@ -489,6 +581,7 @@ export type AssetUncheckedUpdateWithoutCapexInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
 }
@@ -501,6 +594,7 @@ export type AssetCreateWithoutOpexInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
   capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
 }
@@ -513,6 +607,7 @@ export type AssetUncheckedCreateWithoutOpexInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
   capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
 }
@@ -541,6 +636,7 @@ export type AssetUpdateWithoutOpexInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
   capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
 }
@@ -553,6 +649,7 @@ export type AssetUncheckedUpdateWithoutOpexInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
   capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
 }
@@ -565,6 +662,7 @@ export type AssetCreateWithoutRentRollInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
   capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
 }
@@ -577,6 +675,7 @@ export type AssetUncheckedCreateWithoutRentRollInput = {
   country?: string | null
   created_at?: Date | string
   updated_at?: Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
   capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
 }
@@ -605,6 +704,7 @@ export type AssetUpdateWithoutRentRollInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
   capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
 }
@@ -617,6 +717,7 @@ export type AssetUncheckedUpdateWithoutRentRollInput = {
   country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
   capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
 }
@@ -627,12 +728,14 @@ export type AssetUncheckedUpdateWithoutRentRollInput = {
  */
 
 export type AssetCountOutputType = {
+  tri: number
   capex: number
   opex: number
   rentRoll: number
 }
 
 export type AssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tri?: boolean | AssetCountOutputTypeCountTriArgs
   capex?: boolean | AssetCountOutputTypeCountCapexArgs
   opex?: boolean | AssetCountOutputTypeCountOpexArgs
   rentRoll?: boolean | AssetCountOutputTypeCountRentRollArgs
@@ -646,6 +749,13 @@ export type AssetCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
    * Select specific fields to fetch from the AssetCountOutputType
    */
   select?: Prisma.AssetCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * AssetCountOutputType without action
+ */
+export type AssetCountOutputTypeCountTriArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TheoreticalRentalIncomeWhereInput
 }
 
 /**
@@ -678,6 +788,7 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   country?: boolean
   created_at?: boolean
   updated_at?: boolean
+  tri?: boolean | Prisma.Asset$triArgs<ExtArgs>
   capex?: boolean | Prisma.Asset$capexArgs<ExtArgs>
   opex?: boolean | Prisma.Asset$opexArgs<ExtArgs>
   rentRoll?: boolean | Prisma.Asset$rentRollArgs<ExtArgs>
@@ -716,6 +827,7 @@ export type AssetSelectScalar = {
 
 export type AssetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "address" | "city" | "country" | "created_at" | "updated_at", ExtArgs["result"]["asset"]>
 export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  tri?: boolean | Prisma.Asset$triArgs<ExtArgs>
   capex?: boolean | Prisma.Asset$capexArgs<ExtArgs>
   opex?: boolean | Prisma.Asset$opexArgs<ExtArgs>
   rentRoll?: boolean | Prisma.Asset$rentRollArgs<ExtArgs>
@@ -727,6 +839,7 @@ export type AssetIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
 export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Asset"
   objects: {
+    tri: Prisma.$TheoreticalRentalIncomePayload<ExtArgs>[]
     capex: Prisma.$CapexPayload<ExtArgs>[]
     opex: Prisma.$OpexPayload<ExtArgs>[]
     rentRoll: Prisma.$RentRollUnitPayload<ExtArgs>[]
@@ -1133,6 +1246,7 @@ readonly fields: AssetFieldRefs;
  */
 export interface Prisma__AssetClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  tri<T extends Prisma.Asset$triArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$triArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TheoreticalRentalIncomePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   capex<T extends Prisma.Asset$capexArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$capexArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CapexPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   opex<T extends Prisma.Asset$opexArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$opexArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpexPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rentRoll<T extends Prisma.Asset$rentRollArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$rentRollArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentRollUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1557,6 +1671,30 @@ export type AssetDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Limit how many Assets to delete.
    */
   limit?: number
+}
+
+/**
+ * Asset.tri
+ */
+export type Asset$triArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TheoreticalRentalIncome
+   */
+  select?: Prisma.TheoreticalRentalIncomeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TheoreticalRentalIncome
+   */
+  omit?: Prisma.TheoreticalRentalIncomeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TheoreticalRentalIncomeInclude<ExtArgs> | null
+  where?: Prisma.TheoreticalRentalIncomeWhereInput
+  orderBy?: Prisma.TheoreticalRentalIncomeOrderByWithRelationInput | Prisma.TheoreticalRentalIncomeOrderByWithRelationInput[]
+  cursor?: Prisma.TheoreticalRentalIncomeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TheoreticalRentalIncomeScalarFieldEnum | Prisma.TheoreticalRentalIncomeScalarFieldEnum[]
 }
 
 /**

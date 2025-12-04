@@ -7269,6 +7269,164 @@ export const opexData = [
     "budget_total_opex": "1.620.801"
   }
 ]
+
+export const theoreticalRentalIncData = [
+  {
+    "asset_name": "Gertrudehus",
+    "tri_year": 2025,
+    "tri_amount": 1035000,
+    "vacancy_loss": 52000,
+  },
+  {
+    "asset_name": "Gertrudehus",
+    "tri_year": 2026,
+    "tri_amount": 1060000,
+    "vacancy_loss": 61000,
+  },
+  {
+    "asset_name": "Gertrudehus",
+    "tri_year": 2027,
+    "tri_amount": 1088000,
+    "vacancy_loss": 59000,
+  },
+  {
+    "asset_name": "Gertrudehus",
+    "tri_year": 2028,
+    "tri_amount": 1112000,
+    "vacancy_loss": 65000,
+  },
+
+  // Emmahus – slightly higher growth, slightly lower vacancy
+  {
+    "asset_name": "Emmahus",
+    "tri_year": 2025,
+    "tri_amount": 980000,
+    "vacancy_loss": 42000,
+  },
+  {
+    "asset_name": "Emmahus",
+    "tri_year": 2026,
+    "tri_amount": 1015000,
+    "vacancy_loss": 46000,
+  },
+  {
+    "asset_name": "Emmahus",
+    "tri_year": 2027,
+    "tri_amount": 1048000,
+    "vacancy_loss": 51000,
+  },
+  {
+    "asset_name": "Emmahus",
+    "tri_year": 2028,
+    "tri_amount": 1082000,
+    "vacancy_loss": 54000,
+  },
+
+  // Green Square Garden – prime asset, higher TRI, lower vacancy
+  {
+    "asset_name": "Green Square Garden",
+    "tri_year": 2025,
+    "tri_amount": 1250000,
+    "vacancy_loss": 48000,
+  },
+  {
+    "asset_name": "Green Square Garden",
+    "tri_year": 2026,
+    "tri_amount": 1285000,
+    "vacancy_loss": 53000,
+  },
+  {
+    "asset_name": "Green Square Garden",
+    "tri_year": 2027,
+    "tri_amount": 1322000,
+    "vacancy_loss": 56000,
+  },
+  {
+    "asset_name": "Green Square Garden",
+    "tri_year": 2028,
+    "tri_amount": 1360000,
+    "vacancy_loss": 60000,
+  },
+
+  // Poppelstykket – mid-range asset, slightly higher vacancy
+  {
+    "asset_name": "Poppelstykket",
+    "tri_year": 2025,
+    "tri_amount": 910000,
+    "vacancy_loss": 60000,
+  },
+  {
+    "asset_name": "Poppelstykket",
+    "tri_year": 2026,
+    "tri_amount": 935000,
+    "vacancy_loss": 63000,
+  },
+  {
+    "asset_name": "Poppelstykket",
+    "tri_year": 2027,
+    "tri_amount": 962000,
+    "vacancy_loss": 66000,
+  },
+  {
+    "asset_name": "Poppelstykket",
+    "tri_year": 2028,
+    "tri_amount": 990000,
+    "vacancy_loss": 70000,
+  },
+
+  // Ørestad Have – strong growth, moderate vacancy
+  {
+    "asset_name": "Ørestad Have",
+    "tri_year": 2025,
+    "tri_amount": 1120000,
+    "vacancy_loss": 54000,
+  },
+  {
+    "asset_name": "Ørestad Have",
+    "tri_year": 2026,
+    "tri_amount": 1156000,
+    "vacancy_loss": 58000,
+  },
+  {
+    "asset_name": "Ørestad Have",
+    "tri_year": 2027,
+    "tri_amount": 1193000,
+    "vacancy_loss": 62000,
+  },
+  {
+    "asset_name": "Ørestad Have",
+    "tri_year": 2028,
+    "tri_amount": 1230000,
+    "vacancy_loss": 66000,
+  },
+
+  // Nordhuset – stable TRI, slightly higher vacancy early on
+  {
+    "asset_name": "Nordhuset",
+    "tri_year": 2025,
+    "tri_amount": 960000,
+    "vacancy_loss": 68000,
+  },
+  {
+    "asset_name": "Nordhuset",
+    "tri_year": 2026,
+    "tri_amount": 985000,
+    "vacancy_loss": 65000,
+  },
+  {
+    "asset_name": "Nordhuset",
+    "tri_year": 2027,
+    "tri_amount": 1010000,
+    "vacancy_loss": 64000,
+  },
+  {
+    "asset_name": "Nordhuset",
+    "tri_year": 2028,
+    "tri_amount": 1038000,
+    "vacancy_loss": 63000,
+  },
+];
+
 const parseMoneyToInt = (value: number | string): number => {
   if (typeof value === "number") {
     return Math.round(value);
@@ -7331,6 +7489,12 @@ export const assets = (() => {
       budget_home_owner_association: number;
       budget_total_opex: number;
     }>;
+    tri: Array<{
+      asset_name: string;
+      tri_year: number;
+      tri_amount: number;
+      vacancy_loss: number;
+    }>;
   };
 
   const map = new Map<string, AssetAggregate>();
@@ -7347,6 +7511,7 @@ export const assets = (() => {
         rentRoll: [],
         capex: [],
         opex: [],
+        tri: [],
       });
     }
     map.get(name)!.rentRoll.push(unit);
@@ -7364,6 +7529,7 @@ export const assets = (() => {
         rentRoll: [],
         capex: [],
         opex: [],
+        tri: [],
       });
     }
 
@@ -7399,6 +7565,7 @@ export const assets = (() => {
         rentRoll: [],
         capex: [],
         opex: [],
+        tri: [],
       });
     }
 
@@ -7429,6 +7596,29 @@ export const assets = (() => {
       budget_common_consumption: row.budget_common_consumption,
       budget_home_owner_association: row.budget_home_owner_association,
       budget_total_opex: parseMoneyToInt(row.budget_total_opex),
+    });
+  }
+
+  // Attach TRI rows by asset_name
+  for (const row of theoreticalRentalIncData) {
+    const name = row.asset_name;
+    if (!map.has(name)) {
+      map.set(name, {
+        name,
+        address: null,
+        city: null,
+        country: "Denmark",
+        rentRoll: [],
+        capex: [],
+        opex: [],
+        tri: [],
+      });
+    }
+    map.get(name)!.tri.push({
+      asset_name: row.asset_name,
+      tri_year: row.tri_year,
+      tri_amount: row.tri_amount,
+      vacancy_loss: row.vacancy_loss,
     });
   }
 

@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Asset: 'Asset',
+  TheoreticalRentalIncome: 'TheoreticalRentalIncome',
   Capex: 'Capex',
   Opex: 'Opex',
   RentRollUnit: 'RentRollUnit'
@@ -84,6 +85,19 @@ export const AssetScalarFieldEnum = {
 } as const
 
 export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
+
+
+export const TheoreticalRentalIncomeScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  triYear: 'triYear',
+  triAmount: 'triAmount',
+  vacancyLoss: 'vacancyLoss',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TheoreticalRentalIncomeScalarFieldEnum = (typeof TheoreticalRentalIncomeScalarFieldEnum)[keyof typeof TheoreticalRentalIncomeScalarFieldEnum]
 
 
 export const CapexScalarFieldEnum = {

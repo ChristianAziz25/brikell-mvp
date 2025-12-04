@@ -16,6 +16,7 @@ model Asset {
   country String?
 
   // Relations
+  tri      TheoreticalRentalIncome[]
   capex    Capex[]
   opex     Opex[]
   rentRoll RentRollUnit[]
@@ -24,6 +25,21 @@ model Asset {
   updated_at DateTime @updatedAt
 
   @@map("asset")
+  @@schema("public")
+}
+
+model TheoreticalRentalIncome {
+  id          String @id @default(cuid())
+  assetId     String
+  asset       Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  triYear     Int
+  triAmount   Int
+  vacancyLoss Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("theoretical_rental_income")
   @@schema("public")
 }
 

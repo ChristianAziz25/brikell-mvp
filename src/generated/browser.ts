@@ -23,6 +23,11 @@ export * from './enums.js';
  */
 export type Asset = Prisma.AssetModel
 /**
+ * Model TheoreticalRentalIncome
+ * 
+ */
+export type TheoreticalRentalIncome = Prisma.TheoreticalRentalIncomeModel
+/**
  * Model Capex
  * 
  */

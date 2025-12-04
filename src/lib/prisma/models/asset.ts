@@ -124,6 +124,16 @@ export async function getAssetById(id: string) {
   });
 }
 
+export async function getAllAssetsCapexOpexTri() {
+  return prisma.asset.findMany({
+    include: {
+      capex: true,
+      opex: true,
+      tri: true,
+    },
+  });
+}
+
 export async function deleteAsset(id: string) {
   return prisma.asset.delete({
     where: { id },

@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models"
-import { type PrismaClient } from "./class"
+import type * as Prisma from "../models.js"
+import { type PrismaClient } from "./class.js"
 
-export type * from '../models'
+export type * from '../models.js'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Asset: 'Asset',
+  TheoreticalRentalIncome: 'TheoreticalRentalIncome',
   Capex: 'Capex',
   Opex: 'Opex',
   RentRollUnit: 'RentRollUnit'
@@ -403,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "asset" | "capex" | "opex" | "rentRollUnit"
+    modelProps: "asset" | "theoreticalRentalIncome" | "capex" | "opex" | "rentRollUnit"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +479,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.AssetCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.AssetCountAggregateOutputType> | number
+        }
+      }
+    }
+    TheoreticalRentalIncome: {
+      payload: Prisma.$TheoreticalRentalIncomePayload<ExtArgs>
+      fields: Prisma.TheoreticalRentalIncomeFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TheoreticalRentalIncomeFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TheoreticalRentalIncomeFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>
+        }
+        findFirst: {
+          args: Prisma.TheoreticalRentalIncomeFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TheoreticalRentalIncomeFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>
+        }
+        findMany: {
+          args: Prisma.TheoreticalRentalIncomeFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>[]
+        }
+        create: {
+          args: Prisma.TheoreticalRentalIncomeCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>
+        }
+        createMany: {
+          args: Prisma.TheoreticalRentalIncomeCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TheoreticalRentalIncomeCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>[]
+        }
+        delete: {
+          args: Prisma.TheoreticalRentalIncomeDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>
+        }
+        update: {
+          args: Prisma.TheoreticalRentalIncomeUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>
+        }
+        deleteMany: {
+          args: Prisma.TheoreticalRentalIncomeDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TheoreticalRentalIncomeUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TheoreticalRentalIncomeUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>[]
+        }
+        upsert: {
+          args: Prisma.TheoreticalRentalIncomeUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TheoreticalRentalIncomePayload>
+        }
+        aggregate: {
+          args: Prisma.TheoreticalRentalIncomeAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTheoreticalRentalIncome>
+        }
+        groupBy: {
+          args: Prisma.TheoreticalRentalIncomeGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TheoreticalRentalIncomeGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TheoreticalRentalIncomeCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TheoreticalRentalIncomeCountAggregateOutputType> | number
         }
       }
     }
@@ -755,6 +830,19 @@ export const AssetScalarFieldEnum = {
 export type AssetScalarFieldEnum = (typeof AssetScalarFieldEnum)[keyof typeof AssetScalarFieldEnum]
 
 
+export const TheoreticalRentalIncomeScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  triYear: 'triYear',
+  triAmount: 'triAmount',
+  vacancyLoss: 'vacancyLoss',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TheoreticalRentalIncomeScalarFieldEnum = (typeof TheoreticalRentalIncomeScalarFieldEnum)[keyof typeof TheoreticalRentalIncomeScalarFieldEnum]
+
+
 export const CapexScalarFieldEnum = {
   id: 'id',
   asset_name: 'asset_name',
@@ -1029,6 +1117,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   asset?: Prisma.AssetOmit
+  theoreticalRentalIncome?: Prisma.TheoreticalRentalIncomeOmit
   capex?: Prisma.CapexOmit
   opex?: Prisma.OpexOmit
   rentRollUnit?: Prisma.RentRollUnitOmit

@@ -9,7 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.js"
+import type * as Prisma from "../internal/prismaNamespace.js"
 
 /**
  * Model Capex
@@ -820,14 +821,6 @@ export type CapexUncheckedUpdateManyWithoutAssetNestedInput = {
   update?: Prisma.CapexUpdateWithWhereUniqueWithoutAssetInput | Prisma.CapexUpdateWithWhereUniqueWithoutAssetInput[]
   updateMany?: Prisma.CapexUpdateManyWithWhereWithoutAssetInput | Prisma.CapexUpdateManyWithWhereWithoutAssetInput[]
   deleteMany?: Prisma.CapexScalarWhereInput | Prisma.CapexScalarWhereInput[]
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type CapexCreateWithoutAssetInput = {
