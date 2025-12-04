@@ -31,7 +31,6 @@ export async function upsertOpex(
       actual_service_subscriptions: data.actual_service_subscriptions,
       actual_common_consumption: data.actual_common_consumption,
       actual_home_owner_association: data.actual_home_owner_association,
-      actual_total_opex: data.actual_total_opex,
       budget_delinquency: data.budget_delinquency,
       budget_property_management_fee: data.budget_property_management_fee,
       budget_leasing_fee: data.budget_leasing_fee,
@@ -43,7 +42,6 @@ export async function upsertOpex(
       budget_service_subscriptions: data.budget_service_subscriptions,
       budget_common_consumption: data.budget_common_consumption,
       budget_home_owner_association: data.budget_home_owner_association,
-      budget_total_opex: data.budget_total_opex,
     },
     create: data,
   });
@@ -86,7 +84,6 @@ export async function bulkUpsertOpex(
             actual_service_subscriptions: row.actual_service_subscriptions,
             actual_common_consumption: row.actual_common_consumption,
             actual_home_owner_association: row.actual_home_owner_association,
-            actual_total_opex: row.actual_total_opex,
             budget_delinquency: row.budget_delinquency,
             budget_property_management_fee: row.budget_property_management_fee,
             budget_leasing_fee: row.budget_leasing_fee,
@@ -98,7 +95,6 @@ export async function bulkUpsertOpex(
             budget_service_subscriptions: row.budget_service_subscriptions,
             budget_common_consumption: row.budget_common_consumption,
             budget_home_owner_association: row.budget_home_owner_association,
-            budget_total_opex: row.budget_total_opex,
           },
         });
         result.updated++;
