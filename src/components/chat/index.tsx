@@ -8,7 +8,7 @@ import { Textarea } from "../ui/textarea";
 
 export default function Chat() {
   const editorRef = useRef<HTMLDivElement | null>(null);
-  const [value, setValue] = useState(""); // plain-text backing value
+  const [value, setValue] = useState("");
 
   const isEmpty = value.trim().length === 0;
 
@@ -47,7 +47,7 @@ export default function Chat() {
         handleSubmit(value);
       }}
     >
-      <div className="bg-card rounded-2xl p-2.5 shadow-sm border grid grid-cols-[1fr_auto] [grid-template-areas:'primary_trailing'_'footer_footer'] gap-y-1.5">
+      <div className="bg-card rounded-2xl p-2.5 shadow-sm border grid grid-cols-[1fr] [grid-template-areas:'primary'_'footer'] gap-y-1.5">
         <Textarea
           className="hidden"
           name="message"
@@ -63,7 +63,7 @@ export default function Chat() {
               contentEditable
               translate="no"
               spellCheck={false}
-              className="relative pt-2 z-10 min-h-14 outline-none whitespace-pre-wrap"
+              className="relative py-2 z-10 min-h-14 outline-none whitespace-pre-wrap"
               onInput={handleInput}
               onKeyDown={handleKeyDown}
             />
@@ -95,7 +95,7 @@ export default function Chat() {
             </Button>
           </div>
 
-          <div className="flex items-center gap-2 [grid-area:trailing]">
+          <div className="flex items-center gap-2 [grid-area:footer]">
             <Button
               type="submit"
               size="icon"
