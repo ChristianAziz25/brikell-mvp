@@ -141,7 +141,7 @@ export const OpexScalarFieldEnum = {
   actual_service_subscriptions: 'actual_service_subscriptions',
   actual_common_consumption: 'actual_common_consumption',
   actual_home_owner_association: 'actual_home_owner_association',
-  actuals_total_opex: 'actuals_total_opex',
+  actual_total_opex: 'actual_total_opex',
   budget_delinquency: 'budget_delinquency',
   budget_property_management_fee: 'budget_property_management_fee',
   budget_leasing_fee: 'budget_leasing_fee',

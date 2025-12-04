@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model Opex
@@ -39,7 +39,7 @@ export type OpexAvgAggregateOutputType = {
   actual_service_subscriptions: number | null
   actual_common_consumption: number | null
   actual_home_owner_association: number | null
-  actuals_total_opex: number | null
+  actual_total_opex: number | null
   budget_delinquency: number | null
   budget_property_management_fee: number | null
   budget_leasing_fee: number | null
@@ -67,7 +67,7 @@ export type OpexSumAggregateOutputType = {
   actual_service_subscriptions: number | null
   actual_common_consumption: number | null
   actual_home_owner_association: number | null
-  actuals_total_opex: number | null
+  actual_total_opex: number | null
   budget_delinquency: number | null
   budget_property_management_fee: number | null
   budget_leasing_fee: number | null
@@ -97,7 +97,7 @@ export type OpexMinAggregateOutputType = {
   actual_service_subscriptions: number | null
   actual_common_consumption: number | null
   actual_home_owner_association: number | null
-  actuals_total_opex: number | null
+  actual_total_opex: number | null
   budget_delinquency: number | null
   budget_property_management_fee: number | null
   budget_leasing_fee: number | null
@@ -130,7 +130,7 @@ export type OpexMaxAggregateOutputType = {
   actual_service_subscriptions: number | null
   actual_common_consumption: number | null
   actual_home_owner_association: number | null
-  actuals_total_opex: number | null
+  actual_total_opex: number | null
   budget_delinquency: number | null
   budget_property_management_fee: number | null
   budget_leasing_fee: number | null
@@ -163,7 +163,7 @@ export type OpexCountAggregateOutputType = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -196,7 +196,7 @@ export type OpexAvgAggregateInputType = {
   actual_service_subscriptions?: true
   actual_common_consumption?: true
   actual_home_owner_association?: true
-  actuals_total_opex?: true
+  actual_total_opex?: true
   budget_delinquency?: true
   budget_property_management_fee?: true
   budget_leasing_fee?: true
@@ -224,7 +224,7 @@ export type OpexSumAggregateInputType = {
   actual_service_subscriptions?: true
   actual_common_consumption?: true
   actual_home_owner_association?: true
-  actuals_total_opex?: true
+  actual_total_opex?: true
   budget_delinquency?: true
   budget_property_management_fee?: true
   budget_leasing_fee?: true
@@ -254,7 +254,7 @@ export type OpexMinAggregateInputType = {
   actual_service_subscriptions?: true
   actual_common_consumption?: true
   actual_home_owner_association?: true
-  actuals_total_opex?: true
+  actual_total_opex?: true
   budget_delinquency?: true
   budget_property_management_fee?: true
   budget_leasing_fee?: true
@@ -287,7 +287,7 @@ export type OpexMaxAggregateInputType = {
   actual_service_subscriptions?: true
   actual_common_consumption?: true
   actual_home_owner_association?: true
-  actuals_total_opex?: true
+  actual_total_opex?: true
   budget_delinquency?: true
   budget_property_management_fee?: true
   budget_leasing_fee?: true
@@ -320,7 +320,7 @@ export type OpexCountAggregateInputType = {
   actual_service_subscriptions?: true
   actual_common_consumption?: true
   actual_home_owner_association?: true
-  actuals_total_opex?: true
+  actual_total_opex?: true
   budget_delinquency?: true
   budget_property_management_fee?: true
   budget_leasing_fee?: true
@@ -440,7 +440,7 @@ export type OpexGroupByOutputType = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -496,7 +496,7 @@ export type OpexWhereInput = {
   actual_service_subscriptions?: Prisma.IntFilter<"Opex"> | number
   actual_common_consumption?: Prisma.IntFilter<"Opex"> | number
   actual_home_owner_association?: Prisma.IntFilter<"Opex"> | number
-  actuals_total_opex?: Prisma.IntFilter<"Opex"> | number
+  actual_total_opex?: Prisma.IntFilter<"Opex"> | number
   budget_delinquency?: Prisma.IntFilter<"Opex"> | number
   budget_property_management_fee?: Prisma.IntFilter<"Opex"> | number
   budget_leasing_fee?: Prisma.IntFilter<"Opex"> | number
@@ -530,7 +530,7 @@ export type OpexOrderByWithRelationInput = {
   actual_service_subscriptions?: Prisma.SortOrder
   actual_common_consumption?: Prisma.SortOrder
   actual_home_owner_association?: Prisma.SortOrder
-  actuals_total_opex?: Prisma.SortOrder
+  actual_total_opex?: Prisma.SortOrder
   budget_delinquency?: Prisma.SortOrder
   budget_property_management_fee?: Prisma.SortOrder
   budget_leasing_fee?: Prisma.SortOrder
@@ -568,7 +568,7 @@ export type OpexWhereUniqueInput = Prisma.AtLeast<{
   actual_service_subscriptions?: Prisma.IntFilter<"Opex"> | number
   actual_common_consumption?: Prisma.IntFilter<"Opex"> | number
   actual_home_owner_association?: Prisma.IntFilter<"Opex"> | number
-  actuals_total_opex?: Prisma.IntFilter<"Opex"> | number
+  actual_total_opex?: Prisma.IntFilter<"Opex"> | number
   budget_delinquency?: Prisma.IntFilter<"Opex"> | number
   budget_property_management_fee?: Prisma.IntFilter<"Opex"> | number
   budget_leasing_fee?: Prisma.IntFilter<"Opex"> | number
@@ -602,7 +602,7 @@ export type OpexOrderByWithAggregationInput = {
   actual_service_subscriptions?: Prisma.SortOrder
   actual_common_consumption?: Prisma.SortOrder
   actual_home_owner_association?: Prisma.SortOrder
-  actuals_total_opex?: Prisma.SortOrder
+  actual_total_opex?: Prisma.SortOrder
   budget_delinquency?: Prisma.SortOrder
   budget_property_management_fee?: Prisma.SortOrder
   budget_leasing_fee?: Prisma.SortOrder
@@ -643,7 +643,7 @@ export type OpexScalarWhereWithAggregatesInput = {
   actual_service_subscriptions?: Prisma.IntWithAggregatesFilter<"Opex"> | number
   actual_common_consumption?: Prisma.IntWithAggregatesFilter<"Opex"> | number
   actual_home_owner_association?: Prisma.IntWithAggregatesFilter<"Opex"> | number
-  actuals_total_opex?: Prisma.IntWithAggregatesFilter<"Opex"> | number
+  actual_total_opex?: Prisma.IntWithAggregatesFilter<"Opex"> | number
   budget_delinquency?: Prisma.IntWithAggregatesFilter<"Opex"> | number
   budget_property_management_fee?: Prisma.IntWithAggregatesFilter<"Opex"> | number
   budget_leasing_fee?: Prisma.IntWithAggregatesFilter<"Opex"> | number
@@ -676,7 +676,7 @@ export type OpexCreateInput = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -709,7 +709,7 @@ export type OpexUncheckedCreateInput = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -742,7 +742,7 @@ export type OpexUpdateInput = {
   actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
   actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
   actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
-  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
   budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
   budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -775,7 +775,7 @@ export type OpexUncheckedUpdateInput = {
   actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
   actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
   actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
-  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
   budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
   budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -808,7 +808,7 @@ export type OpexCreateManyInput = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -841,7 +841,7 @@ export type OpexUpdateManyMutationInput = {
   actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
   actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
   actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
-  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
   budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
   budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -873,7 +873,7 @@ export type OpexUncheckedUpdateManyInput = {
   actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
   actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
   actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
-  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
   budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
   budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -921,7 +921,7 @@ export type OpexCountOrderByAggregateInput = {
   actual_service_subscriptions?: Prisma.SortOrder
   actual_common_consumption?: Prisma.SortOrder
   actual_home_owner_association?: Prisma.SortOrder
-  actuals_total_opex?: Prisma.SortOrder
+  actual_total_opex?: Prisma.SortOrder
   budget_delinquency?: Prisma.SortOrder
   budget_property_management_fee?: Prisma.SortOrder
   budget_leasing_fee?: Prisma.SortOrder
@@ -952,7 +952,7 @@ export type OpexAvgOrderByAggregateInput = {
   actual_service_subscriptions?: Prisma.SortOrder
   actual_common_consumption?: Prisma.SortOrder
   actual_home_owner_association?: Prisma.SortOrder
-  actuals_total_opex?: Prisma.SortOrder
+  actual_total_opex?: Prisma.SortOrder
   budget_delinquency?: Prisma.SortOrder
   budget_property_management_fee?: Prisma.SortOrder
   budget_leasing_fee?: Prisma.SortOrder
@@ -982,7 +982,7 @@ export type OpexMaxOrderByAggregateInput = {
   actual_service_subscriptions?: Prisma.SortOrder
   actual_common_consumption?: Prisma.SortOrder
   actual_home_owner_association?: Prisma.SortOrder
-  actuals_total_opex?: Prisma.SortOrder
+  actual_total_opex?: Prisma.SortOrder
   budget_delinquency?: Prisma.SortOrder
   budget_property_management_fee?: Prisma.SortOrder
   budget_leasing_fee?: Prisma.SortOrder
@@ -1015,7 +1015,7 @@ export type OpexMinOrderByAggregateInput = {
   actual_service_subscriptions?: Prisma.SortOrder
   actual_common_consumption?: Prisma.SortOrder
   actual_home_owner_association?: Prisma.SortOrder
-  actuals_total_opex?: Prisma.SortOrder
+  actual_total_opex?: Prisma.SortOrder
   budget_delinquency?: Prisma.SortOrder
   budget_property_management_fee?: Prisma.SortOrder
   budget_leasing_fee?: Prisma.SortOrder
@@ -1046,7 +1046,7 @@ export type OpexSumOrderByAggregateInput = {
   actual_service_subscriptions?: Prisma.SortOrder
   actual_common_consumption?: Prisma.SortOrder
   actual_home_owner_association?: Prisma.SortOrder
-  actuals_total_opex?: Prisma.SortOrder
+  actual_total_opex?: Prisma.SortOrder
   budget_delinquency?: Prisma.SortOrder
   budget_property_management_fee?: Prisma.SortOrder
   budget_leasing_fee?: Prisma.SortOrder
@@ -1118,7 +1118,7 @@ export type OpexCreateWithoutAssetInput = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -1150,7 +1150,7 @@ export type OpexUncheckedCreateWithoutAssetInput = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -1211,7 +1211,7 @@ export type OpexScalarWhereInput = {
   actual_service_subscriptions?: Prisma.IntFilter<"Opex"> | number
   actual_common_consumption?: Prisma.IntFilter<"Opex"> | number
   actual_home_owner_association?: Prisma.IntFilter<"Opex"> | number
-  actuals_total_opex?: Prisma.IntFilter<"Opex"> | number
+  actual_total_opex?: Prisma.IntFilter<"Opex"> | number
   budget_delinquency?: Prisma.IntFilter<"Opex"> | number
   budget_property_management_fee?: Prisma.IntFilter<"Opex"> | number
   budget_leasing_fee?: Prisma.IntFilter<"Opex"> | number
@@ -1244,7 +1244,7 @@ export type OpexCreateManyAssetInput = {
   actual_service_subscriptions: number
   actual_common_consumption: number
   actual_home_owner_association: number
-  actuals_total_opex: number
+  actual_total_opex: number
   budget_delinquency: number
   budget_property_management_fee: number
   budget_leasing_fee: number
@@ -1276,7 +1276,7 @@ export type OpexUpdateWithoutAssetInput = {
   actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
   actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
   actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
-  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
   budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
   budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1308,7 +1308,7 @@ export type OpexUncheckedUpdateWithoutAssetInput = {
   actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
   actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
   actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
-  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
   budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
   budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1340,7 +1340,7 @@ export type OpexUncheckedUpdateManyWithoutAssetInput = {
   actual_service_subscriptions?: Prisma.IntFieldUpdateOperationsInput | number
   actual_common_consumption?: Prisma.IntFieldUpdateOperationsInput | number
   actual_home_owner_association?: Prisma.IntFieldUpdateOperationsInput | number
-  actuals_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
+  actual_total_opex?: Prisma.IntFieldUpdateOperationsInput | number
   budget_delinquency?: Prisma.IntFieldUpdateOperationsInput | number
   budget_property_management_fee?: Prisma.IntFieldUpdateOperationsInput | number
   budget_leasing_fee?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1374,7 +1374,7 @@ export type OpexSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   actual_service_subscriptions?: boolean
   actual_common_consumption?: boolean
   actual_home_owner_association?: boolean
-  actuals_total_opex?: boolean
+  actual_total_opex?: boolean
   budget_delinquency?: boolean
   budget_property_management_fee?: boolean
   budget_leasing_fee?: boolean
@@ -1408,7 +1408,7 @@ export type OpexSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   actual_service_subscriptions?: boolean
   actual_common_consumption?: boolean
   actual_home_owner_association?: boolean
-  actuals_total_opex?: boolean
+  actual_total_opex?: boolean
   budget_delinquency?: boolean
   budget_property_management_fee?: boolean
   budget_leasing_fee?: boolean
@@ -1442,7 +1442,7 @@ export type OpexSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   actual_service_subscriptions?: boolean
   actual_common_consumption?: boolean
   actual_home_owner_association?: boolean
-  actuals_total_opex?: boolean
+  actual_total_opex?: boolean
   budget_delinquency?: boolean
   budget_property_management_fee?: boolean
   budget_leasing_fee?: boolean
@@ -1476,7 +1476,7 @@ export type OpexSelectScalar = {
   actual_service_subscriptions?: boolean
   actual_common_consumption?: boolean
   actual_home_owner_association?: boolean
-  actuals_total_opex?: boolean
+  actual_total_opex?: boolean
   budget_delinquency?: boolean
   budget_property_management_fee?: boolean
   budget_leasing_fee?: boolean
@@ -1494,7 +1494,7 @@ export type OpexSelectScalar = {
   assetId?: boolean
 }
 
-export type OpexOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "asset_name" | "opex_year" | "actual_delinquency" | "actual_property_management_fee" | "actual_leasing_fee" | "actual_property_taxes" | "actual_refuse_collection" | "actual_insurance" | "actual_cleaning" | "actual_facility_management" | "actual_service_subscriptions" | "actual_common_consumption" | "actual_home_owner_association" | "actuals_total_opex" | "budget_delinquency" | "budget_property_management_fee" | "budget_leasing_fee" | "budget_property_taxes" | "budget_refuse_collection" | "budget_insurance" | "budget_cleaning" | "budget_facility_management" | "budget_service_subscriptions" | "budget_common_consumption" | "budget_home_owner_association" | "budget_total_opex" | "created_at" | "updated_at" | "assetId", ExtArgs["result"]["opex"]>
+export type OpexOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "asset_name" | "opex_year" | "actual_delinquency" | "actual_property_management_fee" | "actual_leasing_fee" | "actual_property_taxes" | "actual_refuse_collection" | "actual_insurance" | "actual_cleaning" | "actual_facility_management" | "actual_service_subscriptions" | "actual_common_consumption" | "actual_home_owner_association" | "actual_total_opex" | "budget_delinquency" | "budget_property_management_fee" | "budget_leasing_fee" | "budget_property_taxes" | "budget_refuse_collection" | "budget_insurance" | "budget_cleaning" | "budget_facility_management" | "budget_service_subscriptions" | "budget_common_consumption" | "budget_home_owner_association" | "budget_total_opex" | "created_at" | "updated_at" | "assetId", ExtArgs["result"]["opex"]>
 export type OpexInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.AssetDefaultArgs<ExtArgs>
 }
@@ -1525,7 +1525,7 @@ export type $OpexPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     actual_service_subscriptions: number
     actual_common_consumption: number
     actual_home_owner_association: number
-    actuals_total_opex: number
+    actual_total_opex: number
     budget_delinquency: number
     budget_property_management_fee: number
     budget_leasing_fee: number
@@ -1979,7 +1979,7 @@ export interface OpexFieldRefs {
   readonly actual_service_subscriptions: Prisma.FieldRef<"Opex", 'Int'>
   readonly actual_common_consumption: Prisma.FieldRef<"Opex", 'Int'>
   readonly actual_home_owner_association: Prisma.FieldRef<"Opex", 'Int'>
-  readonly actuals_total_opex: Prisma.FieldRef<"Opex", 'Int'>
+  readonly actual_total_opex: Prisma.FieldRef<"Opex", 'Int'>
   readonly budget_delinquency: Prisma.FieldRef<"Opex", 'Int'>
   readonly budget_property_management_fee: Prisma.FieldRef<"Opex", 'Int'>
   readonly budget_leasing_fee: Prisma.FieldRef<"Opex", 'Int'>

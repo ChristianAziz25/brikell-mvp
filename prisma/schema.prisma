@@ -9,35 +9,31 @@ datasource db {
 }
 
 model Asset {
-  id      String  @id @default(cuid())
-  name    String
-  address String?
-  city    String?
-  country String?
-
-  // Relations
-  tri      TheoreticalRentalIncome[]
-  capex    Capex[]
-  opex     Opex[]
-  rentRoll RentRollUnit[]
-
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         String                    @id @default(cuid())
+  name       String
+  address    String?
+  city       String?
+  country    String?
+  created_at DateTime                  @default(now())
+  updated_at DateTime                  @updatedAt
+  capex      Capex[]
+  opex       Opex[]
+  rentRoll   RentRollUnit[]
+  tri        TheoreticalRentalIncome[]
 
   @@map("asset")
   @@schema("public")
 }
 
 model TheoreticalRentalIncome {
-  id          String @id @default(cuid())
+  id          String   @id @default(cuid())
   assetId     String
-  asset       Asset  @relation(fields: [assetId], references: [id], onDelete: Cascade)
   triYear     Int
   triAmount   Int
   vacancyLoss Int
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@map("theoretical_rental_income")
   @@schema("public")
@@ -66,7 +62,6 @@ model Capex {
   assetId                     String
   asset                       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
-  // Ensure at most one Capex row per asset per year
   @@unique([assetId, capex_year])
   @@map("capex")
   @@schema("public")
@@ -87,7 +82,7 @@ model Opex {
   actual_service_subscriptions   Int
   actual_common_consumption      Int
   actual_home_owner_association  Int
-  actuals_total_opex             Int
+  actual_total_opex              Int
   budget_delinquency             Int
   budget_property_management_fee Int
   budget_leasing_fee             Int
@@ -105,7 +100,6 @@ model Opex {
   assetId                        String
   asset                          Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
-  // Ensure at most one Opex row per asset per year
   @@unique([assetId, opex_year])
   @@map("opex")
   @@schema("public")
@@ -113,7 +107,6 @@ model Opex {
 
 model RentRollUnit {
   assetId             String
-  asset               Asset      @relation(fields: [assetId], references: [id], onDelete: Cascade)
   property_build_year Int
   property_name       String
   unit_address        String
@@ -140,6 +133,7 @@ model RentRollUnit {
   tenant_mail2        String
   created_at          DateTime   @default(now())
   updated_at          DateTime   @updatedAt
+  asset               Asset      @relation(fields: [assetId], references: [id], onDelete: Cascade)
 
   @@map("rent_roll_unit")
   @@schema("public")
