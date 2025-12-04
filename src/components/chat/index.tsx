@@ -1,28 +1,112 @@
-import { Search, Send } from "lucide-react";
+"use client";
+
+import { Send } from "lucide-react";
+import { useRef, useState } from "react";
+
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 export default function Chat() {
+  const editorRef = useRef<HTMLDivElement | null>(null);
+  const [value, setValue] = useState(""); // plain-text backing value
+
+  const isEmpty = value.trim().length === 0;
+
+  function handleInput() {
+    const text = editorRef.current?.innerText ?? "";
+    setValue(text);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    const isEnter = e.key === "Enter";
+    const hasModifier = e.shiftKey || e.metaKey || e.ctrlKey || e.altKey;
+
+    if (isEnter && !hasModifier) {
+      e.preventDefault();
+      const text = editorRef.current?.innerText ?? "";
+      handleSubmit(text);
+    }
+  }
+
+  function handleSubmit(value: string) {
+    const text = value.trim();
+    if (!text) return;
+
+    // TODO: wire this up to useChat sendMessage
+    setValue("");
+    if (editorRef.current) {
+      editorRef.current.innerHTML = "";
+    }
+  }
+
   return (
-    <div className="bg-card text-card-foreground p-8 shadow-sm border rounded-2xl">
-      <div className="space-y-6">
-        <h1 className="text-xl font-medium text-center text-foreground">
-          What would you like to know?
-        </h1>
-        <p className="text-center text-muted-foreground text-sm">
-          Ask anything about your properties, tenants, or financials
-        </p>
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            className="flex w-full border px-3 py-2 ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-11 h-12 text-sm bg-muted/30 border-border/50 focus:bg-background rounded-xl"
-            placeholder="Type your question here..."
-          />
-          <Button className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 px-3 absolute right-2 top-1/2 transform -translate-y-1/2 h-8 bg-foreground text-background hover:bg-foreground/90 rounded-lg">
-            Ask
-          </Button>
+    <form
+      className="group/composer w-full"
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(value);
+      }}
+    >
+      <div className="bg-card rounded-2xl p-2.5 shadow-sm border grid grid-cols-[1fr_auto] [grid-template-areas:'primary_trailing'_'footer_footer'] gap-y-1.5">
+        <Textarea
+          className="hidden"
+          name="message"
+          value={value}
+          readOnly
+          aria-hidden="true"
+        />
+
+        <div className="-my-2.5 flex min-h-14 items-center overflow-x-hidden px-1.5 [grid-area:primary]">
+          <div className="relative flex-1 max-h-52 overflow-auto text-sm leading-relaxed overscroll-contain">
+            <div
+              ref={editorRef}
+              contentEditable
+              translate="no"
+              spellCheck={false}
+              className="relative pt-2 z-10 min-h-14 outline-none whitespace-pre-wrap"
+              onInput={handleInput}
+              onKeyDown={handleKeyDown}
+            />
+            {isEmpty && (
+              <div className="pointer-events-none absolute inset-x-0 top-2 text-muted-foreground">
+                Ask anything about your properties, tenants, or financials
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="-m-1 max-w-full overflow-x-auto p-1 [grid-area:footer] flex items-center justify-between gap-2">
+          <div className="flex min-w-fit items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-full px-3 text-xs"
+            >
+              Attach
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-8 rounded-full px-3 text-xs"
+            >
+              Search
+            </Button>
+          </div>
+
+          <div className="flex items-center gap-2 [grid-area:trailing]">
+            <Button
+              type="submit"
+              size="icon"
+              className="h-9 w-9 rounded-full bg-foreground text-background hover:bg-foreground/90"
+              aria-label="Send message"
+            >
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
