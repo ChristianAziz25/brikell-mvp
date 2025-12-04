@@ -153,7 +153,7 @@ async function main() {
         actual_service_subscriptions: row.actual_service_subscriptions,
         actual_common_consumption: row.actual_common_consumption,
         actual_home_owner_association: row.actual_home_owner_association,
-        actuals_total_opex: parseMoneyToInt(row.actuals_total_opex),
+        actual_total_opex: parseMoneyToInt(row.actuals_total_opex),
         budget_delinquency: row.budget_delinquency,
         budget_property_management_fee: row.budget_property_management_fee,
         budget_leasing_fee: row.budget_leasing_fee,
