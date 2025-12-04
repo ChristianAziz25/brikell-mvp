@@ -38,11 +38,26 @@ export function Table<TData extends RowData>({
                       return null;
                     }
 
+                    const columnMeta = header.column.columnDef.meta as
+                      | {
+                          isYearGroup?: boolean;
+                          yearIndex?: number;
+                          isFirstInGroup?: boolean;
+                        }
+                      | undefined;
+                    const isYearGroupFirst =
+                      columnMeta?.isYearGroup &&
+                      columnMeta?.isFirstInGroup &&
+                      columnMeta?.yearIndex !== undefined &&
+                      columnMeta.yearIndex > 0;
+
                     return (
                       <th
                         key={header.id}
                         colSpan={header.colSpan}
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                        className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${
+                          isYearGroupFirst ? "border-l border-border" : ""
+                        }`}
                       >
                         {flexRender(
                           header.column.columnDef.header,
@@ -79,17 +94,34 @@ export function Table<TData extends RowData>({
                   key={row.id}
                   className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-muted/50"
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="p-4 align-middle [&:has([role=checkbox])]:pr-0"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </td>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    const columnMeta = cell.column.columnDef.meta as
+                      | {
+                          isYearGroup?: boolean;
+                          yearIndex?: number;
+                          isFirstInGroup?: boolean;
+                        }
+                      | undefined;
+                    const isYearGroupFirst =
+                      columnMeta?.isYearGroup &&
+                      columnMeta?.isFirstInGroup &&
+                      columnMeta?.yearIndex !== undefined &&
+                      columnMeta.yearIndex > 0;
+
+                    return (
+                      <td
+                        key={cell.id}
+                        className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${
+                          isYearGroupFirst ? "border-l border-border" : ""
+                        }`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))
             )}
@@ -117,11 +149,41 @@ export function Table<TData extends RowData>({
                       return null;
                     }
 
+                    const columnMeta = footer.column.columnDef.meta as
+                      | {
+                          isYearGroup?: boolean;
+                          yearIndex?: number;
+                          isFirstInGroup?: boolean;
+                        }
+                      | undefined;
+
+                    const parentColumn = footer.column.parent;
+                    const parentMeta = parentColumn?.columnDef.meta as
+                      | {
+                          isYearGroup?: boolean;
+                          yearIndex?: number;
+                          isFirstInGroup?: boolean;
+                        }
+                      | undefined;
+
+                    const isYearGroupFirst =
+                      (columnMeta?.isYearGroup &&
+                        columnMeta?.isFirstInGroup &&
+                        columnMeta?.yearIndex !== undefined &&
+                        columnMeta.yearIndex > 0) ||
+                      (parentMeta?.isYearGroup &&
+                        parentMeta?.yearIndex !== undefined &&
+                        parentMeta.yearIndex > 0 &&
+                        (footer.id?.includes("-actual") ||
+                          footer.column.id?.includes("-actual")));
+
                     return (
                       <td
                         key={footer.id}
                         colSpan={footer.colSpan}
-                        className="h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                        className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${
+                          isYearGroupFirst ? "border-l border-border" : ""
+                        }`}
                       >
                         {flexRender(
                           footer.column.columnDef.footer,

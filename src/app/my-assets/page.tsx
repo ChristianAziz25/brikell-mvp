@@ -98,8 +98,9 @@ export default function MyAssets() {
           },
         ],
       },
-      ...years.map((year) => ({
+      ...years.map((year, yearIndex) => ({
         id: `${year}-group`,
+        meta: { isYearGroup: true, yearIndex },
         header: () => {
           return (
             <div className="flex flex-row gap-8">
@@ -170,6 +171,7 @@ export default function MyAssets() {
         columns: [
           {
             id: `${year}-actual`,
+            meta: { isYearGroup: true, yearIndex, isFirstInGroup: true },
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
@@ -300,8 +302,9 @@ export default function MyAssets() {
           },
         ],
       },
-      ...years.map((year) => ({
+      ...years.map((year, yearIndex) => ({
         id: `${year}-group`,
+        meta: { isYearGroup: true, yearIndex },
         header: () => {
           return (
             <div className="flex flex-row gap-8">
@@ -341,6 +344,7 @@ export default function MyAssets() {
         columns: [
           {
             id: `${year}-actual`,
+            meta: { isYearGroup: true, yearIndex, isFirstInGroup: true },
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
@@ -427,8 +431,9 @@ export default function MyAssets() {
           },
         ],
       },
-      ...years.map((year) => ({
+      ...years.map((year, yearIndex) => ({
         id: `${year}-group`,
+        meta: { isYearGroup: true, yearIndex },
         header: () => {
           return (
             <div className="flex flex-row gap-8">
@@ -468,6 +473,7 @@ export default function MyAssets() {
         columns: [
           {
             id: `${year}-actual`,
+            meta: { isYearGroup: true, yearIndex, isFirstInGroup: true },
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
@@ -584,8 +590,9 @@ export default function MyAssets() {
           },
         ],
       },
-      ...years.map((year) => ({
+      ...years.map((year, yearIndex) => ({
         id: `${year}-group`,
+        meta: { isYearGroup: true, yearIndex },
         header: () => {
           return (
             <div className="flex flex-row gap-8">
@@ -694,6 +701,7 @@ export default function MyAssets() {
         columns: [
           {
             id: `${year}-actual`,
+            meta: { isYearGroup: true, yearIndex, isFirstInGroup: true },
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
