@@ -312,12 +312,54 @@ export default function MyAssets() {
         },
         size: COLUMN_WIDTHS.year * 2,
         minSize: COLUMN_WIDTHS.year * 2,
+        footer: ({ table }: { table: TanStackTable<TableRow> }) => {
+          const rows = table.getRowModel().rows as Row<TableRow>[];
+
+          const totalActual = rows.reduce((sum, row) => {
+            const value = row.original[year];
+            const actual = Array.isArray(value) ? value[0] : value;
+            const numValue =
+              typeof actual === "number" ? actual : Number(actual) || 0;
+            return sum + numValue;
+          }, 0);
+
+          const totalBudget = rows.reduce((sum, row) => {
+            const value = row.original[year];
+            const budget = Array.isArray(value) ? value[1] : value;
+            const numValue =
+              typeof budget === "number" ? budget : Number(budget) || 0;
+            return sum + numValue;
+          }, 0);
+
+          return (
+            <div className="flex flex-row gap-8">
+              <div className="text-center w-full">{totalActual}</div>
+              <div className="text-center w-full">{totalBudget}</div>
+            </div>
+          );
+        },
         columns: [
           {
             id: `${year}-actual`,
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
+            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
+              const rows = table.getRowModel().rows as Row<TableRow>[];
+              const total = rows.reduce((sum, row) => {
+                const value = row.original[year];
+                const actual = Array.isArray(value) ? value[0] : value;
+                const numValue =
+                  typeof actual === "number" ? actual : Number(actual) || 0;
+                return sum + numValue;
+              }, 0);
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">{total}</span>
+                </div>
+              );
+            },
             cell: ({ row }: { row: Row<TableRow> }) => {
               const value = row.original[year];
               const actual = Array.isArray(value) ? value[0] : value;
@@ -330,10 +372,25 @@ export default function MyAssets() {
           },
           {
             id: `${year}-budget`,
-
             header: () => <div className="text-center">Budget</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
+            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
+              const rows = table.getRowModel().rows as Row<TableRow>[];
+              const total = rows.reduce((sum, row) => {
+                const value = row.original[year];
+                const budget = Array.isArray(value) ? value[1] : value;
+                const numValue =
+                  typeof budget === "number" ? budget : Number(budget) || 0;
+                return sum + numValue;
+              }, 0);
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">{total}</span>
+                </div>
+              );
+            },
             cell: ({ row }: { row: Row<TableRow> }) => {
               const value = row.original[year];
               const budget = Array.isArray(value) ? value[1] : undefined;
@@ -357,6 +414,7 @@ export default function MyAssets() {
         header: "Operating Expenses (OPEX)",
         size: COLUMN_WIDTHS.metric,
         minSize: COLUMN_WIDTHS.metric,
+        footer: () => <div className="text-left w-40">Total</div>,
         columns: [
           {
             accessorKey: "metric",
@@ -381,12 +439,54 @@ export default function MyAssets() {
         },
         size: COLUMN_WIDTHS.year * 2,
         minSize: COLUMN_WIDTHS.year * 2,
+        footer: ({ table }: { table: TanStackTable<TableRow> }) => {
+          const rows = table.getRowModel().rows as Row<TableRow>[];
+
+          const totalActual = rows.reduce((sum, row) => {
+            const value = row.original[year];
+            const actual = Array.isArray(value) ? value[0] : value;
+            const numValue =
+              typeof actual === "number" ? actual : Number(actual) || 0;
+            return sum + numValue;
+          }, 0);
+
+          const totalBudget = rows.reduce((sum, row) => {
+            const value = row.original[year];
+            const budget = Array.isArray(value) ? value[1] : value;
+            const numValue =
+              typeof budget === "number" ? budget : Number(budget) || 0;
+            return sum + numValue;
+          }, 0);
+
+          return (
+            <div className="flex flex-row gap-8">
+              <div className="text-center w-full">{totalActual}</div>
+              <div className="text-center w-full">{totalBudget}</div>
+            </div>
+          );
+        },
         columns: [
           {
             id: `${year}-actual`,
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
+            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
+              const rows = table.getRowModel().rows as Row<TableRow>[];
+              const total = rows.reduce((sum, row) => {
+                const value = row.original[year];
+                const actual = Array.isArray(value) ? value[0] : value;
+                const numValue =
+                  typeof actual === "number" ? actual : Number(actual) || 0;
+                return sum + numValue;
+              }, 0);
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">{total}</span>
+                </div>
+              );
+            },
             cell: ({ row }: { row: Row<TableRow> }) => {
               const value = row.original[year];
               const actual = Array.isArray(value) ? value[0] : value;
@@ -402,6 +502,22 @@ export default function MyAssets() {
             header: () => <div className="text-center">Budget</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
+            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
+              const rows = table.getRowModel().rows as Row<TableRow>[];
+              const total = rows.reduce((sum, row) => {
+                const value = row.original[year];
+                const budget = Array.isArray(value) ? value[1] : value;
+                const numValue =
+                  typeof budget === "number" ? budget : Number(budget) || 0;
+                return sum + numValue;
+              }, 0);
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">{total}</span>
+                </div>
+              );
+            },
             cell: ({ row }: { row: Row<TableRow> }) => {
               const value = row.original[year];
               const budget = Array.isArray(value) ? value[1] : undefined;
@@ -439,7 +555,7 @@ export default function MyAssets() {
     if (!activeAsset) return [];
     return [
       {
-        metric: "Net Income",
+        metric: "NOI",
         ...years.reduce((acc, year) => {
           acc[year] = [0, 0];
           return acc;
@@ -452,9 +568,10 @@ export default function MyAssets() {
     () => [
       {
         id: "net-income-group",
-        header: "Net Income",
+        header: "NOI",
         size: COLUMN_WIDTHS.metric,
         minSize: COLUMN_WIDTHS.metric,
+        footer: () => <div className="text-left w-40">NOI Margin</div>,
         columns: [
           {
             accessorKey: "metric",
@@ -479,12 +596,163 @@ export default function MyAssets() {
         },
         size: COLUMN_WIDTHS.year * 2,
         minSize: COLUMN_WIDTHS.year * 2,
+        footer: () => {
+          const triRows = triTable.getRowModel().rows as Row<TableRow>[];
+          const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
+
+          const triAmountRow = triRows.find(
+            (r) => r.original.metric === "triAmount"
+          );
+          const vacancyLossRow = triRows.find(
+            (r) => r.original.metric === "vacancyLoss"
+          );
+
+          const triBaseActual = triAmountRow?.original[year];
+          const vacancyBaseActual = vacancyLossRow?.original[year];
+          const triBaseBudget = triAmountRow?.original[year];
+          const vacancyBaseBudget = vacancyLossRow?.original[year];
+
+          const triNumberActual =
+            typeof triBaseActual === "number"
+              ? triBaseActual
+              : Array.isArray(triBaseActual)
+              ? Number(triBaseActual[0])
+              : undefined;
+
+          const vacancyNumberActual =
+            typeof vacancyBaseActual === "number"
+              ? vacancyBaseActual
+              : Array.isArray(vacancyBaseActual)
+              ? Number(vacancyBaseActual[0])
+              : undefined;
+
+          const triNumberBudget =
+            typeof triBaseBudget === "number"
+              ? triBaseBudget
+              : Array.isArray(triBaseBudget)
+              ? Number(triBaseBudget[1])
+              : undefined;
+
+          const vacancyNumberBudget =
+            typeof vacancyBaseBudget === "number"
+              ? vacancyBaseBudget
+              : Array.isArray(vacancyBaseBudget)
+              ? Number(vacancyBaseBudget[1])
+              : undefined;
+
+          const griActual =
+            triNumberActual != null && vacancyNumberActual != null
+              ? triNumberActual - vacancyNumberActual
+              : undefined;
+
+          const griBudget =
+            triNumberBudget != null && vacancyNumberBudget != null
+              ? triNumberBudget - vacancyNumberBudget
+              : undefined;
+
+          const totalOpexActual = opexRows.reduce((sum, row) => {
+            const value = row.original[year];
+            const actual = Array.isArray(value) ? value[0] : value;
+            const numValue =
+              typeof actual === "number" ? actual : Number(actual) || 0;
+            return sum + numValue;
+          }, 0);
+
+          const totalOpexBudget = opexRows.reduce((sum, row) => {
+            const value = row.original[year];
+            const budget = Array.isArray(value) ? value[1] : value;
+            const numValue =
+              typeof budget === "number" ? budget : Number(budget) || 0;
+            return sum + numValue;
+          }, 0);
+
+          const noiActual =
+            griActual != null ? griActual - totalOpexActual : undefined;
+          const noiBudget =
+            griBudget != null ? griBudget - totalOpexBudget : undefined;
+
+          const noiMarginActual =
+            griActual != null && griActual !== 0 && noiActual != null
+              ? ((noiActual / griActual) * 100).toFixed(2)
+              : undefined;
+          const noiMarginBudget =
+            griBudget != null && griBudget !== 0 && noiBudget != null
+              ? ((noiBudget / griBudget) * 100).toFixed(2)
+              : undefined;
+
+          return (
+            <div className="flex flex-row gap-8">
+              <div className="text-center w-full">
+                {noiMarginActual != null ? `${noiMarginActual}%` : "-"}
+              </div>
+              <div className="text-center w-full">
+                {noiMarginBudget != null ? `${noiMarginBudget}%` : "-"}
+              </div>
+            </div>
+          );
+        },
         columns: [
           {
             id: `${year}-actual`,
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
+            footer: () => {
+              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
+              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
+
+              const triAmountRow = triRows.find(
+                (r) => r.original.metric === "triAmount"
+              );
+              const vacancyLossRow = triRows.find(
+                (r) => r.original.metric === "vacancyLoss"
+              );
+
+              const triBase = triAmountRow?.original[year];
+              const vacancyBase = vacancyLossRow?.original[year];
+
+              const triNumber =
+                typeof triBase === "number"
+                  ? triBase
+                  : Array.isArray(triBase)
+                  ? Number(triBase[0])
+                  : undefined;
+
+              const vacancyNumber =
+                typeof vacancyBase === "number"
+                  ? vacancyBase
+                  : Array.isArray(vacancyBase)
+                  ? Number(vacancyBase[0])
+                  : undefined;
+
+              const gri =
+                triNumber != null && vacancyNumber != null
+                  ? triNumber - vacancyNumber
+                  : undefined;
+
+              const totalOpex = opexRows.reduce((sum, row) => {
+                const value = row.original[year];
+                const actual = Array.isArray(value) ? value[0] : value;
+                const numValue =
+                  typeof actual === "number" ? actual : Number(actual) || 0;
+                return sum + numValue;
+              }, 0);
+
+              const noi = gri != null ? gri - totalOpex : undefined;
+
+              const noiMargin =
+                gri != null && gri !== 0 && noi != null
+                  ? ((noi / gri) * 100).toFixed(2)
+                  : undefined;
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">
+                    {noiMargin != null ? `${noiMargin}%` : "-"}
+                  </span>
+                </div>
+              );
+            },
             cell: () => {
               const triRows = triTable.getRowModel().rows as Row<TableRow>[];
               const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
@@ -540,6 +808,62 @@ export default function MyAssets() {
             header: () => <div className="text-center">Budget</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
+            footer: () => {
+              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
+              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
+
+              const triAmountRow = triRows.find(
+                (r) => r.original.metric === "triAmount"
+              );
+              const vacancyLossRow = triRows.find(
+                (r) => r.original.metric === "vacancyLoss"
+              );
+
+              const triBase = triAmountRow?.original[year];
+              const vacancyBase = vacancyLossRow?.original[year];
+
+              const triNumber =
+                typeof triBase === "number"
+                  ? triBase
+                  : Array.isArray(triBase)
+                  ? Number(triBase[1])
+                  : undefined;
+
+              const vacancyNumber =
+                typeof vacancyBase === "number"
+                  ? vacancyBase
+                  : Array.isArray(vacancyBase)
+                  ? Number(vacancyBase[1])
+                  : undefined;
+
+              const gri =
+                triNumber != null && vacancyNumber != null
+                  ? triNumber - vacancyNumber
+                  : undefined;
+
+              const totalOpex = opexRows.reduce((sum, row) => {
+                const value = row.original[year];
+                const budget = Array.isArray(value) ? value[1] : value;
+                const numValue =
+                  typeof budget === "number" ? budget : Number(budget) || 0;
+                return sum + numValue;
+              }, 0);
+
+              const noi = gri != null ? gri - totalOpex : undefined;
+
+              const noiMargin =
+                gri != null && gri !== 0 && noi != null
+                  ? ((noi / gri) * 100).toFixed(2)
+                  : undefined;
+
+              return (
+                <div className="text-center max-w-40">
+                  <span className="">
+                    {noiMargin != null ? `${noiMargin}%` : "-"}
+                  </span>
+                </div>
+              );
+            },
             cell: () => {
               const triRows = triTable.getRowModel().rows as Row<TableRow>[];
               const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
