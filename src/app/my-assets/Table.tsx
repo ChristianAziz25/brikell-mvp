@@ -20,7 +20,7 @@ export function Table<TData extends RowData>({
   const rows = table.getRowModel().rows;
 
   return (
-    <div className="rounded-lg border bg-card">
+    <div className="rounded-lg border bg-card overflow-hidden">
       <div className="relative w-full overflow-auto no-scrollbar overscroll-x-contain">
         <table className="w-full caption-bottom text-sm">
           <thead className="[&_tr]:border-b">
@@ -28,7 +28,7 @@ export function Table<TData extends RowData>({
               table.getHeaderGroups().map((headerGroup) => (
                 <tr
                   key={headerGroup.id}
-                  className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-muted/50"
+                  className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-muted/20"
                 >
                   {headerGroup.headers.map((header) => {
                     if (header.isPlaceholder) {
@@ -92,7 +92,7 @@ export function Table<TData extends RowData>({
               rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-muted/50"
+                  className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-muted/20"
                 >
                   {row.getVisibleCells().map((cell) => {
                     const columnMeta = cell.column.columnDef.meta as
@@ -142,7 +142,7 @@ export function Table<TData extends RowData>({
               return (
                 <tr
                   key={leafGroup.id}
-                  className="border-t transition-colors data-[state=selected]:bg-muted hover:bg-muted/50"
+                  className="border-t transition-colors data-[state=selected]:bg-muted hover:bg-muted/20"
                 >
                   {leafGroup.headers.map((footer) => {
                     if (footer.isPlaceholder) {

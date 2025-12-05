@@ -45,6 +45,7 @@
   --color-primary-border: var(--primary-border);
   --color-input-background-color: var(--input-background-color);
   --color-chat-machine-color: var(--chat-machine-color);
+  --color-main-bg: var(--main-bg);
 }
 
 * {
@@ -63,7 +64,7 @@
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.967 0.001 286.375);
   --secondary-foreground: oklch(0.21 0.006 285.885);
-  --muted: oklch(0.967 0.001 286.375);
+  --muted: oklch(0.733 0.001 286.375);
   --muted-foreground: oklch(0.552 0.016 285.938);
   --accent: oklch(0.967 0.001 286.375);
   --accent-foreground: oklch(0.21 0.006 285.885);
@@ -89,6 +90,7 @@
   --chat-machine-color: oklch(0.21 0.006 285.885);
 
   --border-medium: 0.1rem solid var(--border);
+  --main-bg: oklch(0.9458 0 0);
 }
 
 .dark {
@@ -145,5 +147,12 @@
   }
   .border-l-medium {
     border-left: var(--border-medium);
+  }
+  .main-bg {
+    background: linear-gradient(
+      329deg,
+      rgba(205, 205, 205, 0.56),
+      rgba(0, 0, 0, 0)
+    );
   }
 }

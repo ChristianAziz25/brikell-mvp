@@ -3,10 +3,20 @@
 import { Send } from "lucide-react";
 import { useRef, useState } from "react";
 
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 
-export default function Chat() {
+const TW_BUTTON_CLASSNAME =
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-8 rounded-full px-3 text-xs cursor-pointer";
+
+export default function Chat({
+  eventHandler,
+  className,
+}: {
+  eventHandler?: (value: string) => void;
+  className?: string;
+}) {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const [value, setValue] = useState("");
 
@@ -33,6 +43,9 @@ export default function Chat() {
     if (!text) return;
 
     // TODO: wire this up to useChat sendMessage
+    if (eventHandler) {
+      eventHandler(text);
+    }
     setValue("");
     if (editorRef.current) {
       editorRef.current.innerHTML = "";
@@ -47,7 +60,12 @@ export default function Chat() {
         handleSubmit(value);
       }}
     >
-      <div className="bg-card rounded-2xl p-2.5 shadow-sm border grid grid-cols-[1fr] [grid-template-areas:'primary'_'footer'] gap-y-1.5">
+      <div
+        className={cn(
+          "bg-card rounded-2xl p-2.5 shadow-sm border grid grid-cols-[1fr] [grid-template-areas:'primary'_'footer'] gap-y-1.5",
+          className
+        )}
+      >
         <Textarea
           className="hidden"
           name="message"
@@ -77,19 +95,16 @@ export default function Chat() {
 
         <div className="-m-1 max-w-full overflow-x-auto p-1 [grid-area:footer] flex items-center justify-between gap-2">
           <div className="flex min-w-fit items-center gap-1.5">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-8 rounded-full px-3 text-xs"
-            >
+            <label htmlFor="file-upload" className={TW_BUTTON_CLASSNAME}>
               Attach
-            </Button>
+            </label>
+            <input id="file-upload" type="file" className="hidden" />
+
             <Button
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 rounded-full px-3 text-xs"
+              className="h-8 rounded-full px-3 text-xs cursor-pointer"
             >
               Search
             </Button>

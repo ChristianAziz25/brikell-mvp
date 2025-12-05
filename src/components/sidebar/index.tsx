@@ -210,7 +210,7 @@ function DesktopSidebar({ children }: { children: React.ReactNode }) {
         </ResizablePanel>
         <ResizableHandle withHandle className="bg-sidebar-border" />
         <ResizablePanel defaultSize={75} minSize={70} className="min-h-0">
-          <div className="flex h-full min-h-0 flex-col bg-background">
+          <div className="flex h-full min-h-0 flex-col main-bg">
             <header className="flex h-14 items-center border-b px-6">
               <BreadCrumbsBar />
             </header>

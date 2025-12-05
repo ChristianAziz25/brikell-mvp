@@ -395,7 +395,7 @@ export default function Page() {
       <div className="w-full">
         <div className="space-y-6 max-w-full">
           <div className="w-full p-6 ">
-            <h2 className="text-2xl font-medium tracking-tight text-foreground">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
               Leasing Pipeline
             </h2>
             <p className="text-muted-foreground text-sm mt-1">

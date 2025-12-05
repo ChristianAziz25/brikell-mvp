@@ -10,6 +10,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { RentRollUnitModel } from "@/generated/models/RentRollUnit";
 import { cn } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -488,7 +495,7 @@ export default function Page() {
                       {propertyUniqueValues.map((property) => (
                         <Button
                           key={property}
-                          variant="outline"
+                          variant="secondary"
                           size="sm"
                           onClick={() => column.setFilterValue(property)}
                         >
@@ -502,27 +509,32 @@ export default function Page() {
 
               {table.getColumn("units_status") && (
                 <div className="flex items-center gap-2">
-                  <select
+                  <Select
                     value={
                       (
                         table
                           .getColumn("units_status")
                           ?.getFilterValue() as string[]
-                      )?.join(",") || ""
+                      )?.join(",") || "all"
                     }
-                    onChange={(e) => {
-                      const value = e.target.value;
+                    onValueChange={(value: string) => {
                       table
                         .getColumn("units_status")
-                        ?.setFilterValue(value ? value.split(",") : undefined);
+                        ?.setFilterValue(
+                          value === "all" ? undefined : value.split(",")
+                        );
                     }}
-                    className="h-8 w-[140px] rounded-md border border-input bg-background px-3 py-1 text-sm"
                   >
-                    <option value="">All Status</option>
-                    <option value="occupied">Occupied</option>
-                    <option value="vacant">Vacant</option>
-                    <option value="terminated">Terminated</option>
-                  </select>
+                    <SelectTrigger className="h-8 w-[140px]">
+                      <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="occupied">Occupied</SelectItem>
+                      <SelectItem value="vacant">Vacant</SelectItem>
+                      <SelectItem value="terminated">Terminated</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               )}
             </div>
@@ -538,10 +550,7 @@ export default function Page() {
           <table className="w-full caption-bottom text-sm">
             <thead className="[&_tr]:border-b">
               {table.getHeaderGroups().map((headerGroup) => (
-                <tr
-                  key={headerGroup.id}
-                  className="border-b bg-muted/50 transition-colors hover:bg-muted data-[state=selected]:bg-muted"
-                >
+                <tr key={headerGroup.id} className="border-b">
                   {headerGroup.headers.map((header) => (
                     <th
                       key={header.id}

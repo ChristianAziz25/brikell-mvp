@@ -769,7 +769,7 @@ export default function MyAssets() {
   return (
     <div className="space-y-6">
       <div className="w-full">
-        <h2 className="text-2xl font-medium tracking-tight text-foreground">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground">
           My Assets
         </h2>
         <p className="text-muted-foreground text-sm mt-1">
@@ -781,7 +781,6 @@ export default function MyAssets() {
           <Button
             key={asset.name}
             variant={asset.name === activeAsset?.name ? "default" : "outline"}
-            className="w-full justify-start"
             onClick={() => setSelectedAsset(asset.name)}
           >
             <span className="font-medium">{asset.name}</span>
