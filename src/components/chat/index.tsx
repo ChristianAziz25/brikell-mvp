@@ -78,7 +78,7 @@ export default function Chat({
           <div className="relative flex-1 max-h-52 overflow-auto text-sm leading-relaxed overscroll-contain">
             <div
               ref={editorRef}
-              contentEditable
+              contentEditable="plaintext-only"
               translate="no"
               spellCheck={false}
               className="relative py-2 z-10 min-h-14 outline-none whitespace-pre-wrap"

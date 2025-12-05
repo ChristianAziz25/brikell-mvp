@@ -17,7 +17,6 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 import {
-  Building2Icon,
   FileCheckIcon,
   FileIcon,
   FolderIcon,
@@ -45,11 +44,6 @@ const navItems: NavItem[] = [
     title: "Flow",
     url: "/flow",
     icon: WorkflowIcon,
-  },
-  {
-    title: "Units",
-    url: "/units",
-    icon: Building2Icon,
   },
   {
     title: "My assets",

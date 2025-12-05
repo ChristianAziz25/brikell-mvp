@@ -7,16 +7,9 @@ import { useChat } from "@ai-sdk/react";
 import { Brain, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-const tips = [
-  "Upload your dataset or report for analysis",
-  "Ask follow-up questions in the chat",
-  "AI can generate charts and graphs",
-];
-
 const agents = ["capex", "opex", "all"];
 
 export default function Page() {
-  const [input, setInput] = useState("");
   const [context, setContext] = useState<"capex" | "opex" | "all">("all");
 
   const messageScrollRef = useRef<HTMLDivElement>(null);
@@ -55,7 +48,7 @@ export default function Page() {
             {messages.length === 0 && (
               <div className="flex justify-start">
                 <div className="flex max-w-3xl items-start gap-3">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/20">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30">
                     <Brain className="h-4 w-4 text-muted-foreground" />
                   </div>
                   <div className="rounded-2xl rounded-tl-sm bg-muted/20 px-4 py-3">
@@ -78,7 +71,7 @@ export default function Page() {
               >
                 <div className="flex max-w-3xl items-start gap-3">
                   {message.role === "assistant" && (
-                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30">
                       <Brain className="h-4 w-4 text-muted-foreground" />
                     </div>
                   )}
@@ -86,7 +79,7 @@ export default function Page() {
                     className={`rounded-2xl px-4 py-3 ${
                       message.role === "user"
                         ? "rounded-tr-sm bg-primary text-primary-foreground"
-                        : "rounded-tl-sm bg-muted"
+                        : "rounded-tl-sm bg-muted/30"
                     }`}
                   >
                     <div className="text-sm text-foreground whitespace-pre-wrap">

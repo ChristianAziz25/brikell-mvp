@@ -1,17 +1,6 @@
-import prisma from '@/lib/prisma/client';
-import { getAllAssets } from '@/lib/prisma/models/asset';
-import { getAllRentRollUnits } from '@/lib/prisma/models/rentRollUnit';
-import {
-  retrieveFewShotExample,
-  retrieveTopTables,
-} from '@/lib/rag/fewShot/fewShotRetriever';
-import {
-  buildPrismaQueryPrompt,
-  buildPrismaResponsePrompt,
-  serializeTableDetails,
-} from '@/lib/rag/promptTemplate';
+import { ragTools } from '@/lib/ai/tools/ragTools';
 import { openai } from '@ai-sdk/openai';
-import { type CoreMessage, generateText, streamText } from 'ai';
+import { streamText } from 'ai';
 
 type BasicMessagePart =
   | string
@@ -62,76 +51,6 @@ function extractTextFromMessage(message: BasicMessage): string {
   return '';
 }
 
-async function fetchContextForTables(
-  tableResults: Awaited<ReturnType<typeof retrieveTopTables>>,
-) {
-  const context: Record<string, unknown> = {};
-
-  for (const t of tableResults) {
-    const name = t.tableName;
-
-    if (name === 'Asset' && context.Asset === undefined) {
-      context.Asset = await getAllAssets();
-    } else if (name === 'RentRollUnit' && context.RentRollUnit === undefined) {
-      context.RentRollUnit = await getAllRentRollUnits();
-    } else if (name === 'Capex' && context.Capex === undefined) {
-      context.Capex = await prisma.capex.findMany({
-        take: 100,
-        orderBy: { capex_year: 'asc' },
-      });
-    } else if (name === 'Opex' && context.Opex === undefined) {
-      context.Opex = await prisma.opex.findMany({
-        take: 100,
-        orderBy: { opex_year: 'asc' },
-      });
-    }
-  }
-
-  return context;
-}
-
-function cleanPrismaCodeBlock(raw: string): string {
-  let code = raw.trim();
-
-  // If the model wrapped the query in a fenced code block, extract the inner content
-  const fenceMatch = code.match(/```[a-zA-Z]*\n([\s\S]*?)```/);
-  if (fenceMatch && fenceMatch[1]) {
-    code = fenceMatch[1].trim();
-  }
-
-  // Drop a leading comment line like "// TypeScript / Prisma Client code here"
-  code = code.replace(/^\/\/.*$/m, '').trim();
-
-  return code;
-}
-
-async function executePrismaQueryFromText(
-  prismaQuery: string,
-): Promise<unknown> {
-  const code = cleanPrismaCodeBlock(prismaQuery).trim();
-
-  let body: string;
-
-  if (/\breturn\b/.test(code)) {
-    body = code;
-  } else {
-    const constMatch = code.match(/^const\s+(\w+)\s*=/);
-    if (constMatch) {
-      const varName = constMatch[1];
-      body = `${code}\nreturn ${varName};`;
-    } else if (/^prisma\./.test(code)) {
-      body = `return await (${code});`;
-    } else {
-      body = `return await (${code});`;
-    }
-  }
-
-  const wrapped = `"use strict"; return (async (prisma) => { ${body} })(prisma);`;
-  console.log('wrappy', wrapped)
-  const fn = new Function('prisma', wrapped);
-  return await fn(prisma);
-}
-
 export async function POST(req: Request) {
   try {
     const {
@@ -171,94 +90,48 @@ export async function POST(req: Request) {
       );
     }
 
-    // Stage 1: retrieve few-shot examples + top tables, build Prisma prompt, and generate PrismaQuery text
-    const [fewShotResults, tableResults] = await Promise.all([
-      retrieveFewShotExample(userQuery),
-      retrieveTopTables(userQuery),
-    ]);
+    // Build system prompt that guides the LLM to use tools in sequence
+    const systemPrompt = `You are a helpful database assistant. When a user asks a question about real estate data, follow these steps:
 
-    const fullTableDetailsText = serializeTableDetails();
+1. First, use similaritySearchQuery to find similar example queries that show how similar questions were answered
+2. Then, use similaritySearchTable to find the most relevant database tables for the query
+3. Next, use generateQuery to create a Prisma database query using the examples and tables you found
+4. Finally, use executeQuery to run the query and get the actual data
+5. Once you have the data, provide a clear, natural language answer based on the query results
 
-    const schemaText =
-      tableResults.length > 0
-        ? tableResults
-            .map(
-              (t) =>
-                `${t.tableName}:\n${t.description}`,
-            )
-            .join('\n\n')
-        : fullTableDetailsText;
+Important:
+- Always follow this sequence: search examples → search tables → generate query → execute query → answer
+- Be concise and helpful in your final answer
+- If a query execution fails, the tool will attempt a fallback automatically
+- Base your answer ONLY on the actual data returned from the query
+- Do not mention Prisma, queries, or databases in your final answer - just provide the information naturally`;
 
-    const fewShotExamplesText =
-      fewShotResults.length > 0
-        ? fewShotResults
-            .map(
-              (ex, index) =>
-                `${index + 1}.\nQuestion: ${ex.question}\nAnswer:\n${ex.answer}`,
-            )
-            .join('\n\n')
-        : '';
-
-    const stage1SystemPrompt = buildPrismaQueryPrompt({
-      userQuery,
-      schema: schemaText,
-      tableDetailsText: fullTableDetailsText,
-      fewShotExamplesText,
-    });
-
-    const { text: stage1Text } = await generateText({
-      model: openai('gpt-5-nano'),
-      prompt: stage1SystemPrompt,
-    });
-
-    // Try to extract only the PrismaQuery block (excluding the Explanation section)
-    const prismaQueryMatch = stage1Text.match(
-      /PrismaQuery:\s*([\s\S]*?)(?:\nExplanation:|\n\nExplanation:|$)/,
-    );
-    const prismaQuery =
-      prismaQueryMatch && prismaQueryMatch[1]
-        ? prismaQueryMatch[1].trim()
-        : stage1Text.trim();
-
-    let contextData: unknown;
-    try {
-      contextData = await executePrismaQueryFromText(prismaQuery);
-    } catch (execError) {
-      console.error('Failed to execute Prisma query from LLM:', execError);
-      contextData = await fetchContextForTables(tableResults);
-    }
-
-    const contextStr = JSON.stringify(contextData, null, 2);
-
-    const stage2SystemPrompt = buildPrismaResponsePrompt({
-      userQuery,
-      prismaQuery,
-      context: contextStr,
-    });
-
-    // Build chat messages for stage 2 from the original request,
-    // falling back to a single user message with the extracted query.
-    const stage2Messages: CoreMessage[] = messages
-      .map((m): CoreMessage => ({
+    // Convert messages to the format expected by streamText
+    const formattedMessages = messages
+      .map((m) => ({
         role:
           m.role === 'assistant' || m.role === 'system' || m.role === 'user'
             ? (m.role as 'assistant' | 'system' | 'user')
             : 'user',
         content: extractTextFromMessage(m),
       }))
-      .filter((m) => typeof m.content === 'string' && m.content.trim().length > 0);
+      .filter(
+        (m) => typeof m.content === 'string' && m.content.trim().length > 0,
+      );
 
-    if (stage2Messages.length === 0) {
-      stage2Messages.push({
+    if (formattedMessages.length === 0) {
+      formattedMessages.push({
         role: 'user',
         content: userQuery,
       });
     }
 
+    // Use streamText with tools - the LLM will decide when to call each tool
     const result = streamText({
       model: openai('gpt-5-nano'),
-      system: stage2SystemPrompt,
-      messages: stage2Messages,
+      system: systemPrompt,
+      messages: formattedMessages,
+      tools: ragTools,
     });
 
     return result.toUIMessageStreamResponse();
