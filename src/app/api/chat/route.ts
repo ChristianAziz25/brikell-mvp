@@ -1,6 +1,7 @@
 import { ragTools } from '@/lib/ai/tools/ragTools';
 import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { streamText, tool } from 'ai';
+import { z } from 'zod';
 
 type BasicMessagePart =
   | string
@@ -90,20 +91,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // Build system prompt that guides the LLM to use tools in sequence
-    const systemPrompt = `You are a helpful database assistant. When a user asks a question about real estate data, follow these steps:
-
-1. First, use similaritySearchQuery to find similar example queries that show how similar questions were answered
-2. Then, use similaritySearchTable to find the most relevant database tables for the query
-3. Next, use generateQuery to create a Prisma database query using the examples and tables you found
-4. Finally, use executeQuery to run the query and get the actual data
-5. Once you have the data, provide a clear, natural language answer based on the query results
+    // Build system prompt that guides the LLM to use tools appropriately
+    const systemPrompt = `You are a helpful assistant. You can answer general questions directly, but when a user asks about real estate data (properties, rent rolls, units, financials, etc.), you should use the chainFewShotQuery tool to query the database.
 
 Important:
-- Always follow this sequence: search examples → search tables → generate query → execute query → answer
-- Be concise and helpful in your final answer
-- If a query execution fails, the tool will attempt a fallback automatically
-- Base your answer ONLY on the actual data returned from the query
+- Answer general questions, greetings, and non-database queries directly without using any tools
+- ONLY use the chainFewShotQuery tool when the user is asking about real estate data that requires querying the database
+- Examples that require the tool: "What properties do we have?", "Show me rent roll data", "What's the occupancy rate?", "List all units"
+- Examples that do NOT require the tool: "Hello", "What is NOI?", "Explain what a rent roll is", general real estate concepts
+- When you do use the tool, provide a clear, natural language answer based on the query results
+- If a tool returns an error (success: false), explain to the user that there was an issue processing their request and provide helpful guidance
+- Always provide a response to the user, even if tool execution fails
 - Do not mention Prisma, queries, or databases in your final answer - just provide the information naturally`;
 
     // Convert messages to the format expected by streamText
@@ -131,8 +129,32 @@ Important:
       model: openai('gpt-5-nano'),
       system: systemPrompt,
       messages: formattedMessages,
-      tools: ragTools,
+      tools: {
+        chainFewShotQuery: tool({
+          description: 'ONLY use this tool when the user is asking a specific question about real estate data that requires querying the database (e.g., "What properties do we have?", "Show me rent roll units", "What is the occupancy rate for Property X?"). Do NOT use this tool for general questions, greetings, explanations of concepts, or questions that don\'t require database queries.',
+          inputSchema: z.object({
+            query: z.string().describe('The user\'s question about real estate data that requires a database query'),
+          }),
+          execute: async ({ query }) => {
+            try {
+              const result = await ragTools.chainFewShotQuery(query);
+              return result.response;
+            } catch (error) {
+              // Ensure errors are properly caught and returned as a structured response
+              const errorMessage = error instanceof Error ? error.message : String(error);
+              console.error('Tool execution error:', errorMessage);
+              return {
+                success: false,
+                data: null,
+                error: `Failed to execute query: ${errorMessage}`,
+                usedFallback: false,
+              };
+            }
+          },
+        }),
+      },
     });
+
 
     return result.toUIMessageStreamResponse();
   } catch (error: unknown) {

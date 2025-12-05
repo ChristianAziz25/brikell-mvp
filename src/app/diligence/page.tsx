@@ -62,6 +62,7 @@ export default function Page() {
                 </div>
               </div>
             )}
+
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -84,46 +85,175 @@ export default function Page() {
                   >
                     <div className="text-sm text-foreground whitespace-pre-wrap">
                       {(() => {
-                        if (
-                          message.role === "assistant" &&
-                          (!message.parts ||
-                            message.parts.length === 0 ||
-                            !message.parts.some((p) => p.type === "text"))
-                        ) {
+                        // Helper function to get emoji based on part type and state
+                        const getPartEmoji = (
+                          part: { type?: string; state?: string } | undefined
+                        ) => {
+                          if (!part) return "⏳";
+
+                          const partType = part.type || "";
+                          const partState = part.state || "";
+
+                          // Handle step-start
+                          if (partType === "step-start") {
+                            return "🚀";
+                          }
+
+                          // Handle reasoning
+                          if (partType === "reasoning") {
+                            if (partState === "done") {
+                              return "💭";
+                            }
+                            return "🤔";
+                          }
+
+                          // Handle tool calls
+                          if (partType.startsWith("tool-")) {
+                            if (partState === "output-available") {
+                              return "✅";
+                            }
+                            if (partState === "call") {
+                              return "🔧";
+                            }
+                            // Default tool emoji
+                            return "⚙️";
+                          }
+
+                          // Handle text parts
+                          if (partType === "text") {
+                            return null; // No emoji for text
+                          }
+
+                          // Default loading emoji
+                          return "⏳";
+                        };
+
+                        if (message.role !== "assistant") {
+                          // For user messages, just render text parts
+                          const textParts =
+                            message.parts
+                              ?.filter((p) => p.type === "text")
+                              .map((part, i) => (
+                                <p
+                                  className="text-primary-foreground"
+                                  key={`${message.id}-${i}`}
+                                >
+                                  {part.text}
+                                </p>
+                              )) || [];
+                          return textParts.length > 0 ? textParts : null;
+                        }
+
+                        // For assistant messages
+                        const textParts =
+                          message.parts
+                            ?.filter((p) => p.type === "text")
+                            .map((part, i) => (
+                              <p
+                                className="text-chat-machine-color"
+                                key={`${message.id}-text-${i}`}
+                              >
+                                {part.text}
+                              </p>
+                            )) || [];
+
+                        // Get tool parts with available output
+                        const toolOutputParts =
+                          message.parts
+                            ?.filter((p) => {
+                              // Type guard: check if part has tool-related properties
+                              const hasToolType = p.type?.startsWith("tool-");
+                              const hasState = "state" in p;
+                              const hasOutput = "output" in p;
+                              return (
+                                hasToolType &&
+                                hasState &&
+                                (p as { state?: string }).state ===
+                                  "output-available" &&
+                                hasOutput &&
+                                (p as { output?: unknown }).output !== undefined
+                              );
+                            })
+                            .map((part, i) => {
+                              // Type guard: safely access output
+                              const partWithOutput = part as {
+                                output?:
+                                  | string
+                                  | { response?: string }
+                                  | unknown;
+                              };
+                              // Handle output from tool - it can be a string or an object
+                              const outputText =
+                                typeof partWithOutput.output === "string"
+                                  ? partWithOutput.output
+                                  : typeof partWithOutput.output === "object" &&
+                                    partWithOutput.output !== null &&
+                                    "response" in partWithOutput.output
+                                  ? (
+                                      partWithOutput.output as {
+                                        response: string;
+                                      }
+                                    ).response
+                                  : typeof partWithOutput.output === "object" &&
+                                    partWithOutput.output !== null
+                                  ? JSON.stringify(partWithOutput.output)
+                                  : "";
+
+                              if (!outputText) return null;
+
+                              return (
+                                <p
+                                  className="text-chat-machine-color"
+                                  key={`${message.id}-tool-${i}`}
+                                >
+                                  {outputText}
+                                </p>
+                              );
+                            })
+                            .filter((p) => p !== null) || [];
+
+                        // Get non-text parts for emoji display
+                        const nonTextParts =
+                          message.parts?.filter((p) => p.type !== "text") || [];
+
+                        // Combine text parts and tool outputs
+                        const allContentParts = [
+                          ...textParts,
+                          ...toolOutputParts,
+                        ];
+
+                        // If we have any content to display, show it
+                        if (allContentParts.length > 0) {
                           return (
-                            <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                            <>
+                              {allContentParts}
+                              {status === "streaming" && (
+                                <span className="inline-block ml-2 animate-pulse">
+                                  {getPartEmoji(
+                                    nonTextParts[nonTextParts.length - 1]
+                                  ) || "⏳"}
+                                </span>
+                              )}
+                            </>
                           );
                         }
 
-                        return message.parts.map((part, i) => {
-                          switch (part.type) {
-                            case "text":
-                              switch (message.role) {
-                                case "assistant":
-                                  return (
-                                    <p
-                                      className="text-chat-machine-color"
-                                      key={`${message.id}-${i}`}
-                                    >
-                                      {part.text}
-                                    </p>
-                                  );
-                                case "user":
-                                  return (
-                                    <p
-                                      className="text-primary-foreground"
-                                      key={`${message.id}-${i}`}
-                                    >
-                                      {part.text}
-                                    </p>
-                                  );
-                                default:
-                                  return null;
-                              }
-                            default:
-                              return null;
-                          }
-                        });
+                        // No text parts yet - show emoji based on current part state
+                        if (message.parts && message.parts.length > 0) {
+                          const latestPart =
+                            message.parts[message.parts.length - 1];
+                          const emoji = getPartEmoji(latestPart);
+                          return (
+                            <span className="inline-block animate-pulse text-xl">
+                              {emoji || "⏳"}
+                            </span>
+                          );
+                        }
+
+                        // No parts at all - show default loader
+                        return (
+                          <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                        );
                       })()}
                     </div>
                   </div>

@@ -12,21 +12,87 @@ import {
 } from '@/lib/rag/fewShot/fewShotRetriever';
 import {
     buildPrismaQueryPrompt,
+    buildPrismaResponsePrompt,
     serializeTableDetails,
 } from '@/lib/rag/promptTemplate';
 import { openai } from '@ai-sdk/openai';
-import { generateText, tool } from 'ai';
-import { z } from 'zod';
+import { generateText } from 'ai';
 import { executePrismaQueryFromText } from './ragUtils';
 
-// Tool 1: Similarity Search for Query Examples
-export const similaritySearchQueryTool = tool({
-  description:
-    'Search for similar example queries and their answers to help understand how to answer the current question. Use this first to find relevant examples.',
-  inputSchema: z.object({
-    query: z.string().describe('The user query to find similar examples for'),
-  }),
-  execute: async ({ query }) => {
+interface BestExample {
+  question: string;
+  answer: string;
+  score: number;
+}
+interface BestExamplesResult {
+  examples: BestExample[];
+  count: number;
+}
+
+interface BestTable {
+  tableName: string;
+  description: string;
+  score: number;
+}
+
+interface BestTablesResult {
+  tables: BestTable[];
+  count: number;
+}
+
+interface QueryResult {
+  prismaQuery: string;
+  explanation: string | undefined;
+}
+
+interface GenerateQueryInput {
+  userQuery: string;
+  relevantTables: { tableName: string; description: string }[];
+  exampleQueries: { question: string; answer: string }[];
+}
+
+interface ExecuteQueryInput {
+  prismaQuery: string;
+  fallbackTables: { tableName: string; description: string }[];
+}
+
+interface ExecuteQueryResult {
+  success: true;
+  data: Record<string, unknown> | unknown;
+  error: null;
+  usedFallback: false;
+}
+
+interface ExecuteQueryError {
+  success: false;
+  data: Record<string, unknown> | null;
+  error: string;
+  usedFallback: boolean;
+}
+
+interface GenerateResponseInput {
+  userQuery: string;
+  prismaQuery: string;
+  queryData: Record<string, unknown> | unknown;
+}
+
+interface ChainFewShotQueryResult {
+  success: true;
+  data: Record<string, unknown> | unknown;
+  response: string;
+  error: null;
+  usedFallback: false;
+}
+
+interface ChainFewShotQueryError {
+  success: false;
+  data: Record<string, unknown> | null;
+  response: string | null;
+  error: string;
+  usedFallback: boolean;
+}
+
+async function searchBestExamples (query: string): Promise<BestExamplesResult> {
     const fewShotResults = await retrieveFewShotExample(query);
     return {
       examples: fewShotResults.map((ex) => ({
@@ -36,55 +102,19 @@ export const similaritySearchQueryTool = tool({
       })),
       count: fewShotResults.length,
     };
-  },
-});
+}
 
-// Tool 2: Similarity Search for Relevant Tables
-export const similaritySearchTableTool = tool({
-  description:
-    'Find the most relevant database tables for answering the query. Use this to identify which tables contain the data needed.',
-  inputSchema: z.object({
-    query: z.string().describe('The user query to find relevant tables for'),
-  }),
-  execute: async ({ query }) => {
-    const tableResults = await retrieveTopTables(query);
-    return {
-      tables: tableResults.map((t) => ({
-        tableName: t.tableName,
-        description: t.description,
-        score: t.score,
-      })),
-      count: tableResults.length,
-    };
-  },
-});
+async function searchBestTables(query: string): Promise<BestTablesResult> {
+  const tableResults = await retrieveTopTables(query);
+  return {
+    tables: tableResults,
+    count: tableResults.length,
+  };
+}
 
-// Tool 3: Generate Prisma Query
-export const generateQueryTool = tool({
-  description:
-    'Generate a Prisma database query based on the user question, relevant tables, and example queries. Use this after finding examples and tables.',
-  inputSchema: z.object({
-    userQuery: z.string().describe('The original user question'),
-    relevantTables: z
-      .array(
-        z.object({
-          tableName: z.string(),
-          description: z.string(),
-        }),
-      )
-      .describe('The relevant database tables identified'),
-    exampleQueries: z
-      .array(
-        z.object({
-          question: z.string(),
-          answer: z.string(),
-        }),
-      )
-      .optional()
-      .describe('Similar example queries and their answers'),
-  }),
-  execute: async ({ userQuery, relevantTables, exampleQueries = [] }) => {
+async function generateQuery(GenerateQueryInput: GenerateQueryInput): Promise<QueryResult> {
     const fullTableDetailsText = serializeTableDetails();
+    const { userQuery, relevantTables, exampleQueries } = GenerateQueryInput;
 
     const schemaText =
       relevantTables.length > 0
@@ -130,32 +160,18 @@ export const generateQueryTool = tool({
         ? text.split('Explanation:')[1]?.trim()
         : undefined,
     };
-  },
-});
+}
 
-// Tool 4: Execute Prisma Query
-export const executeQueryTool = tool({
-  description:
-    'Execute a Prisma query and return the results. Use this after generating a query to get the actual data.',
-  inputSchema: z.object({
-    prismaQuery: z.string().describe('The Prisma query code to execute'),
-    fallbackTables: z
-      .array(
-        z.object({
-          tableName: z.string(),
-          description: z.string(),
-        }),
-      )
-      .optional()
-      .describe('Fallback tables to query if execution fails'),
-  }),
-  execute: async ({ prismaQuery, fallbackTables = [] }) => {
+
+async function executeQuery(ExecuteQueryInput: ExecuteQueryInput): Promise<ExecuteQueryResult | ExecuteQueryError> {
+    const { prismaQuery, fallbackTables } = ExecuteQueryInput;
     try {
       const result = await executePrismaQueryFromText(prismaQuery);
       return {
         success: true,
         data: result,
         error: null,
+        usedFallback: false,
       };
     } catch (error) {
       console.error('Failed to execute Prisma query:', error);
@@ -202,14 +218,99 @@ export const executeQueryTool = tool({
         usedFallback: false,
       };
     }
-  },
-});
+}
+
+async function generateResponse(GenerateResponseInput: GenerateResponseInput): Promise<string> {
+  const { userQuery, prismaQuery, queryData } = GenerateResponseInput;
+  
+  // Serialize the query data to a readable string format
+  const contextStr = JSON.stringify(queryData, null, 2);
+  
+  const prompt = buildPrismaResponsePrompt({
+    userQuery: userQuery,
+    prismaQuery: prismaQuery,
+    context: contextStr,
+  });
+
+  const { text } = await generateText({
+    model: openai('gpt-5-nano'),
+    prompt,
+  });
+
+  // Extract the response (everything after "Response:")
+  const responseMatch = text.match(/Response:\s*([\s\S]*?)$/);
+  const response = responseMatch && responseMatch[1]
+    ? responseMatch[1].trim()
+    : text.trim();
+
+  return response;
+}
+
+async function chainFewShotQuery(query: string): Promise<ChainFewShotQueryResult | ChainFewShotQueryError> {
+  try {
+    const examples = await searchBestExamples(query);
+    console.log(examples);
+    const tables = await searchBestTables(query);
+    console.log(tables);
+    console.time("queryResult");
+    const queryResult = await generateQuery({ userQuery: query, relevantTables: tables.tables, exampleQueries: examples.examples });
+    console.timeEnd("queryResult");
+    console.log(queryResult);
+    const result = await executeQuery({ prismaQuery: queryResult.prismaQuery, fallbackTables: tables.tables });
+    
+    console.log(result);
+    let response: string;
+    
+    if (result.success) {
+      response = await generateResponse({
+        userQuery: query,
+        prismaQuery: queryResult.prismaQuery,
+        queryData: result.data,
+      });
+    } else {
+      if (result.usedFallback && result.data) {
+        response = await generateResponse({
+          userQuery: query,
+          prismaQuery: queryResult.prismaQuery,
+          queryData: result.data,
+        });
+      } else {
+        response = `I encountered an error while processing your query: ${result.error}. Please try rephrasing your question or check if the data you're looking for exists.`;
+      }
+    }    
+    if (result.success) {
+      return {
+        success: true,
+        data: result.data,
+        response: response,
+        error: null,
+        usedFallback: false,
+      };
+    } else {
+      return {
+        success: false,
+        data: result.data,
+        response: response,
+        error: result.error,
+        usedFallback: result.usedFallback,
+      };
+    }
+  } catch (error) {
+    // Catch any unexpected errors in the chain
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('chainFewShotQuery error:', errorMessage);
+    return {
+      success: false,
+      data: null,
+      response: `I encountered an error while processing your query: ${errorMessage}. Please try again.`,
+      error: `Error processing query: ${errorMessage}`,
+      usedFallback: false,
+    };
+  }
+}
 
 // Export all RAG tools as a single object
 export const ragTools = {
-  similaritySearchQuery: similaritySearchQueryTool,
-  similaritySearchTable: similaritySearchTableTool,
-  generateQuery: generateQueryTool,
-  executeQuery: executeQueryTool,
+  chainFewShotQuery: chainFewShotQuery,
 };
 
