@@ -1,3 +1,8 @@
 export const dollarStringify = (value: number) => {
-  return `${value.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  const isMillionOrMore = Math.abs(value) >= 1_000_000;
+  
+  return new Intl.NumberFormat("de-DE", {
+    minimumFractionDigits: isMillionOrMore ? 2 : 0,
+    maximumFractionDigits: isMillionOrMore ? 2 : 0,
+  }).format(value);
 };

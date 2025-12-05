@@ -56,7 +56,7 @@ export function Table<TData extends RowData>({
                         key={header.id}
                         colSpan={header.colSpan}
                         className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${
-                          isYearGroupFirst ? "border-l border-border" : ""
+                          isYearGroupFirst ? "border-l-medium" : ""
                         }`}
                       >
                         {flexRender(
@@ -112,7 +112,7 @@ export function Table<TData extends RowData>({
                       <td
                         key={cell.id}
                         className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${
-                          isYearGroupFirst ? "border-l border-border" : ""
+                          isYearGroupFirst ? "border-l-medium" : ""
                         }`}
                       >
                         {flexRender(
@@ -182,7 +182,7 @@ export function Table<TData extends RowData>({
                         key={footer.id}
                         colSpan={footer.colSpan}
                         className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${
-                          isYearGroupFirst ? "border-l border-border" : ""
+                          isYearGroupFirst ? "border-l-medium" : ""
                         }`}
                       >
                         {flexRender(

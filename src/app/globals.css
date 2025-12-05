@@ -87,6 +87,8 @@
   --primary-border: oklch(0.872 0.01 258.34);
   --input-background-color: oklch(1 0 0);
   --chat-machine-color: oklch(0.21 0.006 285.885);
+
+  --border-medium: 0.1rem solid var(--border);
 }
 
 .dark {
@@ -140,5 +142,8 @@
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+  .border-l-medium {
+    border-left: var(--border-medium);
   }
 }

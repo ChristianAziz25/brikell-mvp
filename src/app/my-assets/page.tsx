@@ -458,6 +458,17 @@ export default function MyAssets() {
             size: COLUMN_WIDTHS.metric,
             minSize: COLUMN_WIDTHS.metric,
             cell: ({ row }) => {
+              const metric =
+                row.original.metric === "triAmount"
+                  ? "TRI"
+                  : row.original.metric === "vacancyLoss"
+                  ? "Vacancy Loss"
+                  : row.original.metric
+                      .split("_")
+                      .join(" ")
+                      .charAt(0)
+                      .toUpperCase() +
+                    row.original.metric.split("_").join(" ").slice(1);
               if (row.original.isSectionHeader) {
                 return (
                   <div className="text-left w-40 font-semibold py-2">
@@ -472,9 +483,7 @@ export default function MyAssets() {
                   </div>
                 );
               }
-              return (
-                <div className="text-left w-40">{row.original.metric}</div>
-              );
+              return <div className="text-left w-40">{metric}</div>;
             },
           },
         ],
