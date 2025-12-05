@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { Table } from "./Table";
+import { dollarStringify } from "./util/dollarStringify";
 
 const COLUMN_WIDTHS = {
   metric: 220,
@@ -19,7 +20,13 @@ const COLUMN_WIDTHS = {
 
 type TableRow = {
   metric: string;
-  [year: string]: string | number | number[];
+  [year: string]: string | number | number[] | boolean | undefined;
+};
+
+type UnifiedTableRow = TableRow & {
+  section: "tri" | "capex" | "opex" | "noi";
+  isSectionHeader?: boolean;
+  isFooterRow?: boolean;
 };
 
 interface TableData {
@@ -44,8 +51,6 @@ export default function MyAssets() {
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
-
-  console.log(tableData);
 
   const activeAsset = useMemo(() => {
     if (!tableData.length) return undefined;
@@ -78,515 +83,399 @@ export default function MyAssets() {
     );
   }, [activeAsset]);
 
-  const triColumns: ColumnDef<TableRow>[] = useMemo(
-    () => [
-      {
-        id: "tri-group",
-        header: "Line Item",
-        size: COLUMN_WIDTHS.metric,
-        minSize: COLUMN_WIDTHS.metric,
-        footer: () => <div className="text-left w-40">GRI</div>,
-        columns: [
-          {
-            accessorKey: "metric",
-            header: "", // second-row header under Metric should be empty
-            size: COLUMN_WIDTHS.metric,
-            minSize: COLUMN_WIDTHS.metric,
-            cell: ({ row }) => (
-              <div className="text-left w-40">{row.original.metric}</div>
-            ),
-          },
-        ],
-      },
-      ...years.map((year, yearIndex) => ({
-        id: `${year}-group`,
-        meta: { isYearGroup: true, yearIndex },
-        header: () => {
-          return (
-            <div className="flex flex-row gap-8">
-              <div className="text-center w-full">{year}</div>
-              <div className="text-center w-full">{year}</div>
-            </div>
-          );
-        },
-        size: COLUMN_WIDTHS.year * 2,
-        minSize: COLUMN_WIDTHS.year * 2,
-        footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-          const rows = table.getRowModel().rows as Row<TableRow>[];
-          const triAmountRow = rows.find(
-            (r) => r.original.metric === "triAmount"
-          );
-          const vacancyLossRow = rows.find(
-            (r) => r.original.metric === "vacancyLoss"
-          );
-
-          console.log(triAmountRow?.original[year]);
-          const [triBase1, triBase2] = triAmountRow?.original[year] as number[];
-          const [vacancyBase1, vacancyBase2] = vacancyLossRow?.original[
-            year
-          ] as number[];
-
-          const triNumber1 =
-            typeof triBase1 === "number"
-              ? triBase1
-              : Array.isArray(triBase1)
-              ? Number(triBase1[0])
-              : undefined;
-          const triNumber2 =
-            typeof triBase2 === "number"
-              ? triBase2
-              : Array.isArray(triBase2)
-              ? Number(triBase2[0])
-              : undefined;
-
-          const vacancyNumber1 =
-            typeof vacancyBase1 === "number"
-              ? vacancyBase1
-              : Array.isArray(vacancyBase1)
-              ? Number(vacancyBase1[0])
-              : undefined;
-          const vacancyNumber2 =
-            typeof vacancyBase2 === "number"
-              ? vacancyBase2
-              : Array.isArray(vacancyBase2)
-              ? Number(vacancyBase2[0])
-              : undefined;
-
-          const gri1 =
-            triNumber1 != null && vacancyNumber1 != null
-              ? triNumber1 - vacancyNumber1
-              : undefined;
-          const gri2 =
-            triNumber2 != null && vacancyNumber2 != null
-              ? triNumber2 - vacancyNumber2
-              : undefined;
-
-          return (
-            <div className="flex flex-row gap-8">
-              <div className="text-center w-full">{gri1 ?? "-"}</div>
-              <div className="text-center w-full">{gri2 ?? "-"}</div>
-            </div>
-          );
-        },
-        columns: [
-          {
-            id: `${year}-actual`,
-            meta: { isYearGroup: true, yearIndex, isFirstInGroup: true },
-            header: () => <div className="text-center">Actual</div>,
-            size: COLUMN_WIDTHS.year,
-            minSize: COLUMN_WIDTHS.year,
-            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              // GRI (Gross Rental Income) = TRI - vacancyLoss for Actual
-              const rows = table.getRowModel().rows as Row<TableRow>[];
-              const triAmountRow = rows.find(
-                (r) => r.original.metric === "triAmount"
-              );
-              const vacancyLossRow = rows.find(
-                (r) => r.original.metric === "vacancyLoss"
-              );
-
-              const triBase = triAmountRow?.original[year];
-              const vacancyBase = vacancyLossRow?.original[year];
-
-              const triNumber =
-                typeof triBase === "number"
-                  ? triBase
-                  : Array.isArray(triBase)
-                  ? Number(triBase[0])
-                  : undefined;
-
-              const vacancyNumber =
-                typeof vacancyBase === "number"
-                  ? vacancyBase
-                  : Array.isArray(vacancyBase)
-                  ? Number(vacancyBase[0])
-                  : undefined;
-
-              const gri =
-                triNumber != null && vacancyNumber != null
-                  ? triNumber - vacancyNumber
-                  : undefined;
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{gri ?? "-"}</span>
-                </div>
-              );
-            },
-            cell: ({ row }: { row: Row<TableRow> }) => {
-              const value = row.original[year];
-              const actual = Array.isArray(value) ? value[0] : value;
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{actual ?? "-"}</span>
-                </div>
-              );
-            },
-          },
-          {
-            id: `${year}-budget`,
-            header: () => <div className="text-center">Budget</div>,
-            size: COLUMN_WIDTHS.year,
-            minSize: COLUMN_WIDTHS.year,
-            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              // GRI (Gross Rental Income) = TRI - vacancyLoss for Budget
-              const rows = table.getRowModel().rows as Row<TableRow>[];
-              const triAmountRow = rows.find(
-                (r) => r.original.metric === "triAmount"
-              );
-              const vacancyLossRow = rows.find(
-                (r) => r.original.metric === "vacancyLoss"
-              );
-
-              const triBase = triAmountRow?.original[year];
-              const vacancyBase = vacancyLossRow?.original[year];
-
-              const triNumber =
-                typeof triBase === "number"
-                  ? triBase
-                  : Array.isArray(triBase)
-                  ? Number(triBase[1])
-                  : undefined;
-
-              const vacancyNumber =
-                typeof vacancyBase === "number"
-                  ? vacancyBase
-                  : Array.isArray(vacancyBase)
-                  ? Number(vacancyBase[1])
-                  : undefined;
-
-              const gri =
-                triNumber != null && vacancyNumber != null
-                  ? triNumber - vacancyNumber
-                  : undefined;
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{gri ?? "-"}</span>
-                </div>
-              );
-            },
-            cell: ({ row }: { row: Row<TableRow> }) => {
-              const value = row.original[year];
-              const budget = Array.isArray(value) ? value[1] : value;
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{budget ?? "-"}</span>
-                </div>
-              );
-            },
-          },
-        ],
-      })),
-    ],
-    [years]
-  );
-
-  const capexColumns: ColumnDef<TableRow>[] = useMemo(
-    () => [
-      {
-        id: "capex-group",
-        header: "Capital Expenditures (CapEx)",
-        size: COLUMN_WIDTHS.metric,
-        minSize: COLUMN_WIDTHS.metric,
-        footer: () => <div className="text-left w-40">Total</div>,
-        columns: [
-          {
-            accessorKey: "metric",
-            header: "",
-            size: COLUMN_WIDTHS.metric,
-            minSize: COLUMN_WIDTHS.metric,
-            cell: ({ row }) => (
-              <div className="text-left w-40">{row.original.metric}</div>
-            ),
-          },
-        ],
-      },
-      ...years.map((year, yearIndex) => ({
-        id: `${year}-group`,
-        meta: { isYearGroup: true, yearIndex },
-        header: () => {
-          return (
-            <div className="flex flex-row gap-8">
-              <div className="text-center w-full">{year}</div>
-              <div className="text-center w-full">{year}</div>
-            </div>
-          );
-        },
-        size: COLUMN_WIDTHS.year * 2,
-        minSize: COLUMN_WIDTHS.year * 2,
-        footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-          const rows = table.getRowModel().rows as Row<TableRow>[];
-
-          const totalActual = rows.reduce((sum, row) => {
-            const value = row.original[year];
-            const actual = Array.isArray(value) ? value[0] : value;
-            const numValue =
-              typeof actual === "number" ? actual : Number(actual) || 0;
-            return sum + numValue;
-          }, 0);
-
-          const totalBudget = rows.reduce((sum, row) => {
-            const value = row.original[year];
-            const budget = Array.isArray(value) ? value[1] : value;
-            const numValue =
-              typeof budget === "number" ? budget : Number(budget) || 0;
-            return sum + numValue;
-          }, 0);
-
-          return (
-            <div className="flex flex-row gap-8">
-              <div className="text-center w-full">{totalActual}</div>
-              <div className="text-center w-full">{totalBudget}</div>
-            </div>
-          );
-        },
-        columns: [
-          {
-            id: `${year}-actual`,
-            meta: { isYearGroup: true, yearIndex, isFirstInGroup: true },
-            header: () => <div className="text-center">Actual</div>,
-            size: COLUMN_WIDTHS.year,
-            minSize: COLUMN_WIDTHS.year,
-            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              const rows = table.getRowModel().rows as Row<TableRow>[];
-              const total = rows.reduce((sum, row) => {
-                const value = row.original[year];
-                const actual = Array.isArray(value) ? value[0] : value;
-                const numValue =
-                  typeof actual === "number" ? actual : Number(actual) || 0;
-                return sum + numValue;
-              }, 0);
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{total}</span>
-                </div>
-              );
-            },
-            cell: ({ row }: { row: Row<TableRow> }) => {
-              const value = row.original[year];
-              const actual = Array.isArray(value) ? value[0] : value;
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{actual ?? "-"}</span>
-                </div>
-              );
-            },
-          },
-          {
-            id: `${year}-budget`,
-            header: () => <div className="text-center">Budget</div>,
-            size: COLUMN_WIDTHS.year,
-            minSize: COLUMN_WIDTHS.year,
-            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              const rows = table.getRowModel().rows as Row<TableRow>[];
-              const total = rows.reduce((sum, row) => {
-                const value = row.original[year];
-                const budget = Array.isArray(value) ? value[1] : value;
-                const numValue =
-                  typeof budget === "number" ? budget : Number(budget) || 0;
-                return sum + numValue;
-              }, 0);
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{total}</span>
-                </div>
-              );
-            },
-            cell: ({ row }: { row: Row<TableRow> }) => {
-              const value = row.original[year];
-              const budget = Array.isArray(value) ? value[1] : undefined;
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{budget ?? "-"}</span>
-                </div>
-              );
-            },
-          },
-        ],
-      })),
-    ],
-    [years]
-  );
-
-  const opexColumns: ColumnDef<TableRow>[] = useMemo(
-    () => [
-      {
-        id: "opex-group",
-        header: "Operating Expenses (OPEX)",
-        size: COLUMN_WIDTHS.metric,
-        minSize: COLUMN_WIDTHS.metric,
-        footer: () => <div className="text-left w-40">Total</div>,
-        columns: [
-          {
-            accessorKey: "metric",
-            header: "",
-            size: COLUMN_WIDTHS.metric,
-            minSize: COLUMN_WIDTHS.metric,
-            cell: ({ row }) => (
-              <div className="text-left w-40">{row.original.metric}</div>
-            ),
-          },
-        ],
-      },
-      ...years.map((year, yearIndex) => ({
-        id: `${year}-group`,
-        meta: { isYearGroup: true, yearIndex },
-        header: () => {
-          return (
-            <div className="flex flex-row gap-8">
-              <div className="text-center w-full">{year}</div>
-              <div className="text-center w-full">{year}</div>
-            </div>
-          );
-        },
-        size: COLUMN_WIDTHS.year * 2,
-        minSize: COLUMN_WIDTHS.year * 2,
-        footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-          const rows = table.getRowModel().rows as Row<TableRow>[];
-
-          const totalActual = rows.reduce((sum, row) => {
-            const value = row.original[year];
-            const actual = Array.isArray(value) ? value[0] : value;
-            const numValue =
-              typeof actual === "number" ? actual : Number(actual) || 0;
-            return sum + numValue;
-          }, 0);
-
-          const totalBudget = rows.reduce((sum, row) => {
-            const value = row.original[year];
-            const budget = Array.isArray(value) ? value[1] : value;
-            const numValue =
-              typeof budget === "number" ? budget : Number(budget) || 0;
-            return sum + numValue;
-          }, 0);
-
-          return (
-            <div className="flex flex-row gap-8">
-              <div className="text-center w-full">{totalActual}</div>
-              <div className="text-center w-full">{totalBudget}</div>
-            </div>
-          );
-        },
-        columns: [
-          {
-            id: `${year}-actual`,
-            meta: { isYearGroup: true, yearIndex, isFirstInGroup: true },
-            header: () => <div className="text-center">Actual</div>,
-            size: COLUMN_WIDTHS.year,
-            minSize: COLUMN_WIDTHS.year,
-            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              const rows = table.getRowModel().rows as Row<TableRow>[];
-              const total = rows.reduce((sum, row) => {
-                const value = row.original[year];
-                const actual = Array.isArray(value) ? value[0] : value;
-                const numValue =
-                  typeof actual === "number" ? actual : Number(actual) || 0;
-                return sum + numValue;
-              }, 0);
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{total}</span>
-                </div>
-              );
-            },
-            cell: ({ row }: { row: Row<TableRow> }) => {
-              const value = row.original[year];
-              const actual = Array.isArray(value) ? value[0] : value;
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{actual ?? "-"}</span>
-                </div>
-              );
-            },
-          },
-          {
-            id: `${year}-budget`,
-            header: () => <div className="text-center">Budget</div>,
-            size: COLUMN_WIDTHS.year,
-            minSize: COLUMN_WIDTHS.year,
-            footer: ({ table }: { table: TanStackTable<TableRow> }) => {
-              const rows = table.getRowModel().rows as Row<TableRow>[];
-              const total = rows.reduce((sum, row) => {
-                const value = row.original[year];
-                const budget = Array.isArray(value) ? value[1] : value;
-                const numValue =
-                  typeof budget === "number" ? budget : Number(budget) || 0;
-                return sum + numValue;
-              }, 0);
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{total}</span>
-                </div>
-              );
-            },
-            cell: ({ row }: { row: Row<TableRow> }) => {
-              const value = row.original[year];
-              const budget = Array.isArray(value) ? value[1] : undefined;
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{budget ?? "-"}</span>
-                </div>
-              );
-            },
-          },
-        ],
-      })),
-    ],
-    [years]
-  );
-  const triTable = useReactTable({
-    data: activeAsset?.tri ?? [],
-    columns: triColumns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  const capexTable = useReactTable({
-    data: activeAsset?.capex ?? [],
-    columns: capexColumns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  const opexTable = useReactTable({
-    data: activeAsset?.opex ?? [],
-    columns: opexColumns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
-  const netIncomeData: TableRow[] = useMemo(() => {
+  // Unified data combining all sections
+  const unifiedData: UnifiedTableRow[] = useMemo(() => {
     if (!activeAsset) return [];
-    return [
-      {
-        metric: "NOI",
-        ...years.reduce((acc, year) => {
-          acc[year] = [0, 0];
-          return acc;
-        }, {} as Record<string, number[]>),
-      },
-    ];
+
+    const data: UnifiedTableRow[] = [];
+
+    // TRI Section
+    data.push({
+      metric: "TRI",
+      section: "tri",
+      isSectionHeader: true,
+      ...years.reduce((acc, year) => {
+        acc[year] = [0, 0];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+    data.push(
+      ...activeAsset.tri.map((row) => ({
+        ...row,
+        section: "tri" as const,
+      }))
+    );
+
+    // TRI Footer: GRI
+    const triAmountRow = activeAsset.tri.find((r) => r.metric === "triAmount");
+    const vacancyLossRow = activeAsset.tri.find(
+      (r) => r.metric === "vacancyLoss"
+    );
+    data.push({
+      metric: "GRI",
+      section: "tri",
+      isFooterRow: true,
+      ...years.reduce((acc, year) => {
+        const triBase = triAmountRow?.[year];
+        const vacancyBase = vacancyLossRow?.[year];
+
+        const triNumberActual =
+          typeof triBase === "number"
+            ? triBase
+            : Array.isArray(triBase)
+            ? Number(triBase[0])
+            : undefined;
+        const triNumberBudget =
+          typeof triBase === "number"
+            ? triBase
+            : Array.isArray(triBase)
+            ? Number(triBase[1])
+            : undefined;
+
+        const vacancyNumberActual =
+          typeof vacancyBase === "number"
+            ? vacancyBase
+            : Array.isArray(vacancyBase)
+            ? Number(vacancyBase[0])
+            : undefined;
+        const vacancyNumberBudget =
+          typeof vacancyBase === "number"
+            ? vacancyBase
+            : Array.isArray(vacancyBase)
+            ? Number(vacancyBase[1])
+            : undefined;
+
+        const griActual =
+          triNumberActual != null && vacancyNumberActual != null
+            ? triNumberActual - vacancyNumberActual
+            : undefined;
+        const griBudget =
+          triNumberBudget != null && vacancyNumberBudget != null
+            ? triNumberBudget - vacancyNumberBudget
+            : undefined;
+
+        acc[year] =
+          griActual != null && griBudget != null
+            ? [griActual, griBudget]
+            : [0, 0];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+
+    // OPEX Section
+    data.push({
+      metric: "Operating Expenses (OPEX)",
+      section: "opex",
+      isSectionHeader: true,
+      ...years.reduce((acc, year) => {
+        acc[year] = [0, 0];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+    data.push(
+      ...activeAsset.opex.map((row) => ({
+        ...row,
+        section: "opex" as const,
+      }))
+    );
+
+    // OPEX Footer: Total
+    data.push({
+      metric: "Total",
+      section: "opex",
+      isFooterRow: true,
+      ...years.reduce((acc, year) => {
+        const totalActual = activeAsset.opex.reduce((sum, row) => {
+          const value = row[year];
+          const actual = Array.isArray(value) ? value[0] : value;
+          const numValue =
+            typeof actual === "number" ? actual : Number(actual) || 0;
+          return sum + numValue;
+        }, 0);
+
+        const totalBudget = activeAsset.opex.reduce((sum, row) => {
+          const value = row[year];
+          const budget = Array.isArray(value) ? value[1] : value;
+          const numValue =
+            typeof budget === "number" ? budget : Number(budget) || 0;
+          return sum + numValue;
+        }, 0);
+
+        acc[year] = [totalActual, totalBudget];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+
+    // NOI Section
+    data.push({
+      metric: "NOI",
+      section: "noi",
+      isSectionHeader: true,
+      ...years.reduce((acc, year) => {
+        acc[year] = [0, 0];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+
+    // Calculate NOI values
+    const noiRow: UnifiedTableRow = {
+      metric: "NOI",
+      section: "noi",
+      ...years.reduce((acc, year) => {
+        const triAmountRow = activeAsset.tri.find(
+          (r) => r.metric === "triAmount"
+        );
+        const vacancyLossRow = activeAsset.tri.find(
+          (r) => r.metric === "vacancyLoss"
+        );
+
+        const triBaseActual = triAmountRow?.[year];
+        const vacancyBaseActual = vacancyLossRow?.[year];
+        const triBaseBudget = triAmountRow?.[year];
+        const vacancyBaseBudget = vacancyLossRow?.[year];
+
+        const triNumberActual =
+          typeof triBaseActual === "number"
+            ? triBaseActual
+            : Array.isArray(triBaseActual)
+            ? Number(triBaseActual[0])
+            : undefined;
+
+        const vacancyNumberActual =
+          typeof vacancyBaseActual === "number"
+            ? vacancyBaseActual
+            : Array.isArray(vacancyBaseActual)
+            ? Number(vacancyBaseActual[0])
+            : undefined;
+
+        const triNumberBudget =
+          typeof triBaseBudget === "number"
+            ? triBaseBudget
+            : Array.isArray(triBaseBudget)
+            ? Number(triBaseBudget[1])
+            : undefined;
+
+        const vacancyNumberBudget =
+          typeof vacancyBaseBudget === "number"
+            ? vacancyBaseBudget
+            : Array.isArray(vacancyBaseBudget)
+            ? Number(vacancyBaseBudget[1])
+            : undefined;
+
+        const griActual =
+          triNumberActual != null && vacancyNumberActual != null
+            ? triNumberActual - vacancyNumberActual
+            : undefined;
+
+        const griBudget =
+          triNumberBudget != null && vacancyNumberBudget != null
+            ? triNumberBudget - vacancyNumberBudget
+            : undefined;
+
+        const totalOpexActual = activeAsset.opex.reduce((sum, row) => {
+          const value = row[year];
+          const actual = Array.isArray(value) ? value[0] : value;
+          const numValue =
+            typeof actual === "number" ? actual : Number(actual) || 0;
+          return sum + numValue;
+        }, 0);
+
+        const totalOpexBudget = activeAsset.opex.reduce((sum, row) => {
+          const value = row[year];
+          const budget = Array.isArray(value) ? value[1] : value;
+          const numValue =
+            typeof budget === "number" ? budget : Number(budget) || 0;
+          return sum + numValue;
+        }, 0);
+
+        const noiActual =
+          griActual != null ? griActual - totalOpexActual : undefined;
+        const noiBudget =
+          griBudget != null ? griBudget - totalOpexBudget : undefined;
+
+        acc[year] =
+          noiActual != null && noiBudget != null
+            ? [noiActual, noiBudget]
+            : [0, 0];
+        return acc;
+      }, {} as Record<string, number[]>),
+    };
+    data.push(noiRow);
+
+    // NOI Footer: NOI Margin
+    data.push({
+      metric: "NOI Margin",
+      section: "noi",
+      isFooterRow: true,
+      ...years.reduce((acc, year) => {
+        const triAmountRow = activeAsset.tri.find(
+          (r) => r.metric === "triAmount"
+        );
+        const vacancyLossRow = activeAsset.tri.find(
+          (r) => r.metric === "vacancyLoss"
+        );
+
+        const triBaseActual = triAmountRow?.[year];
+        const vacancyBaseActual = vacancyLossRow?.[year];
+        const triBaseBudget = triAmountRow?.[year];
+        const vacancyBaseBudget = vacancyLossRow?.[year];
+
+        const triNumberActual =
+          typeof triBaseActual === "number"
+            ? triBaseActual
+            : Array.isArray(triBaseActual)
+            ? Number(triBaseActual[0])
+            : undefined;
+
+        const vacancyNumberActual =
+          typeof vacancyBaseActual === "number"
+            ? vacancyBaseActual
+            : Array.isArray(vacancyBaseActual)
+            ? Number(vacancyBaseActual[0])
+            : undefined;
+
+        const triNumberBudget =
+          typeof triBaseBudget === "number"
+            ? triBaseBudget
+            : Array.isArray(triBaseBudget)
+            ? Number(triBaseBudget[1])
+            : undefined;
+
+        const vacancyNumberBudget =
+          typeof vacancyBaseBudget === "number"
+            ? vacancyBaseBudget
+            : Array.isArray(vacancyBaseBudget)
+            ? Number(vacancyBaseBudget[1])
+            : undefined;
+
+        const griActual =
+          triNumberActual != null && vacancyNumberActual != null
+            ? triNumberActual - vacancyNumberActual
+            : undefined;
+
+        const griBudget =
+          triNumberBudget != null && vacancyNumberBudget != null
+            ? triNumberBudget - vacancyNumberBudget
+            : undefined;
+
+        const totalOpexActual = activeAsset.opex.reduce((sum, row) => {
+          const value = row[year];
+          const actual = Array.isArray(value) ? value[0] : value;
+          const numValue =
+            typeof actual === "number" ? actual : Number(actual) || 0;
+          return sum + numValue;
+        }, 0);
+
+        const totalOpexBudget = activeAsset.opex.reduce((sum, row) => {
+          const value = row[year];
+          const budget = Array.isArray(value) ? value[1] : value;
+          const numValue =
+            typeof budget === "number" ? budget : Number(budget) || 0;
+          return sum + numValue;
+        }, 0);
+
+        const noiActual =
+          griActual != null ? griActual - totalOpexActual : undefined;
+        const noiBudget =
+          griBudget != null ? griBudget - totalOpexBudget : undefined;
+
+        const noiMarginActual =
+          griActual != null && griActual !== 0 && noiActual != null
+            ? (noiActual / griActual) * 100
+            : undefined;
+        const noiMarginBudget =
+          griBudget != null && griBudget !== 0 && noiBudget != null
+            ? (noiBudget / griBudget) * 100
+            : undefined;
+
+        acc[year] =
+          noiMarginActual != null && noiMarginBudget != null
+            ? [noiMarginActual, noiMarginBudget]
+            : [0, 0];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+
+    // CAPEX Section
+    data.push({
+      metric: "Capital Expenditures (CapEx)",
+      section: "capex",
+      isSectionHeader: true,
+      ...years.reduce((acc, year) => {
+        acc[year] = [0, 0];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+    data.push(
+      ...activeAsset.capex.map((row) => ({
+        ...row,
+        section: "capex" as const,
+      }))
+    );
+
+    // CAPEX Footer: Total
+    data.push({
+      metric: "Total",
+      section: "capex",
+      isFooterRow: true,
+      ...years.reduce((acc, year) => {
+        const totalActual = activeAsset.capex.reduce((sum, row) => {
+          const value = row[year];
+          const actual = Array.isArray(value) ? value[0] : value;
+          const numValue =
+            typeof actual === "number" ? actual : Number(actual) || 0;
+          return sum + numValue;
+        }, 0);
+
+        const totalBudget = activeAsset.capex.reduce((sum, row) => {
+          const value = row[year];
+          const budget = Array.isArray(value) ? value[1] : value;
+          const numValue =
+            typeof budget === "number" ? budget : Number(budget) || 0;
+          return sum + numValue;
+        }, 0);
+
+        acc[year] = [totalActual, totalBudget];
+        return acc;
+      }, {} as Record<string, number[]>),
+    });
+
+    return data;
   }, [activeAsset, years]);
 
-  const netIncomeColumns: ColumnDef<TableRow>[] = useMemo(
+  // Unified columns for all sections
+  const unifiedColumns: ColumnDef<UnifiedTableRow>[] = useMemo(
     () => [
       {
-        id: "net-income-group",
-        header: "NOI",
+        id: "metric-group",
+        header: "Metric",
         size: COLUMN_WIDTHS.metric,
         minSize: COLUMN_WIDTHS.metric,
-        footer: () => <div className="text-left w-40">NOI Margin</div>,
         columns: [
           {
             accessorKey: "metric",
             header: "",
             size: COLUMN_WIDTHS.metric,
             minSize: COLUMN_WIDTHS.metric,
-            cell: ({ row }) => (
-              <div className="text-left w-40">{row.original.metric}</div>
-            ),
+            cell: ({ row }) => {
+              if (row.original.isSectionHeader) {
+                return (
+                  <div className="text-left w-40 font-semibold py-2">
+                    {row.original.metric}
+                  </div>
+                );
+              }
+              if (row.original.isFooterRow) {
+                return (
+                  <div className="text-left w-40 font-semibold">
+                    {row.original.metric}
+                  </div>
+                );
+              }
+              return (
+                <div className="text-left w-40">{row.original.metric}</div>
+              );
+            },
           },
         ],
       },
@@ -603,101 +492,6 @@ export default function MyAssets() {
         },
         size: COLUMN_WIDTHS.year * 2,
         minSize: COLUMN_WIDTHS.year * 2,
-        footer: () => {
-          const triRows = triTable.getRowModel().rows as Row<TableRow>[];
-          const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
-
-          const triAmountRow = triRows.find(
-            (r) => r.original.metric === "triAmount"
-          );
-          const vacancyLossRow = triRows.find(
-            (r) => r.original.metric === "vacancyLoss"
-          );
-
-          const triBaseActual = triAmountRow?.original[year];
-          const vacancyBaseActual = vacancyLossRow?.original[year];
-          const triBaseBudget = triAmountRow?.original[year];
-          const vacancyBaseBudget = vacancyLossRow?.original[year];
-
-          const triNumberActual =
-            typeof triBaseActual === "number"
-              ? triBaseActual
-              : Array.isArray(triBaseActual)
-              ? Number(triBaseActual[0])
-              : undefined;
-
-          const vacancyNumberActual =
-            typeof vacancyBaseActual === "number"
-              ? vacancyBaseActual
-              : Array.isArray(vacancyBaseActual)
-              ? Number(vacancyBaseActual[0])
-              : undefined;
-
-          const triNumberBudget =
-            typeof triBaseBudget === "number"
-              ? triBaseBudget
-              : Array.isArray(triBaseBudget)
-              ? Number(triBaseBudget[1])
-              : undefined;
-
-          const vacancyNumberBudget =
-            typeof vacancyBaseBudget === "number"
-              ? vacancyBaseBudget
-              : Array.isArray(vacancyBaseBudget)
-              ? Number(vacancyBaseBudget[1])
-              : undefined;
-
-          const griActual =
-            triNumberActual != null && vacancyNumberActual != null
-              ? triNumberActual - vacancyNumberActual
-              : undefined;
-
-          const griBudget =
-            triNumberBudget != null && vacancyNumberBudget != null
-              ? triNumberBudget - vacancyNumberBudget
-              : undefined;
-
-          const totalOpexActual = opexRows.reduce((sum, row) => {
-            const value = row.original[year];
-            const actual = Array.isArray(value) ? value[0] : value;
-            const numValue =
-              typeof actual === "number" ? actual : Number(actual) || 0;
-            return sum + numValue;
-          }, 0);
-
-          const totalOpexBudget = opexRows.reduce((sum, row) => {
-            const value = row.original[year];
-            const budget = Array.isArray(value) ? value[1] : value;
-            const numValue =
-              typeof budget === "number" ? budget : Number(budget) || 0;
-            return sum + numValue;
-          }, 0);
-
-          const noiActual =
-            griActual != null ? griActual - totalOpexActual : undefined;
-          const noiBudget =
-            griBudget != null ? griBudget - totalOpexBudget : undefined;
-
-          const noiMarginActual =
-            griActual != null && griActual !== 0 && noiActual != null
-              ? ((noiActual / griActual) * 100).toFixed(2)
-              : undefined;
-          const noiMarginBudget =
-            griBudget != null && griBudget !== 0 && noiBudget != null
-              ? ((noiBudget / griBudget) * 100).toFixed(2)
-              : undefined;
-
-          return (
-            <div className="flex flex-row gap-8">
-              <div className="text-center w-full">
-                {noiMarginActual != null ? `${noiMarginActual}%` : "-"}
-              </div>
-              <div className="text-center w-full">
-                {noiMarginBudget != null ? `${noiMarginBudget}%` : "-"}
-              </div>
-            </div>
-          );
-        },
         columns: [
           {
             id: `${year}-actual`,
@@ -705,108 +499,122 @@ export default function MyAssets() {
             header: () => <div className="text-center">Actual</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
-            footer: () => {
-              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
-              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
+            cell: ({
+              row,
+              table,
+            }: {
+              row: Row<UnifiedTableRow>;
+              table: TanStackTable<UnifiedTableRow>;
+            }) => {
+              if (row.original.isSectionHeader) {
+                return <div className="text-center max-w-40"></div>;
+              }
 
-              const triAmountRow = triRows.find(
-                (r) => r.original.metric === "triAmount"
-              );
-              const vacancyLossRow = triRows.find(
-                (r) => r.original.metric === "vacancyLoss"
-              );
-
-              const triBase = triAmountRow?.original[year];
-              const vacancyBase = vacancyLossRow?.original[year];
-
-              const triNumber =
-                typeof triBase === "number"
-                  ? triBase
-                  : Array.isArray(triBase)
-                  ? Number(triBase[0])
-                  : undefined;
-
-              const vacancyNumber =
-                typeof vacancyBase === "number"
-                  ? vacancyBase
-                  : Array.isArray(vacancyBase)
-                  ? Number(vacancyBase[0])
-                  : undefined;
-
-              const gri =
-                triNumber != null && vacancyNumber != null
-                  ? triNumber - vacancyNumber
-                  : undefined;
-
-              const totalOpex = opexRows.reduce((sum, row) => {
+              if (row.original.isFooterRow) {
                 const value = row.original[year];
                 const actual = Array.isArray(value) ? value[0] : value;
-                const numValue =
-                  typeof actual === "number" ? actual : Number(actual) || 0;
-                return sum + numValue;
-              }, 0);
 
-              const noi = gri != null ? gri - totalOpex : undefined;
+                // NOI Margin footer should display as percentage
+                if (
+                  row.original.section === "noi" &&
+                  row.original.metric === "NOI Margin"
+                ) {
+                  const displayValue =
+                    typeof actual === "number" && actual !== 0
+                      ? `${actual.toFixed(2)}%`
+                      : "-";
+                  return (
+                    <div className="text-center max-w-40 font-semibold">
+                      <span className="">{displayValue}</span>
+                    </div>
+                  );
+                }
 
-              const noiMargin =
-                gri != null && gri !== 0 && noi != null
-                  ? ((noi / gri) * 100).toFixed(2)
-                  : undefined;
+                const displayValue =
+                  typeof actual === "number" ? dollarStringify(actual) : "-";
+                return (
+                  <div className="text-center max-w-40 font-semibold">
+                    <span className="">{displayValue}</span>
+                  </div>
+                );
+              }
 
+              if (
+                row.original.section === "noi" &&
+                !row.original.isSectionHeader
+              ) {
+                const allRows = table.getRowModel()
+                  .rows as Row<UnifiedTableRow>[];
+                const triRows = allRows.filter(
+                  (r) =>
+                    r.original.section === "tri" &&
+                    !r.original.isSectionHeader &&
+                    !r.original.isFooterRow
+                );
+                const opexRows = allRows.filter(
+                  (r) =>
+                    r.original.section === "opex" &&
+                    !r.original.isSectionHeader &&
+                    !r.original.isFooterRow
+                );
+
+                const triAmountRow = triRows.find(
+                  (r) => r.original.metric === "triAmount"
+                );
+                const vacancyLossRow = triRows.find(
+                  (r) => r.original.metric === "vacancyLoss"
+                );
+
+                const triBase = triAmountRow?.original[year];
+                const vacancyBase = vacancyLossRow?.original[year];
+
+                const triNumber =
+                  typeof triBase === "number"
+                    ? triBase
+                    : Array.isArray(triBase)
+                    ? Number(triBase[0])
+                    : undefined;
+
+                const vacancyNumber =
+                  typeof vacancyBase === "number"
+                    ? vacancyBase
+                    : Array.isArray(vacancyBase)
+                    ? Number(vacancyBase[0])
+                    : undefined;
+
+                const gri =
+                  triNumber != null && vacancyNumber != null
+                    ? triNumber - vacancyNumber
+                    : undefined;
+
+                const totalOpex = opexRows.reduce((sum, row) => {
+                  const value = row.original[year];
+                  const actual = Array.isArray(value) ? value[0] : value;
+                  const numValue =
+                    typeof actual === "number" ? actual : Number(actual) || 0;
+                  return sum + numValue;
+                }, 0);
+
+                const netIncome = gri != null ? gri - totalOpex : undefined;
+
+                const displayValue =
+                  typeof netIncome === "number"
+                    ? dollarStringify(netIncome)
+                    : "-";
+                return (
+                  <div className="text-center max-w-40">
+                    <span className="">{displayValue}</span>
+                  </div>
+                );
+              }
+
+              const value = row.original[year];
+              const actual = Array.isArray(value) ? value[0] : value;
+              const displayValue =
+                typeof actual === "number" ? dollarStringify(actual) : "-";
               return (
                 <div className="text-center max-w-40">
-                  <span className="">
-                    {noiMargin != null ? `${noiMargin}%` : "-"}
-                  </span>
-                </div>
-              );
-            },
-            cell: () => {
-              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
-              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
-
-              const triAmountRow = triRows.find(
-                (r) => r.original.metric === "triAmount"
-              );
-              const vacancyLossRow = triRows.find(
-                (r) => r.original.metric === "vacancyLoss"
-              );
-
-              const triBase = triAmountRow?.original[year];
-              const vacancyBase = vacancyLossRow?.original[year];
-
-              const triNumber =
-                typeof triBase === "number"
-                  ? triBase
-                  : Array.isArray(triBase)
-                  ? Number(triBase[0])
-                  : undefined;
-
-              const vacancyNumber =
-                typeof vacancyBase === "number"
-                  ? vacancyBase
-                  : Array.isArray(vacancyBase)
-                  ? Number(vacancyBase[0])
-                  : undefined;
-
-              const gri =
-                triNumber != null && vacancyNumber != null
-                  ? triNumber - vacancyNumber
-                  : undefined;
-
-              const totalOpex = opexRows.reduce((sum, row) => {
-                const value = row.original[year];
-                const actual = Array.isArray(value) ? value[0] : value;
-                const numValue =
-                  typeof actual === "number" ? actual : Number(actual) || 0;
-                return sum + numValue;
-              }, 0);
-
-              const netIncome = gri != null ? gri - totalOpex : undefined;
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{netIncome ?? "-"}</span>
+                  <span className="">{displayValue}</span>
                 </div>
               );
             },
@@ -816,108 +624,122 @@ export default function MyAssets() {
             header: () => <div className="text-center">Budget</div>,
             size: COLUMN_WIDTHS.year,
             minSize: COLUMN_WIDTHS.year,
-            footer: () => {
-              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
-              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
+            cell: ({
+              row,
+              table,
+            }: {
+              row: Row<UnifiedTableRow>;
+              table: TanStackTable<UnifiedTableRow>;
+            }) => {
+              if (row.original.isSectionHeader) {
+                return <div className="text-center max-w-40"></div>;
+              }
 
-              const triAmountRow = triRows.find(
-                (r) => r.original.metric === "triAmount"
-              );
-              const vacancyLossRow = triRows.find(
-                (r) => r.original.metric === "vacancyLoss"
-              );
-
-              const triBase = triAmountRow?.original[year];
-              const vacancyBase = vacancyLossRow?.original[year];
-
-              const triNumber =
-                typeof triBase === "number"
-                  ? triBase
-                  : Array.isArray(triBase)
-                  ? Number(triBase[1])
-                  : undefined;
-
-              const vacancyNumber =
-                typeof vacancyBase === "number"
-                  ? vacancyBase
-                  : Array.isArray(vacancyBase)
-                  ? Number(vacancyBase[1])
-                  : undefined;
-
-              const gri =
-                triNumber != null && vacancyNumber != null
-                  ? triNumber - vacancyNumber
-                  : undefined;
-
-              const totalOpex = opexRows.reduce((sum, row) => {
+              if (row.original.isFooterRow) {
                 const value = row.original[year];
                 const budget = Array.isArray(value) ? value[1] : value;
-                const numValue =
-                  typeof budget === "number" ? budget : Number(budget) || 0;
-                return sum + numValue;
-              }, 0);
 
-              const noi = gri != null ? gri - totalOpex : undefined;
+                // NOI Margin footer should display as percentage
+                if (
+                  row.original.section === "noi" &&
+                  row.original.metric === "NOI Margin"
+                ) {
+                  const displayValue =
+                    typeof budget === "number" && budget !== 0
+                      ? `${budget.toFixed(2)}%`
+                      : "-";
+                  return (
+                    <div className="text-center max-w-40 font-semibold">
+                      <span className="">{displayValue}</span>
+                    </div>
+                  );
+                }
 
-              const noiMargin =
-                gri != null && gri !== 0 && noi != null
-                  ? ((noi / gri) * 100).toFixed(2)
-                  : undefined;
+                const displayValue =
+                  typeof budget === "number" ? dollarStringify(budget) : "-";
+                return (
+                  <div className="text-center max-w-40 font-semibold">
+                    <span className="">{displayValue}</span>
+                  </div>
+                );
+              }
 
+              if (
+                row.original.section === "noi" &&
+                !row.original.isSectionHeader
+              ) {
+                const allRows = table.getRowModel()
+                  .rows as Row<UnifiedTableRow>[];
+                const triRows = allRows.filter(
+                  (r) =>
+                    r.original.section === "tri" &&
+                    !r.original.isSectionHeader &&
+                    !r.original.isFooterRow
+                );
+                const opexRows = allRows.filter(
+                  (r) =>
+                    r.original.section === "opex" &&
+                    !r.original.isSectionHeader &&
+                    !r.original.isFooterRow
+                );
+
+                const triAmountRow = triRows.find(
+                  (r) => r.original.metric === "triAmount"
+                );
+                const vacancyLossRow = triRows.find(
+                  (r) => r.original.metric === "vacancyLoss"
+                );
+
+                const triBase = triAmountRow?.original[year];
+                const vacancyBase = vacancyLossRow?.original[year];
+
+                const triNumber =
+                  typeof triBase === "number"
+                    ? triBase
+                    : Array.isArray(triBase)
+                    ? Number(triBase[1])
+                    : undefined;
+
+                const vacancyNumber =
+                  typeof vacancyBase === "number"
+                    ? vacancyBase
+                    : Array.isArray(vacancyBase)
+                    ? Number(vacancyBase[1])
+                    : undefined;
+
+                const gri =
+                  triNumber != null && vacancyNumber != null
+                    ? triNumber - vacancyNumber
+                    : undefined;
+
+                const totalOpex = opexRows.reduce((sum, row) => {
+                  const value = row.original[year];
+                  const budget = Array.isArray(value) ? value[1] : value;
+                  const numValue =
+                    typeof budget === "number" ? budget : Number(budget) || 0;
+                  return sum + numValue;
+                }, 0);
+
+                const netIncome = gri != null ? gri - totalOpex : undefined;
+
+                const displayValue =
+                  typeof netIncome === "number"
+                    ? dollarStringify(netIncome)
+                    : "-";
+                return (
+                  <div className="text-center max-w-40">
+                    <span className="">{displayValue}</span>
+                  </div>
+                );
+              }
+
+              const value = row.original[year];
+              const budget = Array.isArray(value) ? value[1] : value;
+              const displayValue =
+                typeof budget === "number" ? dollarStringify(budget) : "-";
               return (
                 <div className="text-center max-w-40">
-                  <span className="">
-                    {noiMargin != null ? `${noiMargin}%` : "-"}
-                  </span>
-                </div>
-              );
-            },
-            cell: () => {
-              const triRows = triTable.getRowModel().rows as Row<TableRow>[];
-              const opexRows = opexTable.getRowModel().rows as Row<TableRow>[];
-
-              const triAmountRow = triRows.find(
-                (r) => r.original.metric === "triAmount"
-              );
-              const vacancyLossRow = triRows.find(
-                (r) => r.original.metric === "vacancyLoss"
-              );
-
-              const triBase = triAmountRow?.original[year];
-              const vacancyBase = vacancyLossRow?.original[year];
-
-              const triNumber =
-                typeof triBase === "number"
-                  ? triBase
-                  : Array.isArray(triBase)
-                  ? Number(triBase[1])
-                  : undefined;
-
-              const vacancyNumber =
-                typeof vacancyBase === "number"
-                  ? vacancyBase
-                  : Array.isArray(vacancyBase)
-                  ? Number(vacancyBase[1])
-                  : undefined;
-
-              const gri =
-                triNumber != null && vacancyNumber != null
-                  ? triNumber - vacancyNumber
-                  : undefined;
-
-              const totalOpex = opexRows.reduce((sum, row) => {
-                const value = row.original[year];
-                const budget = Array.isArray(value) ? value[1] : value;
-                const numValue =
-                  typeof budget === "number" ? budget : Number(budget) || 0;
-                return sum + numValue;
-              }, 0);
-
-              const netIncome = gri != null ? gri - totalOpex : undefined;
-
-              return (
-                <div className="text-center max-w-40">
-                  <span className="">{netIncome ?? "-"}</span>
+                  <span className="">{displayValue}</span>
                 </div>
               );
             },
@@ -925,18 +747,27 @@ export default function MyAssets() {
         ],
       })),
     ],
-    [years, triTable, opexTable]
+    [years]
   );
 
-  const netIncomeTable = useReactTable({
-    data: netIncomeData,
-    columns: netIncomeColumns,
+  // Unified table instance
+  const unifiedTable = useReactTable({
+    data: unifiedData,
+    columns: unifiedColumns,
     getCoreRowModel: getCoreRowModel(),
   });
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+      <div className="w-full">
+        <h2 className="text-2xl font-medium tracking-tight text-foreground">
+          My Assets
+        </h2>
+        <p className="text-muted-foreground text-sm mt-1">
+          Portfolio overview of all owned properties
+        </p>
+      </div>
+      <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
         {tableData.map((asset) => (
           <Button
             key={asset.name}
@@ -953,32 +784,8 @@ export default function MyAssets() {
         <div className="space-y-8">
           <section className="space-y-3">
             <Table
-              table={triTable}
-              columnCount={triTable.getAllLeafColumns().length}
-              isLoading={isLoading}
-            />
-          </section>
-
-          <section className="space-y-3">
-            <Table
-              table={opexTable}
-              columnCount={opexTable.getAllLeafColumns().length}
-              isLoading={isLoading}
-            />
-          </section>
-
-          <section className="space-y-3">
-            <Table
-              table={netIncomeTable}
-              columnCount={netIncomeTable.getAllLeafColumns().length}
-              isLoading={isLoading}
-            />
-          </section>
-
-          <section className="space-y-3">
-            <Table
-              table={capexTable}
-              columnCount={capexTable.getAllLeafColumns().length}
+              table={unifiedTable}
+              columnCount={unifiedTable.getAllLeafColumns().length}
               isLoading={isLoading}
             />
           </section>
