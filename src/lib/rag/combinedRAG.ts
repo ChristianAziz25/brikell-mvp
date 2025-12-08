@@ -63,7 +63,6 @@ export async function numericalQueryRAG(
       messages.push(...recentHistory);
     }
     
-    // Add current user query with context for query generation
     messages.push({
       role: 'user',
       content: `Answer this question: ${userQuery}
@@ -123,19 +122,42 @@ Output ONLY the query, nothing else.`,
       console.log(`⏱️  [RAG] Query execution (DB) - ERROR: ${timings.queryExecution.toFixed(2)}ms`);
     }
 
-    // Continue the same conversation with query results
-    messages.push({
-      role: 'assistant',
-      content: cleanedQuery,
-    });
-    
-    messages.push({
+    /**
+     * STEP 2: Generate final natural-language answer
+     *
+     * IMPORTANT FOR LATENCY:
+     * - We intentionally start a NEW, much smaller message array for the answer step
+     * - This avoids re-sending the full schema, table details, and few-shot examples,
+     *   which dramatically reduces tokens and "time to first token" for streaming.
+     */
+
+    const answerSystemMessage: CoreMessage = {
+      role: 'system',
+      content:
+        'You are a helpful data analyst. You answer questions based ONLY on the provided query results. Do not mention databases, queries, or Prisma. Speak in clear, concise natural language.',
+    };
+
+    const answerMessages: CoreMessage[] = [answerSystemMessage];
+
+    // Optionally add a trimmed conversation history for tone/continuity (without schema/few-shot noise)
+    if (options?.conversationHistory && options.conversationHistory.length > 0) {
+      const recentHistory = options.conversationHistory
+        .filter((msg) => msg.role === 'user' || msg.role === 'assistant')
+        .slice(-5); // keep last 5 just for light context
+      answerMessages.push(...recentHistory);
+    }
+
+
+    answerMessages.push({
       role: 'user',
-      content: `The query has been executed. Here are the results:
+      content: `The user asked: "${userQuery}"
 
-Query Execution: ${queryError ? `ERROR: ${queryError}` : 'SUCCESS'}
+Here is the Prisma query that was executed to answer this question:
+${cleanedQuery}
 
-Query Results:
+Execution status: ${queryError ? `ERROR: ${queryError}` : 'SUCCESS'}
+
+Query results (JSON):
 ${queryError ? 'No data available due to query error.' : JSON.stringify(queryData, null, 2)}
 
 Now provide a clear, natural language answer to the original question: "${userQuery}"
@@ -149,7 +171,7 @@ Instructions:
 - Include specific numbers, names, dates, or statuses from the results when relevant`,
     });
 
-    // Continue with the same conversation to generate the final answer
+    // Continue with a new, compact conversation to generate the final answer
     const streamStart = performance.now();
     timings.preStream = performance.now() - startTime;
     console.log(`⏱️  [RAG] Pre-stream setup: ${timings.preStream.toFixed(2)}ms`);
@@ -157,7 +179,7 @@ Instructions:
     
     const result = streamText({
       model: openai('gpt-5-nano'),
-      messages,
+      messages: answerMessages,
     });
 
     // Return streamText result - use toTextStreamResponse() in route handlers
