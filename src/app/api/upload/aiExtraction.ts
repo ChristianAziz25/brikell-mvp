@@ -87,7 +87,6 @@ If a field is missing or unclear, omit it (don't use null).`;
     schema: LLMExtractionSchema,
     prompt: `Extract all rent roll data from this ${fileType}:\n\n${fileContent.substring(0, 10000)}`,
     system: systemPrompt,
-    temperature: 0.1,
   });
 
   return object.rows;

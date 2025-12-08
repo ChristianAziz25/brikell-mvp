@@ -46,12 +46,9 @@ export async function numericalQueryRAG(
       .map((ex) => `Question: ${ex.query}\nPrismaQuery: ${ex.sql}`)
       .join('\n\n');
 
-    // Generate query using streamText for faster response (then parse)
-    // This is faster than generateObject because it doesn't wait for complete structure
     const queryGenStart = performance.now();
     const queryStream = streamText({
-      model: openai('gpt-5-nano'), // Using faster model for query generation
-      temperature: 0.1, // Lower temperature for more consistent output
+      model: openai('gpt-5-nano'),
       prompt: `You are an expert TypeScript developer. Translate this question into a Prisma Client query.
 
 Schema:
