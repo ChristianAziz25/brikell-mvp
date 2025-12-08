@@ -1,8 +1,8 @@
 import { executePrismaQueryFromText } from '@/lib/ai/tools/ragUtils';
-import { getPrismaSchema } from '@/lib/rag/schema';
 import { openai } from '@ai-sdk/openai';
 import { streamText, type CoreMessage } from 'ai';
 import { generateEmbeddings } from './embedding';
+import { getPrismaSchema } from './schema';
 import { searchFewShotQueries, searchTableDetails } from './vectorization-service';
 
 export async function numericalQueryRAG(
@@ -21,10 +21,7 @@ export async function numericalQueryRAG(
     
     // OPTIMIZATION: Start embedding and schema retrieval in parallel
     const embeddingStart = performance.now();
-    const [queryEmbedding, schema] = await Promise.all([
-      generateEmbeddings(userQuery),
-      Promise.resolve(getPrismaSchema()),
-    ]);
+    const queryEmbedding = await generateEmbeddings(userQuery);
     timings.embedding = performance.now() - embeddingStart;
     console.log(`⏱️  [RAG] Embedding generation: ${timings.embedding.toFixed(2)}ms`);
     
@@ -46,12 +43,34 @@ export async function numericalQueryRAG(
       .map((ex) => `Question: ${ex.query}\nPrismaQuery: ${ex.sql}`)
       .join('\n\n');
 
-    const queryGenStart = performance.now();
-    const queryStream = streamText({
-      model: openai('gpt-5-nano'),
-      prompt: `You are an expert TypeScript developer. Translate this question into a Prisma Client query.
+    const schema = getPrismaSchema();
 
-Schema:
+    // Build conversation messages with system context
+    const systemMessage: CoreMessage = {
+      role: 'system',
+      content: `You are a helpful assistant that answers questions by generating Prisma queries and interpreting their results.`,
+    };
+
+    // Build messages array: system message + conversation history
+    const messages: CoreMessage[] = [systemMessage];
+    
+    // Add conversation history if provided
+    if (options?.conversationHistory && options.conversationHistory.length > 0) {
+      // Filter to only include user and assistant messages, and limit to last 10 for context
+      const recentHistory = options.conversationHistory
+        .filter(msg => msg.role === 'user' || msg.role === 'assistant')
+        .slice(-10); // Keep last 10 messages for context
+      messages.push(...recentHistory);
+    }
+    
+    // Add current user query with context for query generation
+    messages.push({
+      role: 'user',
+      content: `Answer this question: ${userQuery}
+
+First, generate the Prisma query needed to answer this question. I'll execute it and provide the results for you to interpret.
+
+Database Schema:
 ${schema}
 
 Table Details:
@@ -60,14 +79,18 @@ ${tableDetailsText}
 Few-shot Examples:
 ${fewShotExamplesText}
 
-Question: ${userQuery}
-
-CRITICAL: Asset names are case-sensitive. When filtering by asset.name, you MUST use the exact capitalization as shown in the "Available Asset Names" section above. Do NOT convert asset names to lowercase.
-
+CRITICAL: Asset names are case-sensitive. When filtering by asset.name, you MUST use the exact capitalization as shown. Do NOT convert asset names to lowercase.
 
 Generate ONLY the Prisma query statement (e.g., "prisma.asset.findMany({ where: { name: "Gertrudehus" } })").
 Do NOT wrap in functions, exports, or await keywords.
 Output ONLY the query, nothing else.`,
+    });
+
+    // Single LLM call: First generate the query
+    const queryGenStart = performance.now();
+    const queryStream = streamText({
+      model: openai('gpt-5-nano'),
+      messages,
     });
     
     // Read the stream to get the query
@@ -82,59 +105,51 @@ Output ONLY the query, nothing else.`,
       .replace(/```$/i, '')
       .trim();
     
-    const queryResult = {
-      prismaQuery: cleanedQuery,
-      explanation: undefined as string | undefined,
-    };
-    
     timings.queryGeneration = performance.now() - queryGenStart;
     console.log(`⏱️  [RAG] Query generation (LLM): ${timings.queryGeneration.toFixed(2)}ms`);
-    console.log(`🔍 [RAG] Generated Prisma Query:`, queryResult.prismaQuery);
+    console.log(`🔍 [RAG] Generated Prisma Query:`, cleanedQuery);
 
-    // Execute query in parallel while preparing to stream
+    // Execute query
     const queryExecStart = performance.now();
     let queryData: unknown;
     let queryError: string | null = null;
-    const queryExecutionPromise = executePrismaQueryFromText(queryResult.prismaQuery)
-      .then((data) => {
-        queryData = data;
-        timings.queryExecution = performance.now() - queryExecStart;
-        console.log(`⏱️  [RAG] Query execution (DB): ${timings.queryExecution.toFixed(2)}ms`);
-      })
-      .catch((error) => {
-        queryError = error instanceof Error ? error.message : String(error);
-        timings.queryExecution = performance.now() - queryExecStart;
-        console.log(`⏱️  [RAG] Query execution (DB) - ERROR: ${timings.queryExecution.toFixed(2)}ms`);
-      });
-
-    // Build conversation messages with system context
-    const systemMessage: CoreMessage = {
-      role: 'system',
-      content: `You are a helpful assistant. Answer the user's question based on database query results.`,
-    };
-
-    // Build messages array: system message + conversation history + current user query
-    const messages: CoreMessage[] = [systemMessage];
-    
-    // Add conversation history if provided (excluding the current message)
-    if (options?.conversationHistory && options.conversationHistory.length > 0) {
-      // Filter to only include user and assistant messages, and limit to last 10 for context
-      const recentHistory = options.conversationHistory
-        .filter(msg => msg.role === 'user' || msg.role === 'assistant')
-        .slice(-10); // Keep last 10 messages for context
-      messages.push(...recentHistory);
+    try {
+      queryData = await executePrismaQueryFromText(cleanedQuery);
+      timings.queryExecution = performance.now() - queryExecStart;
+      console.log(`⏱️  [RAG] Query execution (DB): ${timings.queryExecution.toFixed(2)}ms`);
+    } catch (error) {
+      queryError = error instanceof Error ? error.message : String(error);
+      timings.queryExecution = performance.now() - queryExecStart;
+      console.log(`⏱️  [RAG] Query execution (DB) - ERROR: ${timings.queryExecution.toFixed(2)}ms`);
     }
+
+    // Continue the same conversation with query results
+    messages.push({
+      role: 'assistant',
+      content: cleanedQuery,
+    });
     
-    // Add current user query
     messages.push({
       role: 'user',
-      content: userQuery,
+      content: `The query has been executed. Here are the results:
+
+Query Execution: ${queryError ? `ERROR: ${queryError}` : 'SUCCESS'}
+
+Query Results:
+${queryError ? 'No data available due to query error.' : JSON.stringify(queryData, null, 2)}
+
+Now provide a clear, natural language answer to the original question: "${userQuery}"
+
+Instructions:
+- If there was a query error, explain what went wrong and suggest how the user might rephrase their question
+- If query succeeded but returned no data, say "No data found" - do not fabricate answers
+- If query succeeded with data, provide a clear, natural language answer based ONLY on the query results
+- Do NOT mention Prisma, queries, databases, or technical details in your answer
+- Use natural language and be conversational
+- Include specific numbers, names, dates, or statuses from the results when relevant`,
     });
 
-    // Wait for query execution to complete, then stream response with data
-    await queryExecutionPromise;
-
-    // Stream response with query results - no tools needed, pure text stream
+    // Continue with the same conversation to generate the final answer
     const streamStart = performance.now();
     timings.preStream = performance.now() - startTime;
     console.log(`⏱️  [RAG] Pre-stream setup: ${timings.preStream.toFixed(2)}ms`);
@@ -143,30 +158,6 @@ Output ONLY the query, nothing else.`,
     const result = streamText({
       model: openai('gpt-5-nano'),
       messages,
-      system: `You are a helpful assistant. Answer the user's question based on the database query results.
-
-Database Schema:
-${schema}
-
-Available Tables:
-${tableDetailsText}
-
-Generated Prisma Query: ${queryResult.prismaQuery}
-${queryResult.explanation ? `Query Explanation: ${queryResult.explanation}` : ''}
-
-Query Execution: ${queryError ? `ERROR: ${queryError}` : 'SUCCESS'}
-
-Query Results:
-${queryError ? 'No data available due to query error.' : JSON.stringify(queryData, null, 2)}
-
-Instructions:
-- If there was a query error, explain what went wrong and suggest how the user might rephrase their question
-- If query succeeded but returned no data, say "No data found" - do not fabricate answers
-- If query succeeded with data, provide a clear, natural language answer based ONLY on the query results
-- Do NOT mention Prisma, queries, databases, or technical details in your answer
-- Use natural language and be conversational
-- Include specific numbers, names, dates, or statuses from the results when relevant
-- If the user references previous messages, use the conversation history to understand the context`,
     });
 
     // Return streamText result - use toTextStreamResponse() in route handlers
