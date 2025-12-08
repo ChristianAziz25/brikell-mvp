@@ -1,5 +1,5 @@
 export const tableDetails = {
-  Capex: `
+    Capex: `
   Capex stores capital expenditure per asset and year.
   - id: unique identifier (primary key)
   - asset: relation to the parent Asset
@@ -22,7 +22,7 @@ export const tableDetails = {
   - assetId: foreign key to Asset.id
   `.trim(),
   
-  Opex: `
+    Opex: `
   Opex stores operating expenses per asset and year.
   - id: unique identifier (primary key)
   - asset: relation to the parent Asset
@@ -55,7 +55,7 @@ export const tableDetails = {
   - assetId: foreign key to Asset.id
   `.trim(),
   
-  RentRollUnit: `
+    RentRollUnit: `
   RentRollUnit stores per‑unit rent and tenancy data.
   - assetId: foreign key to the parent Asset
   - asset: relation to the parent Asset
@@ -87,7 +87,7 @@ export const tableDetails = {
   - updated_at: last update timestamp
   `.trim(),
   
-  Asset: `
+    Asset: `
   Asset is the core property table and parent for capex, opex, and rent roll.
   - id: unique identifier (primary key and only unique column)
   - name: human‑readable asset name (NOT unique)

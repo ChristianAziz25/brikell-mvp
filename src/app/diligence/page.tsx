@@ -37,10 +37,11 @@ export default function Page() {
   const [context, setContext] = useState<"capex" | "opex" | "all">("all");
 
   const messageScrollRef = useRef<HTMLDivElement>(null);
+  const isUserScrolling = useRef(false);
 
   // Use useChat for faster text streaming - automatically handles messages and conversation history
   // TextStreamChatTransport is required for streamText responses (toTextStreamResponse)
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status, error, stop } = useChat({
     transport: new TextStreamChatTransport({
       api: "/api/chat",
     }),
@@ -53,7 +54,6 @@ export default function Page() {
       console.log("Last message:", messages[messages.length - 1]);
       console.log("All messages:", messages);
     }
-    console.log("Status:", status);
     if (error) {
       toast.error(`Chat error: ${error.message}`);
       console.error("Chat error:", error);
@@ -62,29 +62,40 @@ export default function Page() {
 
   const isLoading = status === "streaming" || status === "submitted";
 
-  // Auto-scroll to bottom when messages change or while loading
+  // Track whether user has scrolled away from bottom
   useEffect(() => {
-    if (!messageScrollRef.current) return;
+    const el = messageScrollRef.current;
+    if (!el) return;
 
-    const scrollToBottom = () => {
-      messageScrollRef.current?.scrollTo({
-        top: messageScrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+    const THRESHOLD = 80; // px from bottom considered "at bottom"
+
+    const handleScroll = () => {
+      const distanceFromBottom =
+        el.scrollHeight - el.scrollTop - el.clientHeight;
+      // user is considered "scrolling" if they've moved up beyond threshold
+      isUserScrolling.current = distanceFromBottom > THRESHOLD;
     };
 
-    scrollToBottom();
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
 
-    if (isLoading) {
-      const interval = setInterval(scrollToBottom, 100);
-      return () => clearInterval(interval);
-    }
-  }, [messages, isLoading]);
+  useEffect(() => {
+    const el = messageScrollRef.current;
+    if (!el) return;
 
-  // Custom handler to integrate with Chat component
+    if (isUserScrolling.current) return;
+
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [isLoading, messages.length]);
+
   function handleChatEvent(value: string) {
-    // Send message using useChat's sendMessage
-    // Type assertion needed due to complex UIMessage type requirements
+    if (isLoading) {
+      stop();
+    }
     sendMessage({
       role: "user",
       content: value,
@@ -173,6 +184,9 @@ export default function Page() {
                     </div>
                     <div className="rounded-2xl rounded-tl-sm bg-muted/30 px-4 py-3">
                       <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                    </div>
+                    <div className="text-sm text-muted animate-pulse self-center">
+                      thinking...
                     </div>
                   </div>
                 </div>
