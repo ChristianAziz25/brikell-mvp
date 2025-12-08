@@ -7,6 +7,7 @@ import { searchFewShotQueries, searchTableDetails } from './vectorization-servic
 
 export async function numericalQueryRAG(
   userQuery: string,
+  abortSignal: AbortSignal,
   options?: {
     tableLimit?: number;
     fewShotLimit?: number;
@@ -219,6 +220,12 @@ Provide a helpful, user-friendly error message explaining what went wrong. Inclu
 - Be friendly, constructive, and avoid technical jargon when possible
 
 If the error mentions "vector", "embedding", or "search", explain that there was an issue retrieving relevant information from the knowledge base.`,
+    abortSignal: abortSignal,
+    onAbort: ({ steps }) => {
+      // Handle cleanup when stream is aborted
+      console.log('Stream aborted after', steps.length, 'steps');
+      // Persist partial results to database
+    },
     });
 
     return {

@@ -60,7 +60,7 @@ export async function POST(req: Request) {
       });
 
     // Call the combined RAG function with conversation history
-    const { response } = await numericalQueryRAG(userQuery, {
+    const { response } = await numericalQueryRAG(userQuery, req.signal, {
       tableLimit: 3,
       fewShotLimit: 2,
       conversationHistory,

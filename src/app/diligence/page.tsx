@@ -35,7 +35,7 @@ function extractMessageContent(message: UIMessage): string {
 
 export default function Page() {
   const [context, setContext] = useState<"capex" | "opex" | "all">("all");
-
+  const queueRef = useRef<string[]>([]);
   const messageScrollRef = useRef<HTMLDivElement>(null);
   const isUserScrolling = useRef(false);
 
@@ -53,6 +53,7 @@ export default function Page() {
       console.log("Messages count:", messages.length);
       console.log("Last message:", messages[messages.length - 1]);
       console.log("All messages:", messages);
+      console.log("Status:", status);
     }
     if (error) {
       toast.error(`Chat error: ${error.message}`);
@@ -62,7 +63,6 @@ export default function Page() {
 
   const isLoading = status === "streaming" || status === "submitted";
 
-  // Track whether user has scrolled away from bottom
   useEffect(() => {
     const el = messageScrollRef.current;
     if (!el) return;
@@ -92,15 +92,33 @@ export default function Page() {
     });
   }, [isLoading, messages.length]);
 
+  // When user presses Enter:
   function handleChatEvent(value: string) {
-    if (isLoading) {
-      stop();
+    // If assistant is idle, send immediately
+    if (!isLoading) {
+      sendMessage({
+        role: "user",
+        content: value,
+      } as unknown as Parameters<typeof sendMessage>[0]);
+      return;
     }
-    sendMessage({
-      role: "user",
-      content: value,
-    } as unknown as Parameters<typeof sendMessage>[0]);
+
+    // Otherwise, enqueue the message
+    queueRef.current.push(value);
   }
+
+  // When current request finishes, send next queued message (if any)
+  useEffect(() => {
+    if (status === "ready" && queueRef.current.length > 0) {
+      const next = queueRef.current.shift();
+      if (next) {
+        sendMessage({
+          role: "user",
+          content: next,
+        } as unknown as Parameters<typeof sendMessage>[0]);
+      }
+    }
+  }, [status, sendMessage]);
 
   return (
     <div className="flex w-full h-full flex-col gap-6 lg:flex-row min-h-0 p-4">
@@ -128,9 +146,9 @@ export default function Page() {
               </div>
             )}
 
-            {messages.map((message) => (
+            {messages.map((message, index) => (
               <div
-                key={message.id}
+                key={`${message.id}-${index}`}
                 className={`flex ${
                   message.role === "user" ? "justify-end" : "justify-start"
                 }`}
