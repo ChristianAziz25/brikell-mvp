@@ -120,7 +120,7 @@ export const tableDetails = {
 
 export const fewShotQueries = {
     'Show me everything about Gertrudehus - all the units, expenses, and capital expenditures': 
-      'Use Prisma\'s include to fetch related data in a single query: `prisma.asset.findUnique({ where: { name: "Gertrudehus" }, include: { rentRoll: true, capex: true, opex: true } })`.',
+      'Use Prisma\'s include to fetch related data in a single query. Since "name" is not unique on Asset, use findFirst instead of findUnique: `prisma.asset.findFirst({ where: { name: "Gertrudehus" }, include: { rentRoll: true, capex: true, opex: true } })`.',
   
     'What units are currently occupied at Gertrudehus?': 
       'Filter by units_status and use the asset relation: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied", asset: { name: "Gertrudehus" } } })`.',
