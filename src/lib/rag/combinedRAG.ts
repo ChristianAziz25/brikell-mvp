@@ -86,6 +86,7 @@ Output ONLY the query, nothing else.`,
     
     timings.queryGeneration = performance.now() - queryGenStart;
     console.log(`⏱️  [RAG] Query generation (LLM): ${timings.queryGeneration.toFixed(2)}ms`);
+    console.log(`🔍 [RAG] Generated Prisma Query:`, queryResult.prismaQuery);
 
     // Execute query in parallel while preparing to stream
     const queryExecStart = performance.now();

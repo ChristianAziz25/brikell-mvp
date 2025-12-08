@@ -222,7 +222,7 @@ export const fewShotQueries = {
       'Filter by bathrooms_amount: `prisma.rentRollUnit.findMany({ where: { bathrooms_amount: { gte: 2 } }, include: { asset: { select: { name: true } } } })`.',
   
     'What\'s our theoretical rental income and vacancy loss?': 
-      'Select tri fields: `prisma.theoreticalRentalIncome.findMany({ select: { triYear: true, triAmount: true, vacancyLoss: true, asset: { select: { name: true } } }, include: { asset: { select: { name: true } } } })`.',
+      'Select tri fields: `prisma.theoreticalRentalIncome.findMany({ select: { triYear: true, triAmount: true, vacancyLoss: true, asset: { select: { name: true } } } })`.',
   
     'Show me all expenses for our Danish properties': 
       'Use nested where: `prisma.opex.findMany({ where: { asset: { country: "Denmark" } }, include: { asset: { select: { name: true, country: true } } } })`.',
@@ -240,7 +240,7 @@ export const fewShotQueries = {
       'Filter by utilites_cost: `prisma.rentRollUnit.findMany({ where: { utilites_cost: { gte: 500 } }, include: { asset: { select: { name: true } } } })`.',
   
     'Show me expenses organized by property and year': 
-      'Use nested orderBy: `prisma.opex.findMany({ orderBy: { asset: { name: "asc" }, opex_year: "asc" }, include: { asset: { select: { name: true } } } })`.',
+      'Order by year and include asset: `prisma.opex.findMany({ orderBy: { opex_year: "asc" }, include: { asset: { select: { name: true } } } })`.',
   
     'What\'s the occupancy rate at Gertrudehus?': 
       'Get all units to calculate: `prisma.rentRollUnit.findMany({ where: { asset: { name: "Gertrudehus" } }, select: { units_status: true } })`.',
