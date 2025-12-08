@@ -1,63 +1,16 @@
 import { ragTools } from '@/lib/ai/tools/ragTools';
+import { generateEmbeddings } from '@/lib/rag/embedding';
 import { openai } from '@ai-sdk/openai';
-import { streamText, tool } from 'ai';
+import { type UIMessage, streamText, tool } from 'ai';
 import { z } from 'zod';
-
-type BasicMessagePart =
-  | string
-  | {
-      type?: string;
-      text?: string;
-      [key: string]: unknown;
-    };
-
-type BasicMessage = {
-  role?: string;
-  content?: string | BasicMessagePart[];
-  parts?: BasicMessagePart[];
-  [key: string]: unknown;
-};
-
-function extractTextFromMessage(message: BasicMessage): string {
-  if (typeof message.content === 'string') {
-    return message.content;
-  }
-
-  if (Array.isArray(message.content)) {
-    return message.content
-      .map((part) =>
-        typeof part === 'string'
-          ? part
-          : typeof part.text === 'string'
-            ? part.text
-            : '',
-      )
-      .join(' ')
-      .trim();
-  }
-
-  if (Array.isArray(message.parts)) {
-    return message.parts
-      .map((part) =>
-        typeof part === 'string'
-          ? part
-          : typeof part.text === 'string'
-            ? part.text
-            : '',
-      )
-      .join(' ')
-      .trim();
-  }
-
-  return '';
-}
+import { extractTextFromMessage } from './utils/extractLatestMesaage';
 
 export async function POST(req: Request) {
   try {
     const {
       messages,
     }: {
-      messages: BasicMessage[];
+      messages: UIMessage[];
     } = await req.json();
 
 
@@ -69,19 +22,22 @@ export async function POST(req: Request) {
     }
 
     // Find the latest user message content to drive retrieval
-    const latestUserMessageIndex = [...messages]
-      .map((m, idx) => ({ m, idx }))
-      .reverse()
-      .find(({ m }) => m.role === 'user')?.idx;
+    // Iterate backwards to find the most recent user message
+    let latestUserMessage: UIMessage | undefined;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i]?.role === 'user') {
+        latestUserMessage = messages[i];
+        break;
+      }
+    }
 
-    if (latestUserMessageIndex === undefined) {
+    if (!latestUserMessage) {
       return new Response(
         JSON.stringify({ error: 'No user message found in request' }),
         { status: 400, headers: { 'Content-Type': 'application/json' } },
       );
     }
 
-    const latestUserMessage = messages[latestUserMessageIndex];
     const userQuery = extractTextFromMessage(latestUserMessage);
 
     if (!userQuery.trim()) {
@@ -90,6 +46,8 @@ export async function POST(req: Request) {
         { status: 400, headers: { 'Content-Type': 'application/json' } },
       );
     }
+
+    const embeddedUserQuery = await generateEmbeddings(userQuery);
 
     // Build system prompt that guides the LLM to use tools appropriately
     const systemPrompt = `You are a helpful assistant. You can answer general questions directly, but when a user asks about real estate data (properties, rent rolls, units, financials, etc.), you should use the chainFewShotQuery tool to query the database.

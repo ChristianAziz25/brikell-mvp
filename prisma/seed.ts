@@ -1,8 +1,173 @@
 import prisma from "@/lib/prisma/client";
 import { generateEmbeddings } from "@/lib/rag/embedding";
-import { fewShotQueries, tableDetails } from "./ragDataEmbedding";
+import { fewShotQueries, tableDetails } from "./ragDataEmbeddingData";
+
+/**
+ * Setup database schema for hybrid search (FTS columns, indexes, triggers)
+ * This is idempotent - safe to run multiple times
+ */
+async function setupHybridSearchSchema() {
+  console.log("Setting up hybrid search schema...");
+
+  // Enable extensions
+  await prisma.$executeRawUnsafe(`CREATE EXTENSION IF NOT EXISTS vector;`);
+  await prisma.$executeRawUnsafe(`CREATE EXTENSION IF NOT EXISTS pg_trgm;`);
+
+  // Set memory for operations
+  await prisma.$executeRawUnsafe(`SET maintenance_work_mem = '128MB';`);
+
+  // Add FTS column to table_details
+  await prisma.$executeRawUnsafe(`
+    DO $$ 
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'table_details' 
+        AND column_name = 'fts'
+      ) THEN
+        ALTER TABLE table_details ADD COLUMN fts TSVECTOR;
+        UPDATE table_details 
+        SET fts = to_tsvector('english', COALESCE(description, ''))
+        WHERE fts IS NULL;
+        ALTER TABLE table_details DROP COLUMN fts;
+        ALTER TABLE table_details 
+        ADD COLUMN fts TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', description)) STORED;
+      END IF;
+    END $$;
+  `);
+
+  // Add FTS column to few_shot_query
+  await prisma.$executeRawUnsafe(`
+    DO $$ 
+    BEGIN
+      IF NOT EXISTS (
+        SELECT 1 FROM information_schema.columns 
+        WHERE table_schema = 'public' 
+        AND table_name = 'few_shot_query' 
+        AND column_name = 'fts'
+      ) THEN
+        ALTER TABLE few_shot_query ADD COLUMN fts TSVECTOR;
+        UPDATE few_shot_query 
+        SET fts = to_tsvector('english', COALESCE(query, ''))
+        WHERE fts IS NULL;
+        ALTER TABLE few_shot_query DROP COLUMN fts;
+        ALTER TABLE few_shot_query 
+        ADD COLUMN fts TSVECTOR GENERATED ALWAYS AS (to_tsvector('english', query)) STORED;
+      END IF;
+    END $$;
+  `);
+
+  // Reset memory
+  await prisma.$executeRawUnsafe(`RESET maintenance_work_mem;`);
+
+  // Create FTS indexes
+  await prisma.$executeRawUnsafe(
+    `CREATE INDEX IF NOT EXISTS idx_table_details_fts ON table_details USING gin(fts);`
+  );
+  await prisma.$executeRawUnsafe(
+    `CREATE INDEX IF NOT EXISTS idx_few_shot_query_fts ON few_shot_query USING gin(fts);`
+  );
+
+  // Create vector indexes (HNSW)
+  await prisma.$executeRawUnsafe(`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE schemaname = 'public' 
+        AND tablename = 'table_details' 
+        AND indexname = 'idx_table_details_embedding'
+      ) THEN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_indexes i
+          JOIN pg_class c ON i.indexname = c.relname
+          WHERE i.schemaname = 'public'
+          AND i.tablename = 'table_details'
+          AND i.indexname = 'idx_table_details_embedding'
+          AND c.relam = (SELECT oid FROM pg_am WHERE amname = 'hnsw')
+        ) THEN
+          DROP INDEX IF EXISTS idx_table_details_embedding;
+          CREATE INDEX idx_table_details_embedding ON table_details
+            USING hnsw (embedding vector_cosine_ops)
+            WITH (m = 16, ef_construction = 64);
+        END IF;
+      ELSE
+        CREATE INDEX idx_table_details_embedding ON table_details
+          USING hnsw (embedding vector_cosine_ops)
+          WITH (m = 16, ef_construction = 64);
+      END IF;
+    END $$;
+  `);
+
+  await prisma.$executeRawUnsafe(`
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1 FROM pg_indexes 
+        WHERE schemaname = 'public' 
+        AND tablename = 'few_shot_query' 
+        AND indexname = 'idx_few_shot_query_embedding'
+      ) THEN
+        IF NOT EXISTS (
+          SELECT 1 FROM pg_indexes i
+          JOIN pg_class c ON i.indexname = c.relname
+          WHERE i.schemaname = 'public'
+          AND i.tablename = 'few_shot_query'
+          AND i.indexname = 'idx_few_shot_query_embedding'
+          AND c.relam = (SELECT oid FROM pg_am WHERE amname = 'hnsw')
+        ) THEN
+          DROP INDEX IF EXISTS idx_few_shot_query_embedding;
+          CREATE INDEX idx_few_shot_query_embedding ON few_shot_query
+            USING hnsw (embedding vector_cosine_ops)
+            WITH (m = 16, ef_construction = 64);
+        END IF;
+      ELSE
+        CREATE INDEX idx_few_shot_query_embedding ON few_shot_query
+          USING hnsw (embedding vector_cosine_ops)
+          WITH (m = 16, ef_construction = 64);
+      END IF;
+    END $$;
+  `);
+
+  // Create trigger function
+  await prisma.$executeRawUnsafe(`
+    CREATE OR REPLACE FUNCTION update_updated_at_column()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      NEW.updated_at = NOW();
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+  `);
+
+  // Create triggers
+  await prisma.$executeRawUnsafe(
+    `DROP TRIGGER IF EXISTS update_table_details_updated_at ON table_details;`
+  );
+  await prisma.$executeRawUnsafe(`
+    CREATE TRIGGER update_table_details_updated_at
+      BEFORE UPDATE ON table_details
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at_column();
+  `);
+
+  await prisma.$executeRawUnsafe(
+    `DROP TRIGGER IF EXISTS update_few_shot_query_updated_at ON few_shot_query;`
+  );
+  await prisma.$executeRawUnsafe(`
+    CREATE TRIGGER update_few_shot_query_updated_at
+      BEFORE UPDATE ON few_shot_query
+      FOR EACH ROW
+      EXECUTE FUNCTION update_updated_at_column();
+  `);
+
+  console.log("✅ Hybrid search schema setup complete!");
+}
 
 async function main() {
+  // Setup database schema first (before seeding data)
+  await setupHybridSearchSchema();
   // // Clear existing data in correct FK order
   // await prisma.rentRollUnit.deleteMany();
   // await prisma.capex.deleteMany();
