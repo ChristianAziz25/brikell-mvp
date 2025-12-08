@@ -136,27 +136,35 @@ model RentRollUnit {
 }
 
 model FewShotQuery {
-  id             String   @id @default(cuid())
-  query          String
-  queryEmbedding Float[]
-  sql            String
-  metadata       Json
-  created_at     DateTime @default(now())
-  updated_at     DateTime @updatedAt
+  id         String                   @id @default(cuid())
+  query      String                   @unique
+  sql        String
+  created_at DateTime                 @default(now())
+  updated_at DateTime                 @updatedAt
+  metadata   Json
+  embedding  Unsupported("vector")
+  fts        Unsupported("tsvector")? @default(dbgenerated("to_tsvector('english'::regconfig, query)"))
 
+  @@index([embedding])
+  @@index([embedding], map: "idx_few_shot_query_embedding")
+  @@index([fts], map: "idx_few_shot_query_fts", type: Gin)
   @@map("few_shot_query")
   @@schema("public")
 }
 
 model TableDetails {
-  id          String   @id @default(cuid())
-  tableName   String
+  id          String                   @id @default(cuid())
+  tableName   String                   @unique
   description String
-  embedding   Float[]
   metadata    Json
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime                 @default(now())
+  updated_at  DateTime                 @updatedAt
+  embedding   Unsupported("vector")
+  fts         Unsupported("tsvector")? @default(dbgenerated("to_tsvector('english'::regconfig, description)"))
 
+  @@index([embedding])
+  @@index([embedding], map: "idx_table_details_embedding")
+  @@index([fts], map: "idx_table_details_fts", type: Gin)
   @@map("table_details")
   @@schema("public")
 }

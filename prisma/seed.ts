@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma/client";
-
-
+import { generateEmbeddings } from "@/lib/rag/embedding";
+import { fewShotQueries, tableDetails } from "./ragDataEmbedding";
 
 async function main() {
   // // Clear existing data in correct FK order
@@ -168,6 +168,34 @@ async function main() {
   //     },
   //   });
   // }
+
+  for (const[tableName, description] of Object.entries(tableDetails)) {
+    const embeddings = await generateEmbeddings(description);
+    const embeddingArray = JSON.stringify(embeddings);
+    await prisma.$executeRaw`
+        INSERT INTO table_details (id, "tableName", description, embedding, metadata, created_at, updated_at)
+        VALUES (gen_random_uuid()::text, ${tableName}, ${description}, ${embeddingArray}::vector, '{}'::jsonb, NOW(), NOW())
+        ON CONFLICT ("tableName") 
+        DO UPDATE SET 
+          description = EXCLUDED.description,
+          embedding = EXCLUDED.embedding,
+          updated_at = NOW()
+      `;
+  }
+  
+  for (const [question, query] of Object.entries(fewShotQueries)) {
+    const embeddings = await generateEmbeddings(question);
+    const embeddingArray = JSON.stringify(embeddings);
+    await prisma.$executeRaw`
+        INSERT INTO few_shot_query (id, query, sql, embedding, metadata, created_at, updated_at)
+        VALUES (gen_random_uuid()::text, ${question}, ${query}, ${embeddingArray}::vector, '{}'::jsonb, NOW(), NOW())
+        ON CONFLICT (query) 
+        DO UPDATE SET 
+          sql = EXCLUDED.sql,
+          embedding = EXCLUDED.embedding,
+          updated_at = NOW()
+      `;
+  }
 }
 
 main()

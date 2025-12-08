@@ -388,7 +388,9 @@ export const ModelName = {
   TheoreticalRentalIncome: 'TheoreticalRentalIncome',
   Capex: 'Capex',
   Opex: 'Opex',
-  RentRollUnit: 'RentRollUnit'
+  RentRollUnit: 'RentRollUnit',
+  FewShotQuery: 'FewShotQuery',
+  TableDetails: 'TableDetails'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "asset" | "theoreticalRentalIncome" | "capex" | "opex" | "rentRollUnit"
+    modelProps: "asset" | "theoreticalRentalIncome" | "capex" | "opex" | "rentRollUnit" | "fewShotQuery" | "tableDetails"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +780,122 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FewShotQuery: {
+      payload: Prisma.$FewShotQueryPayload<ExtArgs>
+      fields: Prisma.FewShotQueryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FewShotQueryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FewShotQueryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload>
+        }
+        findFirst: {
+          args: Prisma.FewShotQueryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FewShotQueryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload>
+        }
+        findMany: {
+          args: Prisma.FewShotQueryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload>[]
+        }
+        delete: {
+          args: Prisma.FewShotQueryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload>
+        }
+        update: {
+          args: Prisma.FewShotQueryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload>
+        }
+        deleteMany: {
+          args: Prisma.FewShotQueryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FewShotQueryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FewShotQueryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FewShotQueryPayload>[]
+        }
+        aggregate: {
+          args: Prisma.FewShotQueryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFewShotQuery>
+        }
+        groupBy: {
+          args: Prisma.FewShotQueryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FewShotQueryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FewShotQueryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FewShotQueryCountAggregateOutputType> | number
+        }
+      }
+    }
+    TableDetails: {
+      payload: Prisma.$TableDetailsPayload<ExtArgs>
+      fields: Prisma.TableDetailsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TableDetailsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TableDetailsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload>
+        }
+        findFirst: {
+          args: Prisma.TableDetailsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TableDetailsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload>
+        }
+        findMany: {
+          args: Prisma.TableDetailsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload>[]
+        }
+        delete: {
+          args: Prisma.TableDetailsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload>
+        }
+        update: {
+          args: Prisma.TableDetailsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload>
+        }
+        deleteMany: {
+          args: Prisma.TableDetailsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TableDetailsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TableDetailsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TableDetailsPayload>[]
+        }
+        aggregate: {
+          args: Prisma.TableDetailsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTableDetails>
+        }
+        groupBy: {
+          args: Prisma.TableDetailsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TableDetailsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TableDetailsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TableDetailsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -934,12 +1052,43 @@ export const RentRollUnitScalarFieldEnum = {
 export type RentRollUnitScalarFieldEnum = (typeof RentRollUnitScalarFieldEnum)[keyof typeof RentRollUnitScalarFieldEnum]
 
 
+export const FewShotQueryScalarFieldEnum = {
+  id: 'id',
+  query: 'query',
+  sql: 'sql',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  metadata: 'metadata'
+} as const
+
+export type FewShotQueryScalarFieldEnum = (typeof FewShotQueryScalarFieldEnum)[keyof typeof FewShotQueryScalarFieldEnum]
+
+
+export const TableDetailsScalarFieldEnum = {
+  id: 'id',
+  tableName: 'tableName',
+  description: 'description',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type TableDetailsScalarFieldEnum = (typeof TableDetailsScalarFieldEnum)[keyof typeof TableDetailsScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -956,6 +1105,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -1017,6 +1175,20 @@ export type EnumRentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Prism
  * Reference to a field of type 'RentStatus[]'
  */
 export type ListEnumRentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -1117,6 +1289,8 @@ export type GlobalOmitConfig = {
   capex?: Prisma.CapexOmit
   opex?: Prisma.OpexOmit
   rentRollUnit?: Prisma.RentRollUnitOmit
+  fewShotQuery?: Prisma.FewShotQueryOmit
+  tableDetails?: Prisma.TableDetailsOmit
 }
 
 /* Types for Logging */

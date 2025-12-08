@@ -55,7 +55,9 @@ export const ModelName = {
   TheoreticalRentalIncome: 'TheoreticalRentalIncome',
   Capex: 'Capex',
   Opex: 'Opex',
-  RentRollUnit: 'RentRollUnit'
+  RentRollUnit: 'RentRollUnit',
+  FewShotQuery: 'FewShotQuery',
+  TableDetails: 'TableDetails'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -191,12 +193,43 @@ export const RentRollUnitScalarFieldEnum = {
 export type RentRollUnitScalarFieldEnum = (typeof RentRollUnitScalarFieldEnum)[keyof typeof RentRollUnitScalarFieldEnum]
 
 
+export const FewShotQueryScalarFieldEnum = {
+  id: 'id',
+  query: 'query',
+  sql: 'sql',
+  created_at: 'created_at',
+  updated_at: 'updated_at',
+  metadata: 'metadata'
+} as const
+
+export type FewShotQueryScalarFieldEnum = (typeof FewShotQueryScalarFieldEnum)[keyof typeof FewShotQueryScalarFieldEnum]
+
+
+export const TableDetailsScalarFieldEnum = {
+  id: 'id',
+  tableName: 'tableName',
+  description: 'description',
+  metadata: 'metadata',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type TableDetailsScalarFieldEnum = (typeof TableDetailsScalarFieldEnum)[keyof typeof TableDetailsScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -213,4 +246,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
