@@ -249,7 +249,7 @@ export const fewShotQueries = {
       'Filter and select rent: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied" }, select: { rent_current_gri: true, asset: { select: { name: true } } } })`.',
   
     'Which properties have the most units?': 
-      'Get all assets with rent roll: `prisma.asset.findMany({ include: { rentRoll: true } })`.',
+      'Order assets by the number of related rent roll units using the relation aggregate _count on rentRoll: `prisma.asset.findMany({ orderBy: { rentRoll: { _count: "desc" } }, include: { rentRoll: true } })`.',
   
     'What\'s our vacancy rate across all properties?': 
       'Get all units to calculate: `prisma.rentRollUnit.findMany({ select: { units_status: true, asset: { select: { name: true } } } })`.',
