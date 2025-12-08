@@ -63,6 +63,7 @@ export async function numericalQueryRAG(
       messages.push(...recentHistory);
     }
     
+    console.log(tableDetailsText)
     messages.push({
       role: 'user',
       content: `Answer this question: ${userQuery}

@@ -1,108 +1,110 @@
 export const tableDetails = {
-    Capex: `
-  Capex is the capital expenditures table for each real-estate asset and year. It captures one‑off or infrequent investment costs that improve or extend the life of the property.
-  - id: unique identifier for this capex record
-  - asset: relation to the Asset this capex belongs to
-  - asset_name: human‑readable name of the related asset
-  - capex_year: fiscal year the capex relates to
-  - common_areas_actuals: actual capex spent on common areas
-  - units_renovations_actuals: actual capex spent on unit renovations
-  - elevator_maintnance_actuals: actual capex spent on elevator maintenance
-  - roof_maintnance_actuals: actual capex spent on roof maintenance
-  - fire_safety_actuals: actual capex spent on fire‑safety improvements
-  - outdoor_area_actuals: actual capex spent on outdoor areas
+  Capex: `
+  Capex stores capital expenditure per asset and year.
+  - id: unique identifier (primary key)
+  - asset: relation to the parent Asset
+  - asset_name: asset name (denormalized, not unique)
+  - capex_year: year the capex relates to
+  - common_areas_actuals: actual capex for common areas
+  - units_renovations_actuals: actual capex for unit renovations
+  - elevator_maintnance_actuals: actual capex for elevator maintenance
+  - roof_maintnance_actuals: actual capex for roof maintenance
+  - fire_safety_actuals: actual capex for fire‑safety work
+  - outdoor_area_actuals: actual capex for outdoor areas
   - common_areas_budget: budgeted capex for common areas
   - units_renovations_budget: budgeted capex for unit renovations
   - elevator_maintnance_budget: budgeted capex for elevator maintenance
   - roof_maintnance_budget: budgeted capex for roof maintenance
   - fire_safety_budget: budgeted capex for fire‑safety work
   - outdoor_area_budget: budgeted capex for outdoor areas
-  - created_at: timestamp when this capex row was created
-  - updated_at: timestamp of the last update
-  - assetId: foreign key linking to the parent Asset row
+  - created_at: row creation timestamp
+  - updated_at: last update timestamp
+  - assetId: foreign key to Asset.id
   `.trim(),
   
-    Opex: `
-  Opex is the operating expenses table for each asset and year. It tracks recurring costs required to operate the property on an ongoing basis.
-  - id: unique identifier for this opex record
-  - asset: relation to the Asset this opex belongs to
-  - asset_name: human‑readable name of the related asset
-  - opex_year: fiscal year the opex relates to
-  - actual_delinquency: realized loss from unpaid rent and delinquencies
-  - actual_property_management_fee: actual fee paid to the property manager
-  - actual_leasing_fee: actual leasing and brokerage fees
+  Opex: `
+  Opex stores operating expenses per asset and year.
+  - id: unique identifier (primary key)
+  - asset: relation to the parent Asset
+  - asset_name: asset name (denormalized, not unique)
+  - opex_year: fiscal year of the opex
+  - actual_delinquency: realized loss from unpaid rent
+  - actual_property_management_fee: actual property management fee
+  - actual_leasing_fee: actual leasing/brokerage fees
   - actual_property_taxes: actual property tax payments
-  - actual_refuse_collection: actual waste and refuse collection costs
-  - actual_insurance: actual insurance premiums paid
-  - actual_cleaning: actual cleaning and janitorial expenses
+  - actual_refuse_collection: actual waste collection costs
+  - actual_insurance: actual insurance premiums
+  - actual_cleaning: actual cleaning/janitorial expenses
   - actual_facility_management: actual facility management costs
-  - actual_service_subscriptions: actual service and subscription expenses
-  - actual_common_consumption: actual costs for common‑area utilities
-  - actual_home_owner_association: actual HOA or condo association fees
-  - budget_delinquency: budgeted delinquency amount
+  - actual_service_subscriptions: actual service/subscription expenses
+  - actual_common_consumption: actual common‑area utilities
+  - actual_home_owner_association: actual HOA/condo fees
+  - budget_delinquency: budgeted delinquency
   - budget_property_management_fee: budgeted property management fee
   - budget_leasing_fee: budgeted leasing fees
   - budget_property_taxes: budgeted property tax expense
-  - budget_refuse_collection: budgeted refuse collection costs
+  - budget_refuse_collection: budgeted refuse collection
   - budget_insurance: budgeted insurance premiums
-  - budget_cleaning: budgeted cleaning expense
-  - budget_facility_management: budgeted facility management costs
-  - budget_service_subscriptions: budgeted service and subscription costs
-  - budget_common_consumption: budgeted common‑area utility costs
-  - budget_home_owner_association: budgeted HOA or condo association fees
-  - created_at: timestamp when this opex row was created
-  - updated_at: timestamp of the last update
-  - assetId: foreign key linking to the parent Asset row
+  - budget_cleaning: budgeted cleaning
+  - budget_facility_management: budgeted facility management
+  - budget_service_subscriptions: budgeted services/subscriptions
+  - budget_common_consumption: budgeted common‑area utilities
+  - budget_home_owner_association: budgeted HOA/condo fees
+  - created_at: row creation timestamp
+  - updated_at: last update timestamp
+  - assetId: foreign key to Asset.id
   `.trim(),
   
-    RentRollUnit: `
-  RentRollUnit represents a single residential or commercial unit in an income‑producing asset. It combines physical attributes, tenancy details, and rent data for each unit.
-  - assetId: foreign key linking this unit to its parent Asset
-  - asset: relation to the Asset this unit belongs to
+  RentRollUnit: `
+  RentRollUnit stores per‑unit rent and tenancy data.
+  - assetId: foreign key to the parent Asset
+  - asset: relation to the parent Asset
   - property_build_year: year the building was constructed
-  - property_name: marketing or legal name of the property
-  - unit_address: street address of the unit
-  - unit_zipcode: postal or ZIP code of the unit
-  - utilites_cost: utilities cost attributable to this unit
-  - unit_type: type of unit (e.g. apartment, retail, office)
+  - property_name: property name
+  - unit_address: unit street address
+  - unit_zipcode: postal/ZIP code
+  - utilites_cost: utilities cost for the unit
+  - unit_type: unit type (e.g. apartment, retail, office)
   - size_sqm: unit size in square meters
-  - rooms_amount: total number of rooms
+  - rooms_amount: total room count
   - bedrooms_amount: number of bedrooms
   - bathrooms_amount: number of bathrooms
-  - rent_current_gri: current gross rent income for the unit
-  - rent_budget_tri: budgeted rent for the unit
-  - lease_start: lease start date (string representation)
-  - lease_end: lease end date (string or null if open‑ended)
+  - rent_current_gri: current gross rent income
+  - rent_budget_tri: budgeted rent
+  - lease_start: lease start date (string)
+  - lease_end: lease end date (string or null)
   - tenant_name1: primary tenant name
-  - tenant_name2: secondary tenant name (if any)
-  - unit_id: unique numeric identifier for the unit (primary key)
+  - tenant_name2: secondary tenant name
+  - unit_id: unique numeric identifier (primary key)
   - unit_door: door or apartment number
-  - unit_floor: floor number of the unit
-  - tenant_number1: primary tenant phone number
-  - tenant_number2: secondary tenant phone number
-  - unit_id: unique numeric identifier for the unit (primary key)
-  - unit_door: door or apartment number
-  - unit_floor: floor number of the unit
-  - units_status: lease status (occupied, vacant, or terminated)
+  - unit_floor: floor number
+  - tenant_number1: primary tenant phone
+  - tenant_number2: secondary tenant phone
+  - units_status: lease status (occupied, vacant, terminated)
   - tenant_mail1: primary tenant email
   - tenant_mail2: secondary tenant email
-  - created_at: timestamp when this unit row was created
-  - updated_at: timestamp of the last update
+  - created_at: row creation timestamp
+  - updated_at: last update timestamp
   `.trim(),
   
-    Asset: `
-  Asset is the core property table. Each row represents a single real‑estate asset in the portfolio and acts as the parent for capex, opex, and rent roll data.
-  - id: unique identifier for the asset
-  - name: asset name used across capex, opex, and rent roll tables
-  - address: street address of the property (optional)
-  - city: city where the property is located (optional)
-  - country: country where the property is located (optional)
-  - tri: relation to the TheoreticalRentalIncome row for this asset
-  - capex: relation to all Capex rows for this asset
-  - opex: relation to all Opex rows for this asset
-  - rentRoll: relation to all RentRollUnit rows for this asset
-  - created_at: timestamp when the asset was created
-  - updated_at: timestamp of the last update
+  Asset: `
+  Asset is the core property table and parent for capex, opex, and rent roll.
+  - id: unique identifier (primary key and only unique column)
+  - name: human‑readable asset name (NOT unique)
+  - address: property street address (optional)
+  - city: city of the property (optional)
+  - country: country of the property (optional)
+  - tri: relation to TheoreticalRentalIncome rows
+  - capex: relation to Capex rows
+  - opex: relation to Opex rows
+  - rentRoll: relation to RentRollUnit rows
+  - created_at: row creation timestamp
+  - updated_at: last update timestamp
+
+  IMPORTANT PRISMA RULES:
+  - Only "id" is unique; "name" is NOT unique in the schema.
+  - Do NOT call prisma.asset.findUnique({ where: { name: ... } }) or prisma.asset.findUniqueOrThrow({ where: { name: ... } }).
+  - For name filters, use prisma.asset.findFirst or prisma.asset.findMany with a "where" clause on "name".
   `.trim(),
 
   TheoreticalRentalIncome: `
