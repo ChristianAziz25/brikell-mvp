@@ -13,6 +13,16 @@ const generateChunks = (input: string): string[] => {
 export const generateEmbeddings = async (
   value: string,
 ): Promise<number[]> => {
+  // For short queries, don't chunk
+  if (value.length < 500) {
+    const { embeddings } = await embedMany({
+      model: embeddingModel,
+      values: [value],
+    });
+    return embeddings[0];
+  }
+
+  // Only chunk for longer text
   const chunks = generateChunks(value);
   const { embeddings } = await embedMany({
     model: embeddingModel,

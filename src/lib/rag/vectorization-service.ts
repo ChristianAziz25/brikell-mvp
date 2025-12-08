@@ -1,10 +1,9 @@
-import { generateEmbeddings } from '@/lib/rag/embedding';
 import { supabaseAdmin } from '@/lib/supabase/client';
 
 /**
  * Convert embedding array to PostgreSQL vector format string
  */
-function embeddingToVector(embedding: number[]): string {
+export function embeddingToVector(embedding: number[]): string {
   return `[${embedding.join(',')}]`;
 }
 
@@ -12,7 +11,8 @@ function embeddingToVector(embedding: number[]): string {
  * Search table details using hybrid search
  */
 export async function searchTableDetails(
-  query: string,
+  queryText: string,
+  queryEmbeddingVector: string,
   options?: {
     limit?: number;
     fullTextWeight?: number;
@@ -21,15 +21,11 @@ export async function searchTableDetails(
   }
 ) {
   try {
-    // Generate query embedding
-    const queryEmbedding = await generateEmbeddings(query);
-    const queryEmbeddingVector = embeddingToVector(queryEmbedding);
-
-    // Call hybrid search RPC
+    // Call hybrid search RPC - Note: The SQL function is named hybrid_search_documents but searches table_details
     const { data, error } = await supabaseAdmin.rpc(
-      'hybrid_search_table_details',
+      'hybrid_search_documents',
       {
-        query_text: query,
+        query_text: queryText,
         query_embedding: queryEmbeddingVector,
         match_count: options?.limit ?? 5,
         full_text_weight: options?.fullTextWeight ?? 1.0,
@@ -59,7 +55,8 @@ export async function searchTableDetails(
  * Search few-shot queries using hybrid search
  */
 export async function searchFewShotQueries(
-  query: string,
+  queryText: string,
+  queryEmbeddingVector: string,
   options?: {
     limit?: number;
     fullTextWeight?: number;
@@ -68,15 +65,11 @@ export async function searchFewShotQueries(
   }
 ) {
   try {
-    // Generate query embedding
-    const queryEmbedding = await generateEmbeddings(query);
-    const queryEmbeddingVector = embeddingToVector(queryEmbedding);
-
     // Call hybrid search RPC
     const { data, error } = await supabaseAdmin.rpc(
       'hybrid_search_few_shot_queries',
       {
-        query_text: query,
+        query_text: queryText,
         query_embedding: queryEmbeddingVector,
         match_count: options?.limit ?? 5,
         full_text_weight: options?.fullTextWeight ?? 1.0,

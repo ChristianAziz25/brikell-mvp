@@ -3,17 +3,67 @@
 import Chat from "@/components/chat";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useChat } from "@ai-sdk/react";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { Brain, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { ragResponseSchema } from "../api/use-object/schema";
 
 const agents = ["capex", "opex", "all"];
 
+type Message = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  keyInsights?: string[];
+};
+
 export default function Page() {
   const [context, setContext] = useState<"capex" | "opex" | "all">("all");
+  const [messages, setMessages] = useState<Message[]>([]);
 
   const messageScrollRef = useRef<HTMLDivElement>(null);
-  const { messages, sendMessage, status } = useChat();
+  const { object, submit, isLoading } = useObject({
+    api: "/api/use-object",
+    schema: ragResponseSchema,
+  });
+
+  // Track the last completed response to add to messages when streaming completes
+  const lastCompletedResponseRef = useRef<string | null>(null);
+
+  // When streaming completes, add the final response to messages
+  useEffect(() => {
+    if (
+      !isLoading &&
+      object?.response &&
+      lastCompletedResponseRef.current !== object.response
+    ) {
+      lastCompletedResponseRef.current = object.response;
+      // Use setTimeout to avoid synchronous setState in effect
+      setTimeout(() => {
+        setMessages((prev) => {
+          const lastMessage = prev[prev.length - 1];
+          const keyInsights = object.keyInsights?.filter(
+            (insight): insight is string => typeof insight === "string"
+          );
+          const newMessage: Message = {
+            id: `assistant-${Date.now()}`,
+            role: "assistant",
+            content: object.response || "",
+            keyInsights:
+              keyInsights && keyInsights.length > 0 ? keyInsights : undefined,
+          };
+
+          if (
+            lastMessage?.role === "assistant" &&
+            lastMessage.id === "pending"
+          ) {
+            return [...prev.slice(0, -1), newMessage];
+          }
+          return [...prev, newMessage];
+        });
+      }, 0);
+    }
+  }, [isLoading, object]);
 
   useEffect(() => {
     if (!messageScrollRef.current) return;
@@ -27,14 +77,33 @@ export default function Page() {
 
     scrollToBottom();
 
-    if (status === "streaming") {
+    if (isLoading) {
       const interval = setInterval(scrollToBottom, 100);
       return () => clearInterval(interval);
     }
-  }, [messages, status]);
+  }, [messages, isLoading, object]);
 
   function handleChatEvent(value: string) {
-    sendMessage({ text: value }, { body: { customKey: context } });
+    // Add user message
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      content: value,
+    };
+    setMessages((prev) => [...prev, userMessage]);
+
+    // Add pending assistant message placeholder
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: "pending",
+        role: "assistant",
+        content: "",
+      },
+    ]);
+
+    // Submit the query
+    submit(value);
   }
 
   return (
@@ -84,177 +153,45 @@ export default function Page() {
                     }`}
                   >
                     <div className="text-sm text-foreground whitespace-pre-wrap">
-                      {(() => {
-                        // Helper function to get emoji based on part type and state
-                        const getPartEmoji = (
-                          part: { type?: string; state?: string } | undefined
-                        ) => {
-                          if (!part) return "⏳";
-
-                          const partType = part.type || "";
-                          const partState = part.state || "";
-
-                          // Handle step-start
-                          if (partType === "step-start") {
-                            return "🚀";
-                          }
-
-                          // Handle reasoning
-                          if (partType === "reasoning") {
-                            if (partState === "done") {
-                              return "💭";
-                            }
-                            return "🤔";
-                          }
-
-                          // Handle tool calls
-                          if (partType.startsWith("tool-")) {
-                            if (partState === "output-available") {
-                              return "✅";
-                            }
-                            if (partState === "call") {
-                              return "🔧";
-                            }
-                            // Default tool emoji
-                            return "⚙️";
-                          }
-
-                          // Handle text parts
-                          if (partType === "text") {
-                            return null; // No emoji for text
-                          }
-
-                          // Default loading emoji
-                          return "⏳";
-                        };
-
-                        if (message.role !== "assistant") {
-                          // For user messages, just render text parts
-                          const textParts =
-                            message.parts
-                              ?.filter((p) => p.type === "text")
-                              .map((part, i) => (
-                                <p
-                                  className="text-primary-foreground"
-                                  key={`${message.id}-${i}`}
-                                >
-                                  {part.text}
+                      {message.role === "user" ? (
+                        <p className="text-primary-foreground">
+                          {message.content}
+                        </p>
+                      ) : message.id === "pending" && isLoading ? (
+                        // Show streaming content for pending messages
+                        <>
+                          {object?.response && (
+                            <p className="text-chat-machine-color">
+                              {object.response}
+                            </p>
+                          )}
+                          {!object?.response && (
+                            <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                          )}
+                        </>
+                      ) : message.content ? (
+                        // Show completed message
+                        <>
+                          <p className="text-chat-machine-color">
+                            {message.content}
+                          </p>
+                          {message.keyInsights &&
+                            message.keyInsights.length > 0 && (
+                              <div className="mt-3 pt-3 border-t border-muted">
+                                <p className="text-xs font-semibold text-muted-foreground mb-2">
+                                  Key Insights:
                                 </p>
-                              )) || [];
-                          return textParts.length > 0 ? textParts : null;
-                        }
-
-                        // For assistant messages
-                        const textParts =
-                          message.parts
-                            ?.filter((p) => p.type === "text")
-                            .map((part, i) => (
-                              <p
-                                className="text-chat-machine-color"
-                                key={`${message.id}-text-${i}`}
-                              >
-                                {part.text}
-                              </p>
-                            )) || [];
-
-                        // Get tool parts with available output
-                        const toolOutputParts =
-                          message.parts
-                            ?.filter((p) => {
-                              // Type guard: check if part has tool-related properties
-                              const hasToolType = p.type?.startsWith("tool-");
-                              const hasState = "state" in p;
-                              const hasOutput = "output" in p;
-                              return (
-                                hasToolType &&
-                                hasState &&
-                                (p as { state?: string }).state ===
-                                  "output-available" &&
-                                hasOutput &&
-                                (p as { output?: unknown }).output !== undefined
-                              );
-                            })
-                            .map((part, i) => {
-                              // Type guard: safely access output
-                              const partWithOutput = part as {
-                                output?:
-                                  | string
-                                  | { response?: string }
-                                  | unknown;
-                              };
-                              // Handle output from tool - it can be a string or an object
-                              const outputText =
-                                typeof partWithOutput.output === "string"
-                                  ? partWithOutput.output
-                                  : typeof partWithOutput.output === "object" &&
-                                    partWithOutput.output !== null &&
-                                    "response" in partWithOutput.output
-                                  ? (
-                                      partWithOutput.output as {
-                                        response: string;
-                                      }
-                                    ).response
-                                  : typeof partWithOutput.output === "object" &&
-                                    partWithOutput.output !== null
-                                  ? JSON.stringify(partWithOutput.output)
-                                  : "";
-
-                              if (!outputText) return null;
-
-                              return (
-                                <p
-                                  className="text-chat-machine-color"
-                                  key={`${message.id}-tool-${i}`}
-                                >
-                                  {outputText}
-                                </p>
-                              );
-                            })
-                            .filter((p) => p !== null) || [];
-
-                        // Get non-text parts for emoji display
-                        const nonTextParts =
-                          message.parts?.filter((p) => p.type !== "text") || [];
-
-                        // Combine text parts and tool outputs
-                        const allContentParts = [
-                          ...textParts,
-                          ...toolOutputParts,
-                        ];
-
-                        // If we have any content to display, show it
-                        if (allContentParts.length > 0) {
-                          return (
-                            <>
-                              {allContentParts}
-                              {status === "streaming" && (
-                                <span className="inline-block ml-2 animate-pulse">
-                                  {getPartEmoji(
-                                    nonTextParts[nonTextParts.length - 1]
-                                  ) || "⏳"}
-                                </span>
-                              )}
-                            </>
-                          );
-                        }
-
-                        // No text parts yet - show emoji based on current part state
-                        if (message.parts && message.parts.length > 0) {
-                          const latestPart =
-                            message.parts[message.parts.length - 1];
-                          const emoji = getPartEmoji(latestPart);
-                          return (
-                            <span className="inline-block animate-pulse text-xl">
-                              {emoji || "⏳"}
-                            </span>
-                          );
-                        }
-
-                        // No parts at all - show default loader
-                        return (
-                          <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
-                        );
-                      })()}
+                                <ul className="list-disc list-inside space-y-1 text-xs text-muted-foreground">
+                                  {message.keyInsights.map((insight, idx) => (
+                                    <li key={idx}>{insight}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                        </>
+                      ) : (
+                        <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                      )}
                     </div>
                   </div>
                   {message.role === "user" && (
