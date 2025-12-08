@@ -3,68 +3,66 @@
 import Chat from "@/components/chat";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { useChat } from "@ai-sdk/react";
+import type { UIMessage } from "ai";
+import { TextStreamChatTransport } from "ai";
 import { Brain, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { ragResponseSchema } from "../api/use-object/schema";
+import { toast } from "sonner";
 
 const agents = ["capex", "opex", "all"];
 
-type Message = {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  keyInsights?: string[];
-};
+function extractMessageContent(message: UIMessage): string {
+  const msg = message as {
+    content?: string | Array<{ type?: string; text?: string }>;
+    parts?: Array<{ type?: string; text?: string }>;
+  };
+
+  if (typeof msg.content === "string") {
+    return msg.content;
+  }
+  if (Array.isArray(msg.content)) {
+    const textPart = msg.content.find((part) => part.type === "text");
+    return textPart?.text || "";
+  }
+  // Handle message.parts if content is not directly available
+  if (Array.isArray(msg.parts)) {
+    const textPart = msg.parts.find((part) => part.type === "text");
+    return textPart?.text || "";
+  }
+  return "";
+}
 
 export default function Page() {
   const [context, setContext] = useState<"capex" | "opex" | "all">("all");
-  const [messages, setMessages] = useState<Message[]>([]);
 
   const messageScrollRef = useRef<HTMLDivElement>(null);
-  const { object, submit, isLoading } = useObject({
-    api: "/api/use-object",
-    schema: ragResponseSchema,
+
+  // Use useChat for faster text streaming - automatically handles messages and conversation history
+  // TextStreamChatTransport is required for streamText responses (toTextStreamResponse)
+  const { messages, sendMessage, status, error } = useChat({
+    transport: new TextStreamChatTransport({
+      api: "/api/chat",
+    }),
   });
 
-  // Track the last completed response to add to messages when streaming completes
-  const lastCompletedResponseRef = useRef<string | null>(null);
-
-  // When streaming completes, add the final response to messages
+  // Debug: Log messages, status, and errors
   useEffect(() => {
-    if (
-      !isLoading &&
-      object?.response &&
-      lastCompletedResponseRef.current !== object.response
-    ) {
-      lastCompletedResponseRef.current = object.response;
-      // Use setTimeout to avoid synchronous setState in effect
-      setTimeout(() => {
-        setMessages((prev) => {
-          const lastMessage = prev[prev.length - 1];
-          const keyInsights = object.keyInsights?.filter(
-            (insight): insight is string => typeof insight === "string"
-          );
-          const newMessage: Message = {
-            id: `assistant-${Date.now()}`,
-            role: "assistant",
-            content: object.response || "",
-            keyInsights:
-              keyInsights && keyInsights.length > 0 ? keyInsights : undefined,
-          };
-
-          if (
-            lastMessage?.role === "assistant" &&
-            lastMessage.id === "pending"
-          ) {
-            return [...prev.slice(0, -1), newMessage];
-          }
-          return [...prev, newMessage];
-        });
-      }, 0);
+    if (messages.length > 0) {
+      console.log("Messages count:", messages.length);
+      console.log("Last message:", messages[messages.length - 1]);
+      console.log("All messages:", messages);
     }
-  }, [isLoading, object]);
+    console.log("Status:", status);
+    if (error) {
+      toast.error(`Chat error: ${error.message}`);
+      console.error("Chat error:", error);
+    }
+  }, [messages, status, error]);
 
+  const isLoading = status === "streaming" || status === "submitted";
+
+  // Auto-scroll to bottom when messages change or while loading
   useEffect(() => {
     if (!messageScrollRef.current) return;
 
@@ -81,29 +79,16 @@ export default function Page() {
       const interval = setInterval(scrollToBottom, 100);
       return () => clearInterval(interval);
     }
-  }, [messages, isLoading, object]);
+  }, [messages, isLoading]);
 
+  // Custom handler to integrate with Chat component
   function handleChatEvent(value: string) {
-    // Add user message
-    const userMessage: Message = {
-      id: `user-${Date.now()}`,
+    // Send message using useChat's sendMessage
+    // Type assertion needed due to complex UIMessage type requirements
+    sendMessage({
       role: "user",
       content: value,
-    };
-    setMessages((prev) => [...prev, userMessage]);
-
-    // Add pending assistant message placeholder
-    setMessages((prev) => [
-      ...prev,
-      {
-        id: "pending",
-        role: "assistant",
-        content: "",
-      },
-    ]);
-
-    // Submit the query
-    submit(value);
+    } as unknown as Parameters<typeof sendMessage>[0]);
   }
 
   return (
@@ -155,42 +140,15 @@ export default function Page() {
                     <div className="text-sm text-foreground whitespace-pre-wrap">
                       {message.role === "user" ? (
                         <p className="text-primary-foreground">
-                          {message.content}
+                          {extractMessageContent(message)}
                         </p>
-                      ) : message.id === "pending" && isLoading ? (
-                        // Show streaming content for pending messages
-                        <>
-                          {object?.response && (
-                            <p className="text-chat-machine-color">
-                              {object.response}
-                            </p>
-                          )}
-                          {!object?.response && (
-                            <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
-                          )}
-                        </>
-                      ) : message.content ? (
-                        // Show completed message
-                        <>
-                          <p className="text-chat-machine-color">
-                            {message.content}
-                          </p>
-                          {message.keyInsights &&
-                            message.keyInsights.length > 0 && (
-                              <div className="mt-3 pt-3 border-t border-muted">
-                                <p className="text-xs font-semibold text-muted-foreground mb-2">
-                                  Key Insights:
-                                </p>
-                                <ul className="list-disc list-inside space-y-1 text-xs text-muted-foreground">
-                                  {message.keyInsights.map((insight, idx) => (
-                                    <li key={idx}>{insight}</li>
-                                  ))}
-                                </ul>
-                              </div>
-                            )}
-                        </>
                       ) : (
-                        <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                        // Show message content (streaming or completed)
+                        <p className="text-chat-machine-color">
+                          {extractMessageContent(message) || (
+                            <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin inline-block" />
+                          )}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -204,6 +162,21 @@ export default function Page() {
                 </div>
               </div>
             ))}
+
+            {/* Show loading indicator for the current streaming message */}
+            {isLoading &&
+              messages[messages.length - 1]?.role !== "assistant" && (
+                <div className="flex justify-start">
+                  <div className="flex max-w-3xl items-start gap-3">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30">
+                      <Brain className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                    <div className="rounded-2xl rounded-tl-sm bg-muted/30 px-4 py-3">
+                      <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
+                    </div>
+                  </div>
+                </div>
+              )}
           </div>
 
           <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-start p-4">

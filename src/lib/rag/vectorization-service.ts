@@ -12,7 +12,7 @@ export function embeddingToVector(embedding: number[]): string {
  */
 export async function searchTableDetails(
   queryText: string,
-  queryEmbeddingVector: string,
+  queryEmbedding: number[],
   options?: {
     limit?: number;
     fullTextWeight?: number;
@@ -26,7 +26,7 @@ export async function searchTableDetails(
       'hybrid_search_documents',
       {
         query_text: queryText,
-        query_embedding: queryEmbeddingVector,
+        query_embedding: queryEmbedding,
         match_count: options?.limit ?? 5,
         full_text_weight: options?.fullTextWeight ?? 1.0,
         semantic_weight: options?.semanticWeight ?? 1.0,
@@ -35,7 +35,8 @@ export async function searchTableDetails(
     );
 
     if (error) {
-      throw new Error(`Table search failed: ${error.message}`);
+      const errorMessage = error.message || JSON.stringify(error);
+      throw new Error(`Table search failed: ${errorMessage}`);
     }
 
     return (data || []) as Array<{
@@ -56,7 +57,7 @@ export async function searchTableDetails(
  */
 export async function searchFewShotQueries(
   queryText: string,
-  queryEmbeddingVector: string,
+  queryEmbedding: number[],
   options?: {
     limit?: number;
     fullTextWeight?: number;
@@ -70,7 +71,7 @@ export async function searchFewShotQueries(
       'hybrid_search_few_shot_queries',
       {
         query_text: queryText,
-        query_embedding: queryEmbeddingVector,
+        query_embedding: queryEmbedding,
         match_count: options?.limit ?? 5,
         full_text_weight: options?.fullTextWeight ?? 1.0,
         semantic_weight: options?.semanticWeight ?? 1.0,
@@ -79,7 +80,8 @@ export async function searchFewShotQueries(
     );
 
     if (error) {
-      throw new Error(`Few-shot search failed: ${error.message}`);
+      const errorMessage = error.message || JSON.stringify(error);
+      throw new Error(`Few-shot search failed: ${errorMessage}`);
     }
 
     return (data || []) as Array<{

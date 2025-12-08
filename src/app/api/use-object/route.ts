@@ -15,22 +15,17 @@ export async function POST(req: Request) {
       );
     }
 
-    const { success, response, error } = await numericalQueryRAG(
+    const { response } = await numericalQueryRAG(
       userQuery.trim(),
       {
-        tableLimit: 5,
-        fewShotLimit: 5,
+        tableLimit: 3,
+        fewShotLimit: 2,
       }
     );
 
-    if (!success) {
-      return new Response(
-        JSON.stringify({ error: error }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } },
-      );
-    }
-
+    // Always return the stream response - errors are handled within the stream
     if (typeof response === 'string') {
+      // If response is a string (unexpected), wrap it in a stream
       return new Response(
         JSON.stringify({ error: response }),
         { status: 500, headers: { 'Content-Type': 'application/json' } },
