@@ -104,6 +104,18 @@ export const tableDetails = {
   - created_at: timestamp when the asset was created
   - updated_at: timestamp of the last update
   `.trim(),
+
+  TheoreticalRentalIncome: `
+  TheoreticalRentalIncome is the theoretical rental income for each asset and year. It is used to calculate the theoretical rental income for each asset and year.
+  - id: unique identifier for this theoretical rental income record
+  - assetId: foreign key linking to the parent Asset row
+  - asset: relation to the Asset this theoretical rental income belongs to
+  - triYear: fiscal year the theoretical rental income relates to
+  - triAmount: theoretical rental income amount
+  - vacancyLoss: vacancy loss amount
+  - created_at: timestamp when this theoretical rental income row was created
+  - updated_at: timestamp of the last update
+  `.trim(),
 };
 
 export const fewShotQueries = {
