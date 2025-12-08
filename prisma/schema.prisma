@@ -135,6 +135,32 @@ model RentRollUnit {
   @@schema("public")
 }
 
+model FewShotQuery {
+  id             String   @id @default(cuid())
+  query          String
+  queryEmbedding Float[]
+  sql            String
+  metadata       Json
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@map("few_shot_query")
+  @@schema("public")
+}
+
+model TableDetails {
+  id          String   @id @default(cuid())
+  tableName   String
+  description String
+  embedding   Float[]
+  metadata    Json
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("table_details")
+  @@schema("public")
+}
+
 enum RentStatus {
   occupied
   vacant

@@ -7,13 +7,12 @@ import prisma from '@/lib/prisma/client';
 import { getAllAssets } from '@/lib/prisma/models/asset';
 import { getAllRentRollUnits } from '@/lib/prisma/models/rentRollUnit';
 import {
-    retrieveFewShotExample,
-    retrieveTopTables,
+  retrieveFewShotExample,
+  retrieveTopTables,
 } from '@/lib/rag/fewShot/fewShotRetriever';
 import {
-    buildPrismaQueryPrompt,
-    buildPrismaResponsePrompt,
-    serializeTableDetails,
+  buildPrismaQueryPrompt,
+  buildPrismaResponsePrompt,
 } from '@/lib/rag/promptTemplate';
 import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
