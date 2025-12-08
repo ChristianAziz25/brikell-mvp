@@ -62,6 +62,9 @@ ${fewShotExamplesText}
 
 Question: ${userQuery}
 
+CRITICAL: Asset names are case-sensitive. When filtering by asset.name, you MUST use the exact capitalization as shown in the "Available Asset Names" section above. Do NOT convert asset names to lowercase.
+
+
 Generate ONLY the Prisma query statement (e.g., "prisma.asset.findMany({ where: { name: "Gertrudehus" } })").
 Do NOT wrap in functions, exports, or await keywords.
 Output ONLY the query, nothing else.`,
