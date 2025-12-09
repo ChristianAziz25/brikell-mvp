@@ -41,7 +41,6 @@ export default function Page() {
   // Use useChat for faster text streaming - automatically handles messages and conversation history
   // TextStreamChatTransport is required for streamText responses (toTextStreamResponse)
   const { messages, sendMessage, status, error } = useChat();
-
   // Debug: Log messages, status, and errors
   useEffect(() => {
     if (messages.length > 0) {

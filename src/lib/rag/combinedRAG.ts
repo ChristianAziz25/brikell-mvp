@@ -122,6 +122,8 @@ Output ONLY the query, nothing else.`,
       timings.queryExecution = performance.now() - queryExecStart;
       console.log(`⏱️  [RAG] Query execution (DB) - ERROR: ${queryError} ${timings.queryExecution.toFixed(2)}ms`);
     }
+
+    console.log(queryData);
  
     return {
       response: queryData,

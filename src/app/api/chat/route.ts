@@ -1,6 +1,7 @@
-import { openai } from '@ai-sdk/openai';
-import { streamText, type UIMessage } from 'ai';
-import { createPrismaQueryGenTool } from './tools';
+import { openai } from "@ai-sdk/openai";
+import { stepCountIs, streamText, type UIMessage } from "ai";
+import { createPrismaQueryGenTool } from "./tools";
+import { extractTextFromMessage } from "./utils/extractLatestMesaage";
 
 export async function POST(req: Request) {
   try {
@@ -12,30 +13,39 @@ export async function POST(req: Request) {
 
     const prismaQueryGenTool = createPrismaQueryGenTool(messages);
 
+    // Build CoreMessages from the UIMessage array
+    const coreMessages = []
+
+    for (const msg of messages) {
+      if (msg.role === "user" || msg.role === "assistant") {
+        const content = extractTextFromMessage(msg);
+        coreMessages.push({
+          role: msg.role,
+          content,
+        });
+      }
+    }
 
     const result = streamText({
-      model: openai('gpt-5-nano'),
-      messages: [
-        { role: 'user', content: 'Generate a Prisma query for the user\'s query' },
-      ],
-      tools: {prismaQueryGenTool},
-      toolChoice: 'auto',
+      model: openai("gpt-5-nano"),
+      messages: coreMessages,
+      tools: { prismaQueryGenTool },
+      toolChoice: "auto",
+      stopWhen: stepCountIs(5)
     });
-    console.log(result.textStream);
-    for await (const text of result.textStream) {
-      process.stdout.write(text);
-    }
-    return result
+
+    // Return a plain text streaming Response compatible with TextStreamChatTransport
+    return result.toUIMessageStreamResponse();
   } catch (error: unknown) {
-    console.error('Chat API error:', error);
+    console.error("Chat API error:", error);
     const errorObj = error as { message?: string };
     return new Response(
       JSON.stringify({
-        error: errorObj?.message || 'Failed to process chat request',
+        error: errorObj?.message || "Failed to process chat request",
       }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { "Content-Type": "application/json" },
       }
     );
   }
