@@ -9,7 +9,7 @@ import {
   type ColumnDef,
   type Table as TanStackTable,
 } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Table } from "./Table";
 import { dollarStringify } from "./util/dollarStringify";
 
@@ -36,10 +36,17 @@ interface TableData {
   opex: TableRow[];
 }
 
+interface AssetSummary {
+  id: string;
+  name: string;
+}
+
 export default function MyAssets() {
   const [selectedAsset, setSelectedAsset] = useState<string>("");
-  const { data: tableData = [], isLoading } = useQuery<TableData[]>({
-    queryKey: ["asset-table-data"],
+  const { data: assets = [], isLoading: isAssetsLoading } = useQuery<
+    AssetSummary[]
+  >({
+    queryKey: ["assets"],
     queryFn: async () => {
       const res = await fetch(`/api/assets`);
       if (!res.ok) {
@@ -52,13 +59,32 @@ export default function MyAssets() {
     refetchOnWindowFocus: false,
   });
 
-  const activeAsset = useMemo(() => {
-    if (!tableData.length) return undefined;
-    if (!selectedAsset) return tableData[0];
-    return (
-      tableData.find((asset) => asset.name === selectedAsset) ?? tableData[0]
-    );
-  }, [selectedAsset, tableData]);
+  const { data: activeAsset, isLoading: isAssetLoading } =
+    useQuery<TableData | null>({
+      queryKey: ["asset-table-data", selectedAsset],
+      queryFn: async () => {
+        if (!selectedAsset) return null;
+        const res = await fetch(
+          `/api/asset?name=${encodeURIComponent(selectedAsset)}`
+        );
+        if (!res.ok) {
+          if (res.status === 404) return null;
+          throw new Error("Failed to fetch asset");
+        }
+        return res.json();
+      },
+      enabled: !!selectedAsset,
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    });
+
+  // Set the default selected asset to the first one returned from the API
+  useEffect(() => {
+    if (!selectedAsset && assets.length > 0) {
+      setSelectedAsset(assets[0].name);
+    }
+  }, [selectedAsset, assets]);
 
   const years = useMemo(() => {
     if (!activeAsset) return [] as string[];
@@ -777,10 +803,10 @@ export default function MyAssets() {
         </p>
       </div>
       <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
-        {tableData.map((asset) => (
+        {assets.map((asset) => (
           <Button
-            key={asset.name}
-            variant={asset.name === activeAsset?.name ? "default" : "outline"}
+            key={asset.id}
+            variant={asset.name === selectedAsset ? "default" : "outline"}
             onClick={() => setSelectedAsset(asset.name)}
           >
             <span className="font-medium">{asset.name}</span>
@@ -794,7 +820,7 @@ export default function MyAssets() {
             <Table
               table={unifiedTable}
               columnCount={unifiedTable.getAllLeafColumns().length}
-              isLoading={isLoading}
+              isLoading={isAssetsLoading || isAssetLoading}
             />
           </section>
         </div>

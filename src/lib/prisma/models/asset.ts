@@ -113,6 +113,13 @@ export async function getAllAssets() {
   });
 }
 
+export async function getAllAssetsNames() {
+  return prisma.asset.findMany({
+    select: { name: true },
+    orderBy: { name: "asc" },
+  });
+}
+
 export async function getAssetById(id: string) {
   return prisma.asset.findUnique({
     where: { id },
