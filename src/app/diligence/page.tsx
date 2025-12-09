@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
-import { TextStreamChatTransport } from "ai";
 import { Brain, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -41,11 +40,7 @@ export default function Page() {
 
   // Use useChat for faster text streaming - automatically handles messages and conversation history
   // TextStreamChatTransport is required for streamText responses (toTextStreamResponse)
-  const { messages, sendMessage, status, error, stop } = useChat({
-    transport: new TextStreamChatTransport({
-      api: "/api/chat",
-    }),
-  });
+  const { messages, sendMessage, status, error } = useChat();
 
   // Debug: Log messages, status, and errors
   useEffect(() => {
