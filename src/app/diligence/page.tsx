@@ -2,6 +2,7 @@
 
 import Chat from "@/components/chat";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
@@ -34,6 +35,7 @@ function extractMessageContent(message: UIMessage): string {
 
 export default function Page() {
   const [context, setContext] = useState<"capex" | "opex" | "all">("all");
+  const [queue, setQueue] = useState<string[]>([]);
   const queueRef = useRef<string[]>([]);
   const messageScrollRef = useRef<HTMLDivElement>(null);
   const isUserScrolling = useRef(false);
@@ -99,6 +101,7 @@ export default function Page() {
 
     // Otherwise, enqueue the message
     queueRef.current.push(value);
+    setQueue([...queueRef.current]);
   }
 
   // When current request finishes, send next queued message (if any)
@@ -111,6 +114,7 @@ export default function Page() {
           content: next,
         } as unknown as Parameters<typeof sendMessage>[0]);
       }
+      setQueue([...queueRef.current]);
     }
   }, [status, sendMessage]);
 
@@ -130,10 +134,9 @@ export default function Page() {
                   </div>
                   <div className="rounded-2xl rounded-tl-sm bg-muted/20 px-4 py-3">
                     <p className="text-sm text-foreground">
-                      Hello! I&apos;m your AI analyst. Upload a file and ask me
-                      anything about your data. I can help you analyze trends,
-                      create visualizations, and answer questions about your
-                      information.
+                      Hello! I&apos;m your AI analyst. Ask me anything about
+                      your data. I can help you analyze trends and answer
+                      questions about your information.
                     </p>
                   </div>
                 </div>
@@ -205,7 +208,7 @@ export default function Page() {
               )}
           </div>
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-start p-4">
+          <div className="pointer-events-none absolute w-full inset-x-0 bottom-0 flex justify-between p-4">
             <div className="hidden md:flex items-center gap-2 pointer-events-auto">
               {agents.map((agent) => (
                 <button
@@ -222,6 +225,22 @@ export default function Page() {
                 </button>
               ))}
             </div>
+            {queue.length > 0 && (
+              <Card className="bg-muted/30">
+                <CardHeader className="p-3 pb-0">
+                  <CardTitle>
+                    <p className="text-sm">Queue</p>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-3">
+                  {queue.map((message) => (
+                    <p className="text-xs" key={message}>
+                      <span>you:</span> {message}
+                    </p>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 
