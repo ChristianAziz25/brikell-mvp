@@ -124,14 +124,14 @@ export const fewShotQueries = {
     'Show me everything about Gertrudehus - all the units, expenses, and capital expenditures': 
       'Use Prisma\'s include to fetch related data in a single query. Since "name" is not unique on Asset, use findFirst instead of findUnique: `prisma.asset.findFirst({ where: { name: "Gertrudehus" }, include: { rentRoll: true, capex: true, opex: true } })`.',
   
-    'What units are currently occupied at Gertrudehus?': 
-      'Filter by units_status and use the asset relation: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied", asset: { name: "Gertrudehus" } } })`.',
+    'What units are currently occupied at gertrudehus?': 
+      'Filter by units_status and use the asset relation: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied", asset: { name: { equals: "gertrudehus", mode: "insensitive" } } } })`.',
   
     'Show me all our properties': 
       'Get all assets: `prisma.asset.findMany({ include: { rentRoll: true } })`.',
   
-    'What did we spend on capital expenditures for Emmahus in 2025?': 
-      'Use nested where and include: `prisma.capex.findFirst({ where: { capex_year: 2025, asset: { name: "Emmahus" } }, include: { asset: { select: { name: true } } } })`.',
+    'What did we spend on capital expenditures for emmahus in 2025?': 
+      'Use nested where and include: `prisma.capex.findFirst({ where: { capex_year: 2025, asset: { name: { equals: "emmahus", mode: "insensitive" } } }, include: { asset: { select: { name: true } } } })`.',
   
     'Show me all operating expenses for 2025': 
       'Filter by opex_year: `prisma.opex.findMany({ where: { opex_year: 2025 }, include: { asset: { select: { name: true } } } })`.',

@@ -23,8 +23,8 @@ export function cleanPrismaCodeBlock(raw: string): string {
     .replace(/\}\s*$/, '')
     .trim();
 
-  const queryMatch = cleaned.match(/prisma\.\w+\.\w+\([^)]*\)/);
-  if (queryMatch) {
+    const queryMatch = cleaned.match(/prisma\.\w+\.\w+\([\s\S]*\)/);
+    if (queryMatch) {
     return queryMatch[0];
   }
 
@@ -42,8 +42,7 @@ export async function executePrismaQueryFromText(
     const cleaned = cleanPrismaCodeBlock(prismaQuery);
 
     // Parse the query to extract model and method
-    const match = cleaned.match(/prisma\.(\w+)\.(\w+)\((.*)\)/);
-    if (!match) {
+    const match = cleaned.match(/prisma\.(\w+)\.(\w+)\(([\s\S]*)\)/);    if (!match) {
       throw new Error(`Invalid Prisma query format: ${cleaned}`);
     }
 

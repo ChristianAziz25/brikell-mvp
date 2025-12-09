@@ -121,7 +121,7 @@ Output ONLY the query, nothing else.`,
     } catch (error) {
       queryError = error instanceof Error ? error.message : String(error);
       timings.queryExecution = performance.now() - queryExecStart;
-      console.log(`⏱️  [RAG] Query execution (DB) - ERROR: ${timings.queryExecution.toFixed(2)}ms`);
+      console.log(`⏱️  [RAG] Query execution (DB) - ERROR: ${queryError} ${timings.queryExecution.toFixed(2)}ms`);
     }
 
     /**
@@ -186,10 +186,7 @@ Instructions:
 
     // Return streamText result - use toTextStreamResponse() in route handlers
     timings.streamStart = performance.now() - streamStart;
-    timings.total = performance.now() - startTime;
-    console.log(`✅ [RAG] StreamText created! Total time: ${timings.total.toFixed(2)}ms`);
-    console.log(`📊 [RAG] Breakdown: Embedding(${timings.embedding.toFixed(0)}ms) + Search(${timings.vectorSearch.toFixed(0)}ms) + QueryGen(${timings.queryGeneration.toFixed(0)}ms) + QueryExec(${timings.queryExecution.toFixed(0)}ms)`);
-    
+    timings.total = performance.now() - startTime;    
     return {
       response: result,
     };
