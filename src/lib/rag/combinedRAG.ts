@@ -63,7 +63,6 @@ export async function numericalQueryRAG(
       messages.push(...recentHistory);
     }
     
-    console.log(tableDetailsText)
     messages.push({
       role: 'user',
       content: `Answer this question: ${userQuery}
@@ -81,6 +80,9 @@ ${fewShotExamplesText}
 
 CRITICAL: Asset names are case-sensitive. When filtering by asset.name, you MUST use the exact capitalization as shown. Do NOT convert asset names to lowercase.
 and make sure you look up the database schema as given above and find the closest match for the asset name.
+
+IMPORTANT: Make sure to only include the top 2 fields of whatever table you are searching, so only necessary data is returned (IF the user hasnt sepcific what fields they want). 
+To do so, you need to follow the table scehma given above and use only the top 2 fields of the table you are searching.
 
 Generate ONLY the Prisma query statement (e.g., "prisma.asset.findMany({ where: { name: "Gertrudehus" } })").
 Do NOT wrap in functions, exports, or await keywords.
