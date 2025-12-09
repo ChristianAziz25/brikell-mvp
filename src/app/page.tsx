@@ -1,27 +1,36 @@
-import { Card, Chat } from "@/components";
+import { Chat } from "@/components";
+import { ChartBarMultiple } from "@/components/ui/bar-chart";
 import { Button } from "@/components/ui/button";
-import { FileIcon, HouseIcon, UsersIcon, WorkflowIcon } from "lucide-react";
+import { ChartLineDefault } from "@/components/ui/line-chart";
+import { ChartPieSimple } from "@/components/ui/pie-chart";
 
-const dashboardConfigs = [
+const graphs = [
   {
-    icon: HouseIcon,
-    title: "Properties",
-    description: "Manage all properties",
+    name: "Line Chart",
+    description: "A line chart",
+    image: "/line-chart.png",
   },
   {
-    icon: FileIcon,
-    title: "Rent Roll",
-    description: "View rent details",
+    name: "Pie Chart",
+    description: "A pie chart",
+    image: "/pie-chart.png",
   },
   {
-    icon: UsersIcon,
-    title: "Tenants",
-    description: "Tenant management",
+    name: "Bar Chart",
+    description: "A bar chart",
+    image: "/bar-chart.png",
   },
   {
-    icon: WorkflowIcon,
-    title: "Workflows",
-    description: "Track processes",
+    name: "Line Chart",
+    description: "A line chart",
+  },
+  {
+    name: "Pie Chart",
+    description: "A pie chart",
+  },
+  {
+    name: "Bar Chart",
+    description: "A bar chart",
   },
 ];
 
@@ -68,18 +77,15 @@ export default function Home() {
           My Dashboards
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {dashboardConfigs.map((config) => {
-            const IconComponent = config.icon;
-            return (
-              <Card
-                key={config.title}
-                title={config.title}
-                content={config.description}
-                className="cursor-pointer hover:shadow-md transition-all hover:border-foreground/20 bg-card border rounded-2xl"
-              >
-                <IconComponent className="h-5 w-5 text-foreground" />
-              </Card>
-            );
+          {graphs.map((graph) => {
+            switch (graph.name) {
+              case "Line Chart":
+                return <ChartLineDefault />;
+              case "Pie Chart":
+                return <ChartPieSimple />;
+              case "Bar Chart":
+                return <ChartBarMultiple />;
+            }
           })}
         </div>
       </div>
