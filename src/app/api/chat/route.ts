@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       messages: coreMessages,
       tools: { prismaQueryGenTool },
       toolChoice: "auto",
-      stopWhen: stepCountIs(5)
+      stopWhen: stepCountIs(2)
     });
 
     // Return a plain text streaming Response compatible with TextStreamChatTransport
