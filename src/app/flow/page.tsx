@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { RentRollUnit } from "@/generated/client";
 import { cn } from "@/lib/utils";
 import {
   closestCenter,
@@ -22,16 +23,12 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Building2, DollarSign, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-type Stage =
-  | "Vacant"
-  | "Terminated"
-  | "Interest"
-  | "Contract Sent"
-  | "Contract Signed";
+type Stage = "Vacant" | "Terminated" | "Occupied";
 
 interface LeaseCard {
   id: string;
@@ -44,96 +41,29 @@ interface LeaseCard {
   notes?: string;
 }
 
-const initialData: LeaseCard[] = [
-  {
-    id: "1",
-    unit: "Unit A102",
-    building: "Maple Tower",
-    price: 1500,
-    stage: "Vacant",
-    daysInStage: 5,
-  },
-  {
-    id: "2",
-    unit: "Unit B205",
-    building: "Oak Complex",
-    price: 1800,
-    stage: "Vacant",
-    daysInStage: 12,
-  },
-  {
-    id: "3",
-    unit: "Unit D302",
-    building: "Birch Plaza",
-    price: 2400,
-    stage: "Terminated",
-    daysInStage: 7,
-    notes: "Failed credit check",
-  },
-  {
-    id: "4",
-    unit: "Unit C301",
-    building: "Pine Apartments",
-    price: 2200,
-    stage: "Interest",
-    daysInStage: 2,
-    tenant: "Sarah Miller",
-  },
-  {
-    id: "5",
-    unit: "Unit A105",
-    building: "Maple Tower",
-    price: 1500,
-    stage: "Interest",
-    daysInStage: 1,
-    tenant: "John Doe",
-  },
-  {
-    id: "6",
-    unit: "Unit D401",
-    building: "Birch Plaza",
-    price: 2400,
-    stage: "Interest",
-    daysInStage: 3,
-    tenant: "Mike Chen",
-  },
-  {
-    id: "7",
-    unit: "Unit B202",
-    building: "Oak Complex",
-    price: 1800,
-    stage: "Contract Sent",
-    daysInStage: 4,
-    tenant: "Emily Davis",
-  },
-  {
-    id: "8",
-    unit: "Unit C305",
-    building: "Pine Apartments",
-    price: 2200,
-    stage: "Contract Sent",
-    daysInStage: 2,
-    tenant: "Alex Johnson",
-  },
-  {
-    id: "9",
-    unit: "Unit A108",
-    building: "Maple Tower",
-    price: 1500,
-    stage: "Contract Signed",
-    daysInStage: 0,
-    tenant: "Lisa Brown",
-    notes: "Move-in: Nov 25",
-  },
-];
+const stages: Stage[] = ["Vacant", "Terminated", "Occupied"];
 
-const stages: Stage[] = [
-  "Vacant",
-  "Terminated",
-  "Interest",
-  "Contract Sent",
-  "Contract Signed",
-];
+function mapStatusToStage(status: RentRollUnit["units_status"]): Stage {
+  switch (status) {
+    case "vacant":
+      return "Vacant";
+    case "terminated":
+      return "Terminated";
+    default:
+      return "Occupied";
+  }
+}
+
+function mapStageToStatus(stage: Stage): RentRollUnit["units_status"] {
+  switch (stage) {
+    case "Vacant":
+      return "vacant";
+    case "Terminated":
+      return "terminated";
+    case "Occupied":
+      return "occupied";
+  }
+}
 
 function SortableCard({ card }: { card: LeaseCard }) {
   const router = useRouter();
@@ -291,9 +221,52 @@ function KanbanColumn({
 }
 
 export default function Page() {
-  const [data, setData] = useState<LeaseCard[]>(initialData);
   const [selectedStage, setSelectedStage] = useState<Stage | "All">("All");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const queryClient = useQueryClient();
+
+  const { data: cards = [], isLoading: isUnitsLoading } = useQuery<LeaseCard[]>(
+    {
+      queryKey: ["units"],
+      queryFn: async () => {
+        const res = await fetch("/api/rent-roll");
+        if (!res.ok) {
+          throw new Error("Failed to load rent roll data");
+        }
+        const raw: RentRollUnit[] = await res.json();
+        return raw.map((unit) => ({
+          id: String(unit.unit_id),
+          unit: unit.unit_address,
+          building: unit.property_name,
+          price: unit.rent_current_gri,
+          stage: mapStatusToStage(unit.units_status),
+          daysInStage: 0,
+          tenant: unit.tenant_name1,
+          notes: undefined,
+        }));
+      },
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  const updateStageMutation = useMutation({
+    mutationFn: async ({ id, stage }: { id: string; stage: Stage }) => {
+      const res = await fetch("/api/rent-roll/stage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          unitId: Number(id),
+          status: mapStageToStatus(stage),
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to update rent roll stage");
+      }
+      return res.json();
+    },
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -307,18 +280,16 @@ export default function Page() {
   );
 
   const getCardsByStage = (stage: Stage) => {
-    return data.filter((card) => card.stage === stage);
+    return cards.filter((card) => card.stage === stage);
   };
 
   const getStageCounts = () => {
     const counts: Record<Stage, number> = {
       Vacant: 0,
       Terminated: 0,
-      Interest: 0,
-      "Contract Sent": 0,
-      "Contract Signed": 0,
+      Occupied: 0,
     };
-    data.forEach((card) => {
+    cards.forEach((card) => {
       counts[card.stage]++;
     });
     return counts;
@@ -336,51 +307,82 @@ export default function Page() {
 
     if (!over || active.id === over.id) return;
 
-    const activeCard = data.find((card) => card.id === active.id);
-    if (!activeCard) return;
-
     const overId = over.id as string;
 
+    const activeCardCurrent = cards.find((c) => c.id === (active.id as string));
+    if (!activeCardCurrent) return;
+
+    let newStageForMutation: Stage | null = null;
     if (overId.startsWith("column-")) {
       const targetStage = overId.replace("column-", "") as Stage;
-      if (targetStage && targetStage !== activeCard.stage) {
-        setData((items) =>
-          items.map((item) =>
-            item.id === active.id
-              ? { ...item, stage: targetStage, daysInStage: 0 }
-              : item
-          )
-        );
+      if (targetStage && targetStage !== activeCardCurrent.stage) {
+        newStageForMutation = targetStage;
       }
-      return;
+    } else {
+      const overCardCurrent = cards.find((c) => c.id === overId);
+      if (
+        overCardCurrent &&
+        overCardCurrent.stage !== activeCardCurrent.stage
+      ) {
+        newStageForMutation = overCardCurrent.stage;
+      }
     }
 
-    const overCard = data.find((card) => card.id === overId);
+    queryClient.setQueryData<LeaseCard[]>(["units"], (items = []) => {
+      const activeCard = items.find(
+        (card) => card.id === (active.id as string)
+      );
+      if (!activeCard) return items;
 
-    if (overCard) {
-      if (activeCard.stage === overCard.stage) {
-        const stageCards = getCardsByStage(activeCard.stage);
-        const oldIndex = stageCards.findIndex((card) => card.id === active.id);
-        const newIndex = stageCards.findIndex((card) => card.id === overId);
-
-        if (oldIndex !== -1 && newIndex !== -1) {
-          const newStageCards = arrayMove(stageCards, oldIndex, newIndex);
-          setData((items) => {
-            const otherCards = items.filter(
-              (item) => item.stage !== activeCard.stage
-            );
-            return [...otherCards, ...newStageCards];
-          });
+      // Dropped onto a column header: move card to that stage
+      if (overId.startsWith("column-")) {
+        const targetStage = overId.replace("column-", "") as Stage;
+        if (!targetStage || targetStage === activeCard.stage) {
+          return items;
         }
-      } else {
-        setData((items) =>
-          items.map((item) =>
-            item.id === active.id
-              ? { ...item, stage: overCard.stage, daysInStage: 0 }
-              : item
-          )
+        return items.map((item) =>
+          item.id === active.id
+            ? { ...item, stage: targetStage, daysInStage: 0 }
+            : item
         );
       }
+
+      // Dropped onto another card
+      const overCard = items.find((card) => card.id === overId);
+      if (!overCard) return items;
+
+      if (activeCard.stage === overCard.stage) {
+        // Reorder within the same stage
+        const stage = activeCard.stage;
+        const stageCards = items.filter((card) => card.stage === stage);
+        const oldIndex = stageCards.findIndex(
+          (card) => card.id === (active.id as string)
+        );
+        const newIndex = stageCards.findIndex((card) => card.id === overId);
+
+        if (oldIndex === -1 || newIndex === -1) return items;
+
+        const newStageCards = arrayMove(stageCards, oldIndex, newIndex);
+        const otherCards = items.filter((item) => item.stage !== stage);
+        return [...otherCards, ...newStageCards];
+      }
+
+      // Move card to a different stage (dropping on another card)
+      return items.map((item) =>
+        item.id === active.id
+          ? { ...item, stage: overCard.stage, daysInStage: 0 }
+          : item
+      );
+    });
+
+    if (
+      newStageForMutation &&
+      newStageForMutation !== activeCardCurrent.stage
+    ) {
+      updateStageMutation.mutate({
+        id: active.id as string,
+        stage: newStageForMutation,
+      });
     }
   };
 
@@ -459,10 +461,8 @@ export default function Page() {
             >
               {activeId
                 ? (() => {
-                    const card = data.find((card) => card.id === activeId);
-                    if (!card) {
-                      return null;
-                    }
+                    const card = cards.find((c) => c.id === activeId);
+                    if (!card) return null;
                     return (
                       <div style={{ transform: "rotate(5deg)" }}>
                         <DragPreviewCard card={card} />
