@@ -28,6 +28,7 @@ import { Building2, DollarSign, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+// TODO: Use the leaseStatus: vancant | terminated | interest | contract sent | contract signed
 type Stage = "Vacant" | "Terminated" | "Occupied";
 
 interface LeaseCard {

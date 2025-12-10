@@ -110,19 +110,28 @@ function AppSidebar({ setOpen }: { setOpen?: (open: boolean) => void }) {
                   setOpen?.(false);
                 }}
                 className={cn(
-                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors cursor-pointer",
+                  "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm cursor-pointer",
                   item.disabled &&
                     "cursor-not-allowed text-sidebar-foreground/40",
+                  "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   isActive
                     ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/40"
+                    : "text-sidebar-foreground/50"
                 )}
               >
                 <item.icon className="size-4 shrink-0" />
                 <span>
                   {item.title}
                   {item.beta && (
-                    <Badge variant="outline" className="ml-2 text-xs">
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "ml-2 text-xs",
+                        isActive
+                          ? "text-sidebar-accent-foreground"
+                          : "text-sidebar-foreground/50"
+                      )}
+                    >
                       beta
                     </Badge>
                   )}
@@ -213,7 +222,7 @@ function DesktopSidebar({ children }: { children: React.ReactNode }) {
       >
         <ResizablePanel
           defaultSize={25}
-          minSize={20}
+          minSize={25}
           maxSize={30}
           className="border-r border-sidebar-border bg-sidebar min-h-0"
         >

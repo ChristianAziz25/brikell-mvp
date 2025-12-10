@@ -3,6 +3,7 @@
 import { Chat } from "@/components";
 import { Button } from "@/components/ui/button";
 import { ChartLineMultiple } from "@/components/ui/multi-line-chart";
+import { TextShimmer } from "@/components/ui/text-shimmer";
 import {
   buildYearByAssetForMetric,
   type AssetWithRelations,
@@ -83,37 +84,40 @@ export default function Home() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 py-12">
-      <div className="space-y-6">
+      <div className="space-y-2">
         <h2 className="text-3xl font-bold text-foreground text-center">
-          Welcome <span className="text-muted-foreground">Søren</span>
+          Welcome{" "}
+          <span className="font-light text-muted-foreground">Søren</span>
         </h2>
-        <p className="text-muted-foreground text-center text-sm">
-          Type to type a command or ask a question
-        </p>
+        <div className="text-center">
+          <TextShimmer duration={2} spread={3} className="text-sm font-light">
+            Type to type a command or ask a question
+          </TextShimmer>
+        </div>
       </div>
       <Chat />
       <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
         <Button
           variant="outline"
-          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-border/50 rounded-xl"
+          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl"
         >
           Show me all vacant units
         </Button>
         <Button
           variant="outline"
-          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-border/50 rounded-xl"
+          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl"
         >
           Generate rent roll report
         </Button>
         <Button
           variant="outline"
-          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-border/50 rounded-xl"
+          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl"
         >
           Calculate portfolio ROI
         </Button>
         <Button
           variant="outline"
-          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-border/50 rounded-xl"
+          className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl"
         >
           Find expiring leases
         </Button>
