@@ -85,7 +85,7 @@ export default function Home() {
     <div className="max-w-4xl mx-auto space-y-12 py-12">
       <div className="space-y-6">
         <h2 className="text-3xl font-bold text-foreground text-center">
-          How can I <span className="text-muted-foreground">help today?</span>
+          Welcome <span className="text-muted-foreground">Søren</span>
         </h2>
         <p className="text-muted-foreground text-center text-sm">
           Type to type a command or ask a question
