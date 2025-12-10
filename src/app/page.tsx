@@ -88,7 +88,7 @@ export default function Home() {
           How can I <span className="text-muted-foreground">help today?</span>
         </h2>
         <p className="text-muted-foreground text-center text-sm">
-          Type a command or ask a question
+          Type to type a command or ask a question
         </p>
       </div>
       <Chat />
@@ -122,21 +122,10 @@ export default function Home() {
         <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
           My Dashboards
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
           {dashboards.map(({ key, title, description, Chart, data }) => (
-            <div
-              key={key}
-              className="bg-card border rounded-2xl p-3 space-y-2 hover:shadow-md transition-all hover:border-foreground/20"
-            >
-              <div className="space-y-1">
-                <p className="text-xs font-semibold leading-none">{title}</p>
-                <p className="text-[11px] text-muted-foreground">
-                  {description}
-                </p>
-              </div>
-              <div className="mt-2">
-                <Chart data={data} />
-              </div>
+            <div key={key} className="mt-2">
+              <Chart title={title} description={description} data={data} />
             </div>
           ))}
         </div>

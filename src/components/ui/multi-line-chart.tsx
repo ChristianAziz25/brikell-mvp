@@ -21,9 +21,13 @@ export const description = "A multiple line chart";
 
 export function ChartLineMultiple({
   data,
+  title,
+  description,
 }: {
   // Rows like: { year: 2024, Emmahus: 123000, Gethus: 98000, ... }
   data: { year: number; [seriesKey: string]: number }[];
+  title: string;
+  description?: string;
 }) {
   // Filter out any rows with invalid year; assume metric values are numeric.
   const chartData = data.filter((d) => Number.isFinite(d.year));
@@ -65,18 +69,17 @@ export function ChartLineMultiple({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Line Chart - Multiple</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+      <CardHeader className="p-4">
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-4 pt-0">
         <ChartContainer config={chartConfig}>
           <LineChart
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
-              right: 12,
+              left: 0,
+              right: 0,
             }}
           >
             <CartesianGrid vertical={false} />
