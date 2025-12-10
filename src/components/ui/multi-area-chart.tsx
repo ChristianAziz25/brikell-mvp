@@ -23,9 +23,13 @@ export const description = "An area chart with a legend";
 
 export function ChartAreaLegend({
   data,
+  assetName,
+  children,
 }: {
   // Rows like: { year: 2024, Emmahus: 123000, Gethus: 98000, ... }
   data: { year: number; [seriesKey: string]: number }[];
+  assetName: string;
+  children?: React.ReactNode;
 }) {
   // Filter out any rows with invalid year; assume metric values are numeric.
   const chartData = data.filter((d) => Number.isFinite(d.year));
@@ -39,7 +43,7 @@ export function ChartAreaLegend({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Area Chart - Legend</CardTitle>
+          <CardTitle>{assetName ?? "Asset"}</CardTitle>
           <CardDescription>No data available</CardDescription>
         </CardHeader>
         <CardContent />
@@ -66,8 +70,11 @@ export function ChartAreaLegend({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Area Chart - Legend</CardTitle>
-        <CardDescription>Value over time</CardDescription>
+        <CardTitle>{assetName}</CardTitle>
+        <CardDescription>
+          <p className="text-muted-foreground text-sm">Value over time</p>
+          {children}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>

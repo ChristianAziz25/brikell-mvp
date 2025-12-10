@@ -1,17 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { ChartAreaLegend } from "@/components/ui/multi-area-chart";
 import type { Asset } from "@/generated/client";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type TableRow = {
   metric: string;
@@ -49,6 +42,10 @@ export default function Performance() {
   });
 
   const activeAssetName = selectedAsset || assets[0]?.name || "";
+
+  useEffect(() => {
+    setSelectedAsset(activeAssetName);
+  }, [activeAssetName]);
 
   const { data: assetData, isLoading: isAssetLoading } =
     useQuery<TableData | null>({
@@ -117,7 +114,6 @@ export default function Performance() {
     }
 
     for (const [yearStr, bucket] of Object.entries(byYear)) {
-      const year = Number(yearStr);
       let opexTotal = 0;
       for (const row of assetData.opex) {
         const raw = row[yearStr];
@@ -199,6 +195,40 @@ export default function Performance() {
       }));
   }, [assetData]);
 
+  type AvgValue = { avg: number; label: string; color: string };
+
+  // [{ avg, label, color }, ...] for TRI, OPEX, CAPEX, OCCUPANCY
+  const avgValues: AvgValue[] = useMemo(() => {
+    if (yearBasedData.length === 0) {
+      return [
+        { avg: 0, label: "TRI", color: "red" },
+        { avg: 0, label: "OPEX", color: "blue" },
+        { avg: 0, label: "CAPEX", color: "green" },
+        { avg: 0, label: "OCCUPANCY", color: "yellow" },
+      ];
+    }
+
+    const sums = yearBasedData.reduce(
+      (acc, row) => ({
+        tri: acc.tri + row.tri,
+        opex: acc.opex + row.opex,
+        capex: acc.capex + row.capex,
+        occupancy: acc.occupancy + row.occupancy,
+      }),
+      { tri: 0, opex: 0, capex: 0, occupancy: 0 }
+    );
+
+    const len = yearBasedData.length;
+
+    const values: AvgValue[] = [
+      { avg: sums.tri / len, label: "TRI", color: "red" },
+      { avg: sums.opex / len, label: "OPEX", color: "blue" },
+      { avg: sums.capex / len, label: "CAPEX", color: "green" },
+      { avg: sums.occupancy / len, label: "OCCUPANCY", color: "yellow" },
+    ];
+    return values;
+  }, [yearBasedData]);
+
   if (isAssetsLoading || isAssetLoading) {
     return <div>Loading...</div>;
   }
@@ -213,25 +243,44 @@ export default function Performance() {
           Financial performance analytics and trends
         </p>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Performance</CardTitle>
-          <CardDescription>
-            {assets.map((asset) => (
-              <Button
-                onClick={() => setSelectedAsset(asset.name)}
-                variant="outline"
-                key={asset.id}
-              >
-                {asset.name}
-              </Button>
-            ))}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ChartAreaLegend data={yearBasedData} />
-        </CardContent>
-      </Card>
+      <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
+        {assets.map((asset) => (
+          <Button
+            onClick={() => setSelectedAsset(asset.name)}
+            variant={selectedAsset === asset.name ? "default" : "outline"}
+            key={asset.id}
+          >
+            {asset.name}
+          </Button>
+        ))}
+      </div>
+      <ChartAreaLegend assetName={activeAssetName} data={yearBasedData}>
+        <div className="w-full flex flex-row gap-3 mt-4">
+          {avgValues.map((value, index) => (
+            <div
+              key={index}
+              className="relative flex-1 min-w-0 flex items-center gap-2.5 rounded-lg border border-border/40 bg-card px-3 py-2"
+            >
+              <div
+                className="absolute left-0 top-1/2 w-0.5 h-12 translate-y-[-50%] rounded-full shrink-0"
+                style={{ backgroundColor: value.color, opacity: 0.5 }}
+              />
+              <div className="flex flex-col gap-2 min-w-0">
+                <div className="text-sm font-medium text-muted-foreground truncate">
+                  {value.label}
+                </div>
+                <div className="flex items-center gap-2.5">
+                  <span className="text-md font-semibold leading-none">
+                    {value.label === "OCCUPANCY"
+                      ? `${(value.avg * 100).toFixed(1)}%`
+                      : value.avg.toFixed(0)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </ChartAreaLegend>
     </div>
   );
 }
