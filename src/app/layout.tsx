@@ -5,9 +5,9 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Domly",
+  title: "Brikell",
   description:
-    "Domly is a platform for creating and managing your housing data",
+    "Brikell is a platform for creating and managing your housing data",
 };
 
 export default function RootLayout({

@@ -27,6 +27,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { BreadCrumbsBar } from "../breadcrumbsBar";
+import { Icon } from "../icon";
 import { Badge } from "../ui/badge";
 
 type NavItem = {
@@ -78,11 +79,11 @@ function AppSidebar({ setOpen }: { setOpen?: (open: boolean) => void }) {
   return (
     <div className="flex h-full w-full flex-col bg-sidebar">
       <div className="flex items-center gap-2 px-4 pt-3">
-        <div className="flex w-full items-center gap-2 rounded-xl bg-sidebar-accent/10 px-3 py-2">
-          <div className="size-9 rounded-full bg-primary" />
+        <div className="flex w-full items-center gap-2 rounded-xl bg-sidebar-accent/10 py-2">
+          <Icon className="size-9 rounded-full object-contain bg-muted/20" />
           <div className="flex flex-col">
             <span className="text-sm font-semibold text-sidebar-foreground">
-              Domly
+              Brikell
             </span>
             <span className="text-xs text-sidebar-foreground/70">
               Real Estate OS
