@@ -34,6 +34,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDown, DownloadIcon, Plus, Upload, X } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import type { RentStatus } from "../type/rent-roll";
+import { RentRollSkeleton } from "./components/skeleton";
 
 const rentStatusVariants: Record<RentStatus, string> = {
   occupied: "bg-foreground text-background border-0",
@@ -314,324 +315,324 @@ export default function Page() {
 
   return (
     <div className="w-full">
-      <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight text-foreground">
-            Rent Roll
-          </h2>
-          <p className="text-muted-foreground mt-2">
-            Comprehensive unit and lease data
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row items-center gap-2">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button size="lg" className="w-full gap-2 md:w-fit">
-                <Plus className="h-4 w-4" />
-                Add Unit
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Upload CSV File</DialogTitle>
-              </DialogHeader>
-              <div className="flex items-center justify-center py-6">
+      {isLoading ? (
+        <RentRollSkeleton />
+      ) : (
+        <>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                Rent Roll
+              </h2>
+              <p className="text-muted-foreground mt-2">
+                Comprehensive unit and lease data
+              </p>
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button size="lg" className="w-full gap-2 md:w-fit">
+                    <Plus className="h-4 w-4" />
+                    Add Unit
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Upload CSV File</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex items-center justify-center py-6">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      {isUploading ? "Uploading..." : "Upload CSV"}
+                    </Button>
+                    <input
+                      ref={fileInputRef}
+                      id="csv"
+                      type="file"
+                      accept=".csv, .xlsx, .xls, .pdf"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          void handleFileUpload(file);
+                          // Optional: allow re‑uploading the same file
+                          e.target.value = "";
+                        }
+                      }}
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="w-full gap-2 md:w-fit"
+                  >
+                    <DownloadIcon className="h-4 w-4" />
+                    Export
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Export as</DialogTitle>
+                  </DialogHeader>
+                  <div className="flex items-center justify-center py-6 gap-2">
+                    <Button
+                      size="lg"
+                      className="w-full gap-2 md:w-fit"
+                      onClick={() => {
+                        void fetch("/api/export?format=csv", {
+                          method: "GET",
+                        }).then((response) => {
+                          if (!response.ok) {
+                            throw new Error("Failed to download CSV");
+                          }
+                          response.blob().then((blob) => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "rent-roll-export.csv";
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                          });
+                        });
+                      }}
+                    >
+                      <DownloadIcon className="h-4 w-4" />
+                      Download csv
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="lg"
+                      className="w-full gap-2 md:w-fit"
+                      onClick={() => {
+                        void fetch("/api/export?format=xlsx", {
+                          method: "GET",
+                        }).then((response) => {
+                          if (!response.ok) {
+                            throw new Error("Failed to download XLSX");
+                          }
+                          response.blob().then((blob) => {
+                            const url = window.URL.createObjectURL(blob);
+                            const a = document.createElement("a");
+                            a.href = url;
+                            a.download = "rent-roll-export.xlsx";
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                          });
+                        });
+                      }}
+                    >
+                      <DownloadIcon className="h-4 w-4" />
+                      Download xlsx
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <Input
+                placeholder="Search all columns..."
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="max-w-sm"
+              />
+            </div>
+
+            <div className="relative rounded-md flex items-center justify-end gap-2">
+              {hasActiveFilters && (
                 <Button
                   variant="outline"
                   size="sm"
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
+                  onClick={clearFilters}
+                  className="gap-2"
                 >
-                  <Upload className="h-4 w-4 mr-2" />
-                  {isUploading ? "Uploading..." : "Upload CSV"}
+                  <X className="h-4 w-4" />
+                  Clear Filters
                 </Button>
-                <input
-                  ref={fileInputRef}
-                  id="csv"
-                  type="file"
-                  accept=".csv, .xlsx, .xls, .pdf"
-                  className="hidden"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      void handleFileUpload(file);
-                      // Optional: allow re‑uploading the same file
-                      e.target.value = "";
-                    }
-                  }}
-                />
-              </div>
-            </DialogContent>
-          </Dialog>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="lg"
-                className="w-full gap-2 md:w-fit"
+              )}
+              <button
+                className="cursor-pointer flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors"
+                onClick={() => setShowFilter(!showFilter)}
+                aria-label={showFilter ? "Hide filters" : "Show filters"}
               >
-                <DownloadIcon className="h-4 w-4" />
-                Export
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Export as</DialogTitle>
-              </DialogHeader>
-              <div className="flex items-center justify-center py-6 gap-2">
-                <Button
-                  size="lg"
-                  className="w-full gap-2 md:w-fit"
-                  onClick={() => {
-                    void fetch("/api/export?format=csv", {
-                      method: "GET",
-                    }).then((response) => {
-                      if (!response.ok) {
-                        throw new Error("Failed to download CSV");
-                      }
-                      response.blob().then((blob) => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "rent-roll-export.csv";
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                      });
-                    });
-                  }}
-                >
-                  <DownloadIcon className="h-4 w-4" />
-                  Download csv
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="w-full gap-2 md:w-fit"
-                  onClick={() => {
-                    void fetch("/api/export?format=xlsx", {
-                      method: "GET",
-                    }).then((response) => {
-                      if (!response.ok) {
-                        throw new Error("Failed to download XLSX");
-                      }
-                      response.blob().then((blob) => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "rent-roll-export.xlsx";
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                      });
-                    });
-                  }}
-                >
-                  <DownloadIcon className="h-4 w-4" />
-                  Download xlsx
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+                <ChevronDown
+                  className={cn(
+                    "size-5 transition-transform duration-300",
+                    showFilter && "rotate-180"
+                  )}
+                />
+              </button>
+            </div>
 
-      <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Input
-            placeholder="Search all columns..."
-            value={globalFilter}
-            onChange={(e) => setGlobalFilter(e.target.value)}
-            className="max-w-sm"
-          />
-        </div>
-
-        <div className="relative rounded-md flex items-center justify-end gap-2">
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearFilters}
-              className="gap-2"
-            >
-              <X className="h-4 w-4" />
-              Clear Filters
-            </Button>
-          )}
-          <button
-            className="cursor-pointer flex items-center justify-center w-8 h-8 rounded-md hover:bg-muted transition-colors"
-            onClick={() => setShowFilter(!showFilter)}
-            aria-label={showFilter ? "Hide filters" : "Show filters"}
-          >
-            <ChevronDown
+            <div
               className={cn(
-                "size-5 transition-transform duration-300",
-                showFilter && "rotate-180"
+                "grid overflow-hidden transition-[grid-template-rows] duration-200",
+                showFilter ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
               )}
-            />
-          </button>
-        </div>
+            >
+              <div
+                className="min-h-0 transition-[visibility] duration-200"
+                style={{ visibility: showFilter ? "visible" : "hidden" }}
+              >
+                <div className="flex flex-wrap gap-2 p-2 pb-0 mb-4">
+                  {table.getAllColumns().map((column) => {
+                    if (!column.getCanFilter() || column.id === "units_status")
+                      return null;
 
-        <div
-          className={cn(
-            "grid overflow-hidden transition-[grid-template-rows] duration-200",
-            showFilter ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-          )}
-        >
-          <div
-            className="min-h-0 transition-[visibility] duration-200"
-            style={{ visibility: showFilter ? "visible" : "hidden" }}
-          >
-            <div className="flex flex-wrap gap-2 p-2 pb-0 mb-4">
-              {table.getAllColumns().map((column) => {
-                if (!column.getCanFilter() || column.id === "units_status")
-                  return null;
-
-                if (column.id === "property_name") {
-                  const propertyUniqueValues = Array.from(
-                    column?.getFacetedUniqueValues().keys()
-                  ).sort();
-                  return (
-                    <div key={column.id} className="flex items-center gap-2">
-                      {propertyUniqueValues.map((property) => (
-                        <Button
-                          key={property}
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => column.setFilterValue(property)}
+                    if (column.id === "property_name") {
+                      const propertyUniqueValues = Array.from(
+                        column?.getFacetedUniqueValues().keys()
+                      ).sort();
+                      return (
+                        <div
+                          key={column.id}
+                          className="flex items-center gap-2"
                         >
-                          {property}
-                        </Button>
-                      ))}
-                    </div>
-                  );
-                }
-              })}
-
-              {table.getColumn("units_status") && (
-                <div className="flex items-center gap-2">
-                  <Select
-                    value={
-                      (
-                        table
-                          .getColumn("units_status")
-                          ?.getFilterValue() as string[]
-                      )?.join(",") || "all"
+                          {propertyUniqueValues.map((property) => (
+                            <Button
+                              key={property}
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => column.setFilterValue(property)}
+                            >
+                              {property}
+                            </Button>
+                          ))}
+                        </div>
+                      );
                     }
-                    onValueChange={(value: string) => {
-                      table
-                        .getColumn("units_status")
-                        ?.setFilterValue(
-                          value === "all" ? undefined : value.split(",")
-                        );
-                    }}
-                  >
-                    <SelectTrigger className="h-8 w-[140px]">
-                      <SelectValue placeholder="All Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="occupied">Occupied</SelectItem>
-                      <SelectItem value="vacant">Vacant</SelectItem>
-                      <SelectItem value="terminated">Terminated</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  })}
+
+                  {table.getColumn("units_status") && (
+                    <div className="flex items-center gap-2">
+                      <Select
+                        value={
+                          (
+                            table
+                              .getColumn("units_status")
+                              ?.getFilterValue() as string[]
+                          )?.join(",") || "all"
+                        }
+                        onValueChange={(value: string) => {
+                          table
+                            .getColumn("units_status")
+                            ?.setFilterValue(
+                              value === "all" ? undefined : value.split(",")
+                            );
+                        }}
+                      >
+                        <SelectTrigger className="h-8 w-[140px]">
+                          <SelectValue placeholder="All Status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="all">All Status</SelectItem>
+                          <SelectItem value="occupied">Occupied</SelectItem>
+                          <SelectItem value="vacant">Vacant</SelectItem>
+                          <SelectItem value="terminated">Terminated</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </div>
-              )}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="overflow-hidden rounded-lg border bg-card">
-        <div
-          ref={tableContainerRef}
-          className="relative w-full overflow-x-auto no-scrollbar"
-        >
-          <table className="w-full caption-bottom text-sm">
-            <thead className="[&_tr]:border-b">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <tr key={headerGroup.id} className="border-b">
-                  {headerGroup.headers.map((header) => (
-                    <th
-                      key={header.id}
-                      className="h-12 px-4 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </th>
+          <div className="overflow-hidden rounded-lg border bg-card">
+            <div
+              ref={tableContainerRef}
+              className="relative w-full overflow-x-auto no-scrollbar"
+            >
+              <table className="w-full caption-bottom text-sm">
+                <thead className="[&_tr]:border-b">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr key={headerGroup.id} className="border-b">
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          key={header.id}
+                          className="h-12 px-4 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </th>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody className="[&_tr:last-child]:border-0">
-              {isLoading ? (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    Loading...
-                  </td>
-                </tr>
-              ) : rows.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={columns.length}
-                    className="h-24 text-center text-muted-foreground"
-                  >
-                    No units found
-                  </td>
-                </tr>
-              ) : (
-                <>
-                  {paddingTop > 0 && (
+                </thead>
+                <tbody className="[&_tr:last-child]:border-0">
+                  {rows.length === 0 ? (
                     <tr>
                       <td
-                        style={{ height: `${paddingTop}px` }}
                         colSpan={columns.length}
-                      />
-                    </tr>
-                  )}
-                  {virtualRows.map((virtualRow) => {
-                    const row = rows[virtualRow.index];
-                    return (
-                      <tr
-                        key={row.id}
-                        data-index={virtualRow.index}
-                        className="border-b transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted"
+                        className="h-24 text-center text-muted-foreground"
                       >
-                        {row.getVisibleCells().map((cell) => (
-                          <td
-                            key={cell.id}
-                            className="p-4 align-middle [&:has([role=checkbox])]:pr-0"
-                          >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                  {paddingBottom > 0 && (
-                    <tr>
-                      <td
-                        style={{ height: `${paddingBottom}px` }}
-                        colSpan={columns.length}
-                      />
+                        No units found
+                      </td>
                     </tr>
+                  ) : (
+                    <>
+                      {paddingTop > 0 && (
+                        <tr>
+                          <td
+                            style={{ height: `${paddingTop}px` }}
+                            colSpan={columns.length}
+                          />
+                        </tr>
+                      )}
+                      {virtualRows.map((virtualRow) => {
+                        const row = rows[virtualRow.index];
+                        return (
+                          <tr
+                            key={row.id}
+                            data-index={virtualRow.index}
+                            className="border-b transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted"
+                          >
+                            {row.getVisibleCells().map((cell) => (
+                              <td
+                                key={cell.id}
+                                className="p-4 align-middle [&:has([role=checkbox])]:pr-0"
+                              >
+                                {flexRender(
+                                  cell.column.columnDef.cell,
+                                  cell.getContext()
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                      {paddingBottom > 0 && (
+                        <tr>
+                          <td
+                            style={{ height: `${paddingBottom}px` }}
+                            colSpan={columns.length}
+                          />
+                        </tr>
+                      )}
+                    </>
                   )}
-                </>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

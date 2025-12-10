@@ -10,6 +10,7 @@ import {
 } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { HomeSkeleton } from "./home-skeleton";
 
 // TODO: add models for different data types
 export default function Home() {
@@ -81,6 +82,10 @@ export default function Home() {
       data: occupancyData,
     },
   ];
+
+  if (isAssetsLoading) {
+    return <HomeSkeleton />;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-12 py-12">

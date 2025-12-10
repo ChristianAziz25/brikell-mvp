@@ -27,6 +27,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Building2, DollarSign, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { FlowSkeleton } from "./components/skeleton";
 
 // TODO: Use the leaseStatus: vancant | terminated | interest | contract sent | contract signed
 type Stage = "Vacant" | "Terminated" | "Occupied";
@@ -395,86 +396,90 @@ export default function Page() {
 
   return (
     <div className="w-full h-screen">
-      <div className="w-full">
-        <div className="space-y-6 max-w-full">
-          <div className="w-full p-6 ">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground">
-              Leasing Pipeline
-            </h2>
-            <p className="text-muted-foreground text-sm mt-1">
-              Track prospects through the leasing process
-            </p>
-          </div>
+      {isUnitsLoading ? (
+        <FlowSkeleton />
+      ) : (
+        <div className="w-full">
+          <div className="space-y-6 max-w-full">
+            <div className="w-full p-6 ">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                Leasing Pipeline
+              </h2>
+              <p className="text-muted-foreground text-sm mt-1">
+                Track prospects through the leasing process
+              </p>
+            </div>
 
-          <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-            {(["All", ...stages] as const).map((stage, index) => (
-              <div
-                key={stage}
-                onClick={() =>
-                  setSelectedStage(stage === "All" ? "All" : stage)
-                }
-                className={cn(
-                  "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border min-w-fit cursor-pointer transition-colors",
-                  selectedStage === stage && "bg-muted/50",
-                  index === 0 && "ml-6",
-                  index === stages.length && "mr-4"
-                )}
-              >
-                <span className="text-sm font-medium text-foreground">
-                  {stage}
-                </span>
-                {stage !== "All" && (
-                  <Badge variant="secondary" className="bg-muted/50 text-xs">
-                    {stageCounts[stage]}
-                  </Badge>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-          >
-            <div className="flex flex-col md:flex-row p-4 md:p-0 md:pb-4 gap-4 overflow-x-auto pb-4 no-scrollbar">
-              {filteredStages.map((stage, index) => (
-                <KanbanColumn
+            <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
+              {(["All", ...stages] as const).map((stage, index) => (
+                <div
                   key={stage}
-                  stage={stage}
-                  cards={getCardsByStage(stage)}
+                  onClick={() =>
+                    setSelectedStage(stage === "All" ? "All" : stage)
+                  }
                   className={cn(
-                    index === 0 && "md:ml-6",
-                    index === filteredStages.length - 1 && "md:mr-6"
+                    "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border min-w-fit cursor-pointer transition-colors",
+                    selectedStage === stage && "bg-muted/50",
+                    index === 0 && "ml-6",
+                    index === stages.length && "mr-4"
                   )}
-                />
+                >
+                  <span className="text-sm font-medium text-foreground">
+                    {stage}
+                  </span>
+                  {stage !== "All" && (
+                    <Badge variant="secondary" className="bg-muted/50 text-xs">
+                      {stageCounts[stage]}
+                    </Badge>
+                  )}
+                </div>
               ))}
             </div>
-            <DragOverlay
-              dropAnimation={{
-                duration: 200,
-                easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
-              }}
-              style={{
-                cursor: "grabbing",
-              }}
+
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragEnd={handleDragEnd}
             >
-              {activeId
-                ? (() => {
-                    const card = cards.find((c) => c.id === activeId);
-                    if (!card) return null;
-                    return (
-                      <div style={{ transform: "rotate(5deg)" }}>
-                        <DragPreviewCard card={card} />
-                      </div>
-                    );
-                  })()
-                : null}
-            </DragOverlay>
-          </DndContext>
+              <div className="flex flex-col md:flex-row p-4 md:p-0 md:pb-4 gap-4 overflow-x-auto pb-4 no-scrollbar">
+                {filteredStages.map((stage, index) => (
+                  <KanbanColumn
+                    key={stage}
+                    stage={stage}
+                    cards={getCardsByStage(stage)}
+                    className={cn(
+                      index === 0 && "md:ml-6",
+                      index === filteredStages.length - 1 && "md:mr-6"
+                    )}
+                  />
+                ))}
+              </div>
+              <DragOverlay
+                dropAnimation={{
+                  duration: 200,
+                  easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+                }}
+                style={{
+                  cursor: "grabbing",
+                }}
+              >
+                {activeId
+                  ? (() => {
+                      const card = cards.find((c) => c.id === activeId);
+                      if (!card) return null;
+                      return (
+                        <div style={{ transform: "rotate(5deg)" }}>
+                          <DragPreviewCard card={card} />
+                        </div>
+                      );
+                    })()
+                  : null}
+              </DragOverlay>
+            </DndContext>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
