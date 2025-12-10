@@ -8,6 +8,26 @@ import { cn } from "@/lib/utils"
 // Format: { THEME_NAME: CSS_SELECTOR }
 const THEMES = { light: "", dark: ".dark" } as const
 
+// Simple compact number formatter: 1_200 -> "1.2k", 1_000_000 -> "1M"
+function formatCompactNumber(value: number): string {
+  const abs = Math.abs(value)
+
+  if (abs >= 1_000_000_000) {
+    const v = value / 1_000_000_000
+    return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}B`
+  }
+  if (abs >= 1_000_000) {
+    const v = value / 1_000_000
+    return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}M`
+  }
+  if (abs >= 1_000) {
+    const v = value / 1_000
+    return `${v >= 10 ? v.toFixed(0) : v.toFixed(1)}k`
+  }
+
+  return value.toLocaleString()
+}
+
 export type ChartConfig = {
   [k in string]: {
     label?: React.ReactNode
@@ -240,9 +260,9 @@ const ChartTooltipContent = React.forwardRef<
                             {itemConfig?.label || item.name}
                           </span>
                         </div>
-                        {item.value && (
+                        {typeof item.value === "number" && (
                           <span className="font-mono font-medium tabular-nums text-foreground">
-                            {item.value.toLocaleString()}
+                            {formatCompactNumber(item.value)}
                           </span>
                         )}
                       </div>
@@ -366,4 +386,5 @@ export {
   ChartLegend,
   ChartLegendContent,
   ChartStyle,
+  formatCompactNumber,
 }

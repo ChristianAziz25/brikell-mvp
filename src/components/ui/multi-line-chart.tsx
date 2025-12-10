@@ -1,13 +1,11 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,38 +17,28 @@ import {
   formatCompactNumber,
 } from "@/components/ui/chart";
 
-export const description = "A line chart";
+export const description = "A multiple line chart";
 
-const chartConfig = {
-  value: {
-    label: "Value",
-    color: "var(--primary)",
-  },
-} satisfies ChartConfig;
-
-export function ChartLineDefault({
+export function ChartLineMultiple({
   data,
 }: {
-  data: { year: number; value: number }[];
+  // Rows like: { year: 2024, Emmahus: 123000, Gethus: 98000, ... }
+  data: { year: number; [seriesKey: string]: number }[];
 }) {
-  const chartData = data
-    .map((item) => ({
-      year: item.year,
-      value: item.value,
-    }))
-    // Guard against NaN / non-finite values which can break Recharts' tick calculations
-    .filter(
-      (d) =>
-        Number.isFinite(d.year) &&
-        typeof d.value === "number" &&
-        Number.isFinite(d.value)
-    );
+  // Filter out any rows with invalid year; assume metric values are numeric.
+  const chartData = data.filter((d) => Number.isFinite(d.year));
 
-  if (chartData.length === 0) {
+  const seriesKeys =
+    chartData.length > 0
+      ? Object.keys(chartData[0]).filter((key) => key !== "year")
+      : [];
+
+  // No usable series → render empty state.
+  if (chartData.length === 0 || seriesKeys.length === 0) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Line Chart</CardTitle>
+          <CardTitle>Line Chart - Multiple</CardTitle>
           <CardDescription>No data available</CardDescription>
         </CardHeader>
         <CardContent />
@@ -58,11 +46,28 @@ export function ChartLineDefault({
     );
   }
 
+  // Build chart config dynamically so each series gets a label and color.
+  const palette = [
+    "var(--chart-1)",
+    "var(--chart-2)",
+    "var(--chart-3)",
+    "var(--chart-4)",
+    "var(--chart-5)",
+  ];
+
+  const chartConfig: ChartConfig = seriesKeys.reduce((cfg, key, index) => {
+    cfg[key] = {
+      label: key,
+      color: palette[index % palette.length],
+    };
+    return cfg;
+  }, {} as ChartConfig);
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Line Chart</CardTitle>
-        <CardDescription>Value over time</CardDescription>
+        <CardTitle>Line Chart - Multiple</CardTitle>
+        <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -86,7 +91,6 @@ export function ChartLineDefault({
               tickLine={false}
               axisLine={false}
               tickMargin={8}
-              // Add some headroom/footroom so very large values don't get visually clipped
               domain={[
                 (dataMin: number) => {
                   if (!Number.isFinite(dataMin)) return 0;
@@ -107,24 +111,19 @@ export function ChartLineDefault({
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Line
-              dataKey="value"
-              type="natural"
-              stroke="var(--color-value)"
-              strokeWidth={2}
-              dot={false}
-            />
+            {seriesKeys.map((key) => (
+              <Line
+                key={key}
+                dataKey={key}
+                type="natural"
+                stroke={`var(--color-${key})`}
+                strokeWidth={2}
+                dot={false}
+              />
+            ))}
           </LineChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   );
 }

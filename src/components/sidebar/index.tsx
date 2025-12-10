@@ -21,17 +21,20 @@ import {
   FileIcon,
   FolderIcon,
   HouseIcon,
+  TrendingUpIcon,
   WorkflowIcon,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { BreadCrumbsBar } from "../breadcrumbsBar";
+import { Badge } from "../ui/badge";
 
 type NavItem = {
   title: string;
   url: string;
   icon: LucideIcon;
   disabled?: boolean;
+  beta?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -59,6 +62,12 @@ const navItems: NavItem[] = [
     title: "Diligence",
     url: "/diligence",
     icon: FileCheckIcon,
+  },
+  {
+    title: "Performance",
+    beta: true,
+    url: "/performance",
+    icon: TrendingUpIcon,
   },
 ];
 
@@ -109,7 +118,14 @@ function AppSidebar({ setOpen }: { setOpen?: (open: boolean) => void }) {
                 )}
               >
                 <item.icon className="size-4 shrink-0" />
-                <span>{item.title}</span>
+                <span>
+                  {item.title}
+                  {item.beta && (
+                    <Badge variant="outline" className="ml-2 text-xs">
+                      beta
+                    </Badge>
+                  )}
+                </span>
               </button>
             );
           })}

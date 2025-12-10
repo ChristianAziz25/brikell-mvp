@@ -54,7 +54,16 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function ChartPieSimple() {
+export function ChartPieSimple({
+  data,
+}: {
+  data: { year: number; value: number }[];
+}) {
+  const chartData = data.map((item) => ({
+    year: item.year,
+    value: item.value,
+  }));
+
   return (
     <Card className="flex flex-col">
       <CardHeader className="items-center pb-0">

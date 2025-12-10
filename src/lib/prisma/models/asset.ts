@@ -109,6 +109,7 @@ export async function getAllAssets() {
       capex: true,
       opex: true,
       rentRoll: true,
+      tri: true,
     },
   });
 }

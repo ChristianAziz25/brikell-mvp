@@ -9,7 +9,7 @@ import {
   type ColumnDef,
   type Table as TanStackTable,
 } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Table } from "./Table";
 import { dollarStringify } from "./util/dollarStringify";
 
@@ -43,6 +43,7 @@ interface AssetSummary {
 
 export default function MyAssets() {
   const [selectedAsset, setSelectedAsset] = useState<string>("");
+
   const { data: assets = [], isLoading: isAssetsLoading } = useQuery<
     AssetSummary[]
   >({
@@ -59,32 +60,27 @@ export default function MyAssets() {
     refetchOnWindowFocus: false,
   });
 
+  // Derive the effective asset name: either the user's choice, or the first asset.
+  const activeAssetName = selectedAsset || assets[0]?.name || "";
+
   const { data: activeAsset, isLoading: isAssetLoading } =
     useQuery<TableData | null>({
-      queryKey: ["asset-table-data", selectedAsset],
+      queryKey: ["asset-table-data", activeAssetName],
       queryFn: async () => {
-        if (!selectedAsset) return null;
+        if (!activeAssetName) return null;
         const res = await fetch(
-          `/api/asset?name=${encodeURIComponent(selectedAsset)}`
+          `/api/asset?name=${encodeURIComponent(activeAssetName)}`
         );
         if (!res.ok) {
-          if (res.status === 404) return null;
           throw new Error("Failed to fetch asset");
         }
         return res.json();
       },
-      enabled: !!selectedAsset,
+      enabled: !!activeAssetName,
       staleTime: 5 * 60 * 1000,
       gcTime: 10 * 60 * 1000,
       refetchOnWindowFocus: false,
     });
-
-  // Set the default selected asset to the first one returned from the API
-  useEffect(() => {
-    if (!selectedAsset && assets.length > 0) {
-      setSelectedAsset(assets[0].name);
-    }
-  }, [selectedAsset, assets]);
 
   const years = useMemo(() => {
     if (!activeAsset) return [] as string[];
@@ -806,7 +802,7 @@ export default function MyAssets() {
         {assets.map((asset) => (
           <Button
             key={asset.id}
-            variant={asset.name === selectedAsset ? "default" : "outline"}
+            variant={asset.name === activeAssetName ? "default" : "outline"}
             onClick={() => setSelectedAsset(asset.name)}
           >
             <span className="font-medium">{asset.name}</span>
