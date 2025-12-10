@@ -18,11 +18,17 @@ type TableRow = {
   [year: string]: string | number | number[] | undefined;
 };
 
+type RentRollUnitLite = {
+  lease_start: string | null;
+  units_status: "occupied" | "vacant" | "terminated";
+};
+
 type TableData = {
   name: string;
   tri: TableRow[];
   capex: TableRow[];
   opex: TableRow[];
+  rentRoll: RentRollUnitLite[];
 };
 
 export default function Performance() {
@@ -155,8 +161,31 @@ export default function Performance() {
       }
     }
 
-    for (const bucket of Object.values(byYear)) {
-      bucket.occupancy ??= 0;
+    // Occupancy: for each year, occupied units / total units from rentRoll
+    const occupancyAgg: Record<number, { occupied: number; total: number }> =
+      {};
+    const rentRoll = assetData.rentRoll ?? [];
+
+    rentRoll.forEach((unit) => {
+      if (!unit.lease_start) return;
+      const d = new Date(unit.lease_start);
+      const year = d.getFullYear();
+      if (!Number.isFinite(year)) return;
+
+      if (!occupancyAgg[year]) {
+        occupancyAgg[year] = { occupied: 0, total: 0 };
+      }
+      occupancyAgg[year].total += 1;
+      if (unit.units_status === "occupied") {
+        occupancyAgg[year].occupied += 1;
+      }
+    });
+
+    for (const [yearStr, bucket] of Object.entries(byYear)) {
+      const year = Number(yearStr);
+      const stats = occupancyAgg[year];
+      bucket.occupancy =
+        stats && stats.total > 0 ? stats.occupied / stats.total : 0;
     }
 
     return Object.entries(byYear)

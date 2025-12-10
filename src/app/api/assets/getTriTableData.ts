@@ -1,22 +1,37 @@
-import { Asset, Capex, Opex, TheoreticalRentalIncome } from "@/generated/client";
+import {
+    Asset,
+    Capex,
+    Opex,
+    RentRollUnit,
+    TheoreticalRentalIncome,
+} from "@/generated/client";
 
 interface TableRow {
-    metric: string;
-    [year: string]: string | number | number[];
+  metric: string;
+  [year: string]: string | number | number[];
 }
 
-const baseExcluded = ["id", "assetId", "created_at", "updated_at", "createdAt", "updatedAt"];
+type RentRollLite = Pick<RentRollUnit, "lease_start" | "units_status">;
 
-const triExcluded    = [...baseExcluded, "triYear"];
-const capexExcluded  = [...baseExcluded, "capex_year", "asset_name"];
-const opexExcluded   = [...baseExcluded, "opex_year", "asset_name"];
+const baseExcluded = [
+  "id",
+  "assetId",
+  "created_at",
+  "updated_at",
+  "createdAt",
+  "updatedAt",
+];
 
+const triExcluded = [...baseExcluded, "triYear"];
+const capexExcluded = [...baseExcluded, "capex_year", "asset_name"];
+const opexExcluded = [...baseExcluded, "opex_year", "asset_name"];
 
 interface TableData {
-    name: string;
-    tri: TableRow[];
-    capex: TableRow[];
-    opex: TableRow[];
+  name: string;
+  tri: TableRow[];
+  capex: TableRow[];
+  opex: TableRow[];
+  rentRoll: RentRollLite[];
 }
 
 const parseNumber = (raw: unknown): number | undefined => {
@@ -58,7 +73,17 @@ const hasActualBudgetPattern = (keys: string[]): boolean => {
     return hasCapexPattern || hasOpexPattern;
 };
 
-export async function getTableData(asset: Asset & { tri: TheoreticalRentalIncome[] } & { capex: Capex[] } & { opex: Opex[] }): Promise<TableData> {
+export async function getTableData(
+  asset: Asset & {
+    tri: TheoreticalRentalIncome[];
+  } & {
+    capex: Capex[];
+  } & {
+    opex: Opex[];
+  } & {
+    rentRoll: RentRollUnit[];
+  }
+): Promise<TableData> {
     const triTableData: TableRow[] = [];
     const capexTableData: TableRow[] = [];
     const opexTableData: TableRow[] = [];
@@ -239,10 +264,14 @@ export async function getTableData(asset: Asset & { tri: TheoreticalRentalIncome
         });
     });
 
-    return {
-        name: asset.name,
-        tri: triTableData,
-        capex: capexTableData,
-        opex: opexTableData,
-    };
+  return {
+    name: asset.name,
+    tri: triTableData,
+    capex: capexTableData,
+    opex: opexTableData,
+    rentRoll: asset.rentRoll.map((unit) => ({
+      lease_start: unit.lease_start,
+      units_status: unit.units_status,
+    })),
+  };
 }

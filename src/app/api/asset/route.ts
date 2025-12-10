@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
     const asset =
       (name && assets.find((a) => a.name === name)) ?? assets[0];
 
+    console.log(asset);
     if (!asset) {
       return NextResponse.json(
         { error: "Asset not found" },

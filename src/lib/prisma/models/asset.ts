@@ -138,6 +138,7 @@ export async function getAllAssetsCapexOpexTri() {
       capex: true,
       opex: true,
       tri: true,
+      rentRoll: true,
     },
   });
 }
