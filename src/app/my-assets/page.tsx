@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useMemo, useState } from "react";
 import { Table } from "./Table";
+import { MyAssetsSkeleton } from "./components/skeleton";
 import { dollarStringify } from "./util/dollarStringify";
 
 const COLUMN_WIDTHS = {
@@ -798,30 +799,33 @@ export default function MyAssets() {
           Portfolio overview of all owned properties
         </p>
       </div>
-      <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
-        {assets.map((asset) => (
-          <Button
-            key={asset.id}
-            variant={asset.name === activeAssetName ? "default" : "outline"}
-            onClick={() => setSelectedAsset(asset.name)}
-          >
-            <span className="font-medium">{asset.name}</span>
-          </Button>
-        ))}
-      </div>
-
-      {activeAsset ? (
-        <div className="space-y-8">
-          <section className="space-y-3">
-            <Table
-              table={unifiedTable}
-              columnCount={unifiedTable.getAllLeafColumns().length}
-              isLoading={isAssetsLoading || isAssetLoading}
-            />
-          </section>
-        </div>
-      ) : (
+      {isAssetsLoading || isAssetLoading ? (
+        <MyAssetsSkeleton />
+      ) : !activeAsset ? (
         <div className="text-muted-foreground">No asset data available.</div>
+      ) : (
+        <>
+          <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
+            {assets.map((asset) => (
+              <Button
+                key={asset.id}
+                variant={asset.name === activeAssetName ? "default" : "outline"}
+                onClick={() => setSelectedAsset(asset.name)}
+              >
+                <span className="font-medium">{asset.name}</span>
+              </Button>
+            ))}
+          </div>
+          <div className="space-y-8">
+            <section className="space-y-3">
+              <Table
+                table={unifiedTable}
+                columnCount={unifiedTable.getAllLeafColumns().length}
+                isLoading={false}
+              />
+            </section>
+          </div>
+        </>
       )}
     </div>
   );
