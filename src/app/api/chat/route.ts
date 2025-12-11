@@ -1,5 +1,5 @@
 import { openai } from "@ai-sdk/openai";
-import { stepCountIs, streamText, type UIMessage } from "ai";
+import { stepCountIs, streamText, type ModelMessage, type UIMessage } from "ai";
 import {
   createPrismaExecutionTool,
   createPrismaQueryGenTool,
@@ -18,7 +18,16 @@ export async function POST(req: Request) {
     const prismaExecutionTool = createPrismaExecutionTool();
 
     // Build CoreMessages from the UIMessage array
-    const coreMessages = [];
+    const coreMessages = [
+      {
+        role: "system",
+        content:
+          "You are an expert TypeScript + Prisma assistant. " +
+          "When constructing Prisma queries, only use models/fields from the provided schema. " +
+          "For asset.name filters based on user text, prefer `where: { name: { contains: <text>, mode: \"insensitive\" } }` " +
+          "so small typos and case differences still match.",
+      },
+    ];
 
     for (const msg of messages) {
       if (msg.role === "user" || msg.role === "assistant") {
@@ -32,7 +41,7 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model: openai("gpt-5-nano"),
-      messages: coreMessages,
+      messages: coreMessages as ModelMessage[],
       tools: {
         prismaQueryGenTool,
         prismaExecutionTool,

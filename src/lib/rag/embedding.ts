@@ -18,6 +18,11 @@ export const generateEmbeddings = async (
     const { embeddings } = await embedMany({
       model: embeddingModel,
       values: [value],
+      providerOptions: {
+        openai: {
+          dimensions: 512,
+        },
+      },
     });
     return embeddings[0];
   }
@@ -27,6 +32,11 @@ export const generateEmbeddings = async (
   const { embeddings } = await embedMany({
     model: embeddingModel,
     values: chunks,
+    providerOptions: {
+      openai: {
+        dimensions: 512,
+      },
+    },
   });
   return embeddings[0];
 };
