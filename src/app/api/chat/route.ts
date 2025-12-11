@@ -50,6 +50,11 @@ export async function POST(req: Request) {
         prismaQueryGenTool,
         prismaExecutionTool,
       },
+      providerOptions: {
+        openai: {
+          reasoningEffort: 'low',        
+        },
+      },
       toolChoice: "auto",
       stopWhen: stepCountIs(5),
     });

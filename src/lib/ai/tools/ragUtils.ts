@@ -1,30 +1,39 @@
-import prisma from '@/lib/prisma/client';
+import prisma from "@/lib/prisma/client";
 
 /**
- * Clean and extract Prisma query from code block or raw text
+ * Clean and extract a single Prisma client call from code block or raw text.
+ *
+ * Goal: take messy model output and reduce it to something like:
+ *   prisma.asset.findMany({ where: { ... } })
  */
 export function cleanPrismaCodeBlock(raw: string): string {
-  // Remove markdown code blocks
+  // 1) Strip common markdown fences
   let cleaned = raw
-    .replace(/```typescript/gi, '')
-    .replace(/```ts/gi, '')
-    .replace(/```/g, '')
+    .replace(/```typescript/gi, "")
+    .replace(/```ts/gi, "")
+    .replace(/```javascript/gi, "")
+    .replace(/```js/gi, "")
+    .replace(/```/g, "")
     .trim();
 
-  // Remove common wrapper patterns
+  // 2) Remove common wrapper patterns (functions, consts, returns, awaits)
   cleaned = cleaned
-    .replace(/^export\s+(const|async\s+function|function)\s+\w+\s*=\s*/i, '')
-    .replace(/^const\s+\w+\s*=\s*/i, '')
-    .replace(/^async\s+function\s+\w+\s*\([^)]*\)\s*\{?\s*/i, '')
-    .replace(/^function\s+\w+\s*\([^)]*\)\s*\{?\s*/i, '')
-    .replace(/^return\s+/i, '')
-    .replace(/await\s+/gi, '')
-    .replace(/;\s*$/, '')
-    .replace(/\}\s*$/, '')
+    .replace(
+      /^export\s+(const|async\s+function|function)\s+\w+\s*=\s*/i,
+      ""
+    )
+    .replace(/^const\s+\w+\s*=\s*/i, "")
+    .replace(/^async\s+function\s+\w+\s*\([^)]*\)\s*\{?\s*/i, "")
+    .replace(/^function\s+\w+\s*\([^)]*\)\s*\{?\s*/i, "")
+    .replace(/^return\s+/i, "")
+    .replace(/await\s+/gi, "")
+    .replace(/;\s*$/, "")
+    .replace(/\}\s*$/, "")
     .trim();
 
-    const queryMatch = cleaned.match(/prisma\.\w+\.\w+\([\s\S]*\)/);
-    if (queryMatch) {
+  // 3) Extract the first prisma.<model>.<method>(...) call if present
+  const queryMatch = cleaned.match(/prisma\.\w+\.\w+\([\s\S]*\)/);
+  if (queryMatch) {
     return queryMatch[0];
   }
 
@@ -39,44 +48,68 @@ export async function executePrismaQueryFromText(
   prismaQuery: string,
 ): Promise<unknown> {
   try {
+    console.log("🚀 [RAG] executing prisma query:", prismaQuery);
+    const performanceStart = performance.now();
     const cleaned = cleanPrismaCodeBlock(prismaQuery);
 
     // Parse the query to extract model and method
-    const match = cleaned.match(/prisma\.(\w+)\.(\w+)\(([\s\S]*)\)/);    if (!match) {
+    const match = cleaned.match(/^prisma\.(\w+)\.(\w+)\(([\s\S]*)\)$/);
+    if (!match) {
       throw new Error(`Invalid Prisma query format: ${cleaned}`);
     }
 
     const [, modelName, method, argsStr] = match;
 
+    // Restrict to read-only methods for safety
+    const allowedMethods = new Set([
+      "findUnique",
+      "findUniqueOrThrow",
+      "findFirst",
+      "findFirstOrThrow",
+      "findMany",
+      "count",
+      "aggregate",
+      "groupBy",
+    ]);
+
+    if (!allowedMethods.has(method)) {
+      throw new Error(
+        `Disallowed Prisma method "${method}". Only read-only operations are permitted.`
+      );
+    }
+
     // Get the model from Prisma client
     // Use unknown first for safe type conversion
-    const model = (prisma as unknown as Record<string, unknown>)[modelName] as Record<string, unknown>;
+    const model = (prisma as unknown as Record<string, unknown>)[
+      modelName
+    ] as Record<string, unknown>;
     if (!model) {
       throw new Error(`Model "${modelName}" not found in Prisma client`);
     }
 
     // Get the method from the model delegate
-    const queryMethod = model[method] as ((args: unknown) => Promise<unknown>) | undefined;
-    if (!queryMethod || typeof queryMethod !== 'function') {
+    const queryMethod = model[method] as
+      | ((args: unknown) => Promise<unknown>)
+      | undefined;
+    if (!queryMethod || typeof queryMethod !== "function") {
       throw new Error(
         `Method "${method}" not found on model "${modelName}"`,
       );
     }
 
-    // Parse arguments (handle JSON-like objects)
-    let args: unknown;
-    try {
-      // Try to parse as JSON first
-      args = JSON.parse(argsStr);
-    } catch {
-      // If JSON parsing fails, try to evaluate safely
-      // This is a simplified approach - in production, use a proper parser
-      // Note: eval is used here for dynamic query execution - ensure input is sanitized
-      args = eval(`(${argsStr})`);
-    }
+    // Parse arguments.
+    // NOTE: This still uses eval under the hood; the LLM is constrained to emit
+    // read-only Prisma calls, and we additionally restrict allowed methods.
+    const args: unknown = eval(`(${argsStr})`);
 
     // Execute the query
     const result = await queryMethod(args);
+    const performanceEnd = performance.now();
+    console.log(
+      "🚀 [RAG] prisma query executed in:",
+      performanceEnd - performanceStart,
+      "ms",
+    );
     return result;
   } catch (error) {
     const errorMessage =
