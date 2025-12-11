@@ -13,12 +13,23 @@ export async function numericalQueryRAG(
     fewShotLimit?: number;
     conversationHistory?: CoreMessage[];
   }
-) {
+): Promise<{
+  userQuery: string;
+  tableDetailsText: string;
+  fewShotExamplesText: string;
+  schema: string;
+}> {
   const startTime = performance.now();
   const timings: Record<string, number> = {};
   
   try {
     console.log("🚀 [RAG] Starting query processing...");
+    console.log("[RAG] Incoming query:", userQuery);
+    console.log("[RAG] Options:", {
+      tableLimit: options?.tableLimit,
+      fewShotLimit: options?.fewShotLimit,
+      conversationHistoryLength: options?.conversationHistory?.length ?? 0,
+    });
     
     const embeddingStart = performance.now();
     const queryEmbedding = await generateEmbeddings(userQuery);
@@ -26,6 +37,7 @@ export async function numericalQueryRAG(
     console.log(
       `⏱️  [RAG] Embedding generation: ${timings.embedding.toFixed(2)}ms`
     );
+    console.log("[RAG] Embedding length:", queryEmbedding.length);
     
     const searchStart = performance.now();
     const [tableResults, fewShotResults] = await Promise.all([
@@ -40,6 +52,22 @@ export async function numericalQueryRAG(
     console.log(
       `⏱️  [RAG] Vector searches: ${timings.vectorSearch.toFixed(2)}ms`
     );
+    console.log("[RAG] TableDetails results:", {
+      count: tableResults.length,
+      top: tableResults.slice(0, 3).map((t) => ({
+        id: t.id,
+        tableName: t.tableName,
+        score: t.score,
+      })),
+    });
+    console.log("[RAG] FewShot results:", {
+      count: fewShotResults.length,
+      top: fewShotResults.slice(0, 3).map((f) => ({
+        id: f.id,
+        query: f.query,
+        score: f.score,
+      })),
+    });
 
     // Format retrieved context
     const tableDetailsText = tableResults
@@ -57,6 +85,11 @@ export async function numericalQueryRAG(
       `✅ [RAG] numericalQueryRAG completed in ${totalTime.toFixed(2)}ms`,
       { timings }
     );
+    console.log("[RAG] Context lengths:", {
+      tableDetailsTextChars: tableDetailsText.length,
+      fewShotExamplesTextChars: fewShotExamplesText.length,
+      schemaChars: schema.length,
+    });
 
     return {
       userQuery,

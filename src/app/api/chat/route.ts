@@ -25,11 +25,15 @@ export async function POST(req: Request) {
           "You are an expert TypeScript + Prisma assistant. " +
           "When constructing Prisma queries, only use models/fields from the provided schema. " +
           "For asset.name filters based on user text, prefer `where: { name: { contains: <text>, mode: \"insensitive\" } }` " +
-          "so small typos and case differences still match.",
+          "so small typos and case differences still match." +
+          `make sure the makeup of the final response is well formatted and easy to understand for the user.`
       },
     ];
 
-    for (const msg of messages) {
+    const CHAT_HISTORY_WINDOW_SIZE = 2;
+    const chatHistoryWindow = messages.slice(-CHAT_HISTORY_WINDOW_SIZE);
+
+    for (const msg of chatHistoryWindow) {
       if (msg.role === "user" || msg.role === "assistant") {
         const content = extractTextFromMessage(msg);
         coreMessages.push({
