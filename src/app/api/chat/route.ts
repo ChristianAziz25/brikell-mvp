@@ -1,5 +1,6 @@
+import type { MyUIMessage } from "@/types/ChatMessage";
 import { openai } from "@ai-sdk/openai";
-import { stepCountIs, streamText, type ModelMessage, type UIMessage } from "ai";
+import { stepCountIs, streamText, type ModelMessage } from "ai";
 import {
   createPrismaExecutionTool,
   createPrismaQueryGenTool,
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
     const {
       messages,
     }: {
-      messages: UIMessage[];
+      messages: MyUIMessage[];
     } = await req.json();
 
     const prismaQueryGenTool = createPrismaQueryGenTool(messages);
@@ -60,7 +61,13 @@ export async function POST(req: Request) {
     });
 
     // Return a plain text streaming Response compatible with TextStreamChatTransport
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse({
+      messageMetadata: ({part}) => {
+        return {
+          createdAt: new Date(Date.now()).toISOString(),
+        };
+      },
+    });
   } catch (error: unknown) {
     console.error("Chat API error:", error);
     const errorObj = error as { message?: string };

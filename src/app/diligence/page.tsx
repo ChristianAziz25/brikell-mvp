@@ -4,11 +4,11 @@ import Chat from "@/components/chat";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import type { MyUIMessage } from "@/types/ChatMessage";
 import { useChat } from "@ai-sdk/react";
 import type { UIMessage } from "ai";
 import { Brain, Loader2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 
 const agents = ["capex", "opex", "all"];
 
@@ -39,23 +39,7 @@ export default function Page() {
   const queueRef = useRef<string[]>([]);
   const messageScrollRef = useRef<HTMLDivElement>(null);
   const isUserScrolling = useRef(false);
-
-  // Use useChat for faster text streaming - automatically handles messages and conversation history
-  // TextStreamChatTransport is required for streamText responses (toTextStreamResponse)
-  const { messages, sendMessage, status, error } = useChat();
-  // Debug: Log messages, status, and errors
-  useEffect(() => {
-    if (messages.length > 0) {
-      console.log("Messages count:", messages.length);
-      console.log("Last message:", messages[messages.length - 1]);
-      console.log("All messages:", messages);
-      console.log("Status:", status);
-    }
-    if (error) {
-      toast.error(`Chat error: ${error.message}`);
-      console.error("Chat error:", error);
-    }
-  }, [messages, status, error]);
+  const { messages, sendMessage, status, error } = useChat<MyUIMessage>();
 
   const isLoading = status === "streaming" || status === "submitted";
 
@@ -156,27 +140,35 @@ export default function Page() {
                       <Brain className="h-4 w-4 text-muted-foreground" />
                     </div>
                   )}
-                  <div
-                    className={`rounded-2xl px-4 py-3 ${
-                      message.role === "user"
-                        ? "rounded-tr-sm bg-primary text-primary-foreground"
-                        : "rounded-tl-sm bg-muted/30"
-                    }`}
-                  >
-                    <div className="text-sm text-foreground whitespace-pre-wrap">
-                      {message.role === "user" ? (
-                        <p className="text-primary-foreground">
-                          {extractMessageContent(message)}
-                        </p>
-                      ) : (
-                        // Show message content (streaming or completed)
-                        <p className="text-chat-machine-color">
-                          {extractMessageContent(message) || (
-                            <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin inline-block" />
-                          )}
-                        </p>
-                      )}
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className={`rounded-2xl px-4 py-3 ${
+                        message.role === "user"
+                          ? "rounded-tr-sm bg-primary text-primary-foreground"
+                          : "rounded-tl-sm bg-muted/30"
+                      }`}
+                    >
+                      <div className="text-sm text-foreground whitespace-pre-wrap">
+                        {message.role === "user" ? (
+                          <p className="text-primary-foreground">
+                            {extractMessageContent(message)}
+                          </p>
+                        ) : (
+                          // Show message content (streaming or completed)
+                          <p className="text-chat-machine-color">
+                            {extractMessageContent(message) || (
+                              <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin inline-block" />
+                            )}
+                          </p>
+                        )}
+                      </div>
                     </div>
+                    <p className="text-xs text-muted-foreground">
+                      {message.metadata?.createdAt &&
+                        new Date(
+                          message.metadata.createdAt
+                        ).toLocaleTimeString()}
+                    </p>
                   </div>
                   {message.role === "user" && (
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
