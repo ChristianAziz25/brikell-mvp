@@ -23,14 +23,20 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Building2, DollarSign, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FlowSkeleton } from "./components/skeleton";
 
-// TODO: Use the leaseStatus: vancant | terminated | interest | contract sent | contract signed
-type Stage = "Vacant" | "Terminated" | "Occupied";
+// Kanban stages shown in the UI
+type Stage =
+  | "Vacant"
+  | "Terminated"
+  | "Occupied"
+  | "Interest"
+  | "Contract Sent"
+  | "Contract Signed";
 
 interface LeaseCard {
   id: string;
@@ -43,8 +49,16 @@ interface LeaseCard {
   notes?: string;
 }
 
-const stages: Stage[] = ["Vacant", "Terminated", "Occupied"];
+const stages: Stage[] = [
+  "Vacant",
+  "Terminated",
+  "Occupied",
+  "Interest",
+  "Contract Sent",
+  "Contract Signed",
+];
 
+// Map DB enum RentStatus -> UI Stage
 function mapStatusToStage(status: RentRollUnit["units_status"]): Stage {
   switch (status) {
     case "vacant":
@@ -53,17 +67,6 @@ function mapStatusToStage(status: RentRollUnit["units_status"]): Stage {
       return "Terminated";
     default:
       return "Occupied";
-  }
-}
-
-function mapStageToStatus(stage: Stage): RentRollUnit["units_status"] {
-  switch (stage) {
-    case "Vacant":
-      return "vacant";
-    case "Terminated":
-      return "terminated";
-    case "Occupied":
-      return "occupied";
   }
 }
 
@@ -242,8 +245,9 @@ export default function Page() {
           building: unit.property_name,
           price: unit.rent_current_gri,
           stage: mapStatusToStage(unit.units_status),
-          daysInStage: 0,
-          tenant: unit.tenant_name1,
+          daysInStage:
+            new Date().getTime() - new Date(unit.lease_start).getTime(),
+          tenant: unit.tenant_name1 ?? undefined,
           notes: undefined,
         }));
       },
@@ -252,23 +256,6 @@ export default function Page() {
       refetchOnWindowFocus: false,
     }
   );
-
-  const updateStageMutation = useMutation({
-    mutationFn: async ({ id, stage }: { id: string; stage: Stage }) => {
-      const res = await fetch("/api/rent-roll/stage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          unitId: Number(id),
-          status: mapStageToStatus(stage),
-        }),
-      });
-      if (!res.ok) {
-        throw new Error("Failed to update rent roll stage");
-      }
-      return res.json();
-    },
-  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -290,6 +277,9 @@ export default function Page() {
       Vacant: 0,
       Terminated: 0,
       Occupied: 0,
+      Interest: 0,
+      "Contract Sent": 0,
+      "Contract Signed": 0,
     };
     cards.forEach((card) => {
       counts[card.stage]++;
@@ -314,22 +304,22 @@ export default function Page() {
     const activeCardCurrent = cards.find((c) => c.id === (active.id as string));
     if (!activeCardCurrent) return;
 
-    let newStageForMutation: Stage | null = null;
     if (overId.startsWith("column-")) {
       const targetStage = overId.replace("column-", "") as Stage;
       if (targetStage && targetStage !== activeCardCurrent.stage) {
-        newStageForMutation = targetStage;
+        // Optimistic cache update: move to target column
+        queryClient.setQueryData<LeaseCard[]>(["units"], (items = []) =>
+          items.map((item) =>
+            item.id === active.id
+              ? { ...item, stage: targetStage, daysInStage: 0 }
+              : item
+          )
+        );
       }
-    } else {
-      const overCardCurrent = cards.find((c) => c.id === overId);
-      if (
-        overCardCurrent &&
-        overCardCurrent.stage !== activeCardCurrent.stage
-      ) {
-        newStageForMutation = overCardCurrent.stage;
-      }
+      return;
     }
 
+    // Optimistic cache update for card-on-card drops
     queryClient.setQueryData<LeaseCard[]>(["units"], (items = []) => {
       const activeCard = items.find(
         (card) => card.id === (active.id as string)
@@ -376,16 +366,6 @@ export default function Page() {
           : item
       );
     });
-
-    if (
-      newStageForMutation &&
-      newStageForMutation !== activeCardCurrent.stage
-    ) {
-      updateStageMutation.mutate({
-        id: active.id as string,
-        stage: newStageForMutation,
-      });
-    }
   };
 
   const stageCounts = getStageCounts();
@@ -466,8 +446,10 @@ export default function Page() {
               >
                 {activeId
                   ? (() => {
-                      const card = cards.find((c) => c.id === activeId);
-                      if (!card) return null;
+                      const card = cards.find((card) => card.id === activeId);
+                      if (!card) {
+                        return null;
+                      }
                       return (
                         <div style={{ transform: "rotate(5deg)" }}>
                           <DragPreviewCard card={card} />

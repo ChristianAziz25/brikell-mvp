@@ -805,26 +805,26 @@ export default function MyAssets() {
         <div className="text-muted-foreground">No asset data available.</div>
       ) : (
         <>
-          <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
-            {assets.map((asset) => (
-              <Button
-                key={asset.id}
+      <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
+        {assets.map((asset) => (
+          <Button
+            key={asset.id}
                 variant={asset.name === activeAssetName ? "default" : "outline"}
-                onClick={() => setSelectedAsset(asset.name)}
-              >
-                <span className="font-medium">{asset.name}</span>
-              </Button>
-            ))}
-          </div>
-          <div className="space-y-8">
-            <section className="space-y-3">
-              <Table
-                table={unifiedTable}
-                columnCount={unifiedTable.getAllLeafColumns().length}
+            onClick={() => setSelectedAsset(asset.name)}
+          >
+            <span className="font-medium">{asset.name}</span>
+          </Button>
+        ))}
+      </div>
+        <div className="space-y-8">
+          <section className="space-y-3">
+            <Table
+              table={unifiedTable}
+              columnCount={unifiedTable.getAllLeafColumns().length}
                 isLoading={false}
-              />
-            </section>
-          </div>
+            />
+          </section>
+        </div>
         </>
       )}
     </div>
