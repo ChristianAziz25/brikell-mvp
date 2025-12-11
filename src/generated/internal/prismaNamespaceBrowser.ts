@@ -55,7 +55,9 @@ export const ModelName = {
   TheoreticalRentalIncome: 'TheoreticalRentalIncome',
   Capex: 'Capex',
   Opex: 'Opex',
-  RentRollUnit: 'RentRollUnit'
+  RentRollUnit: 'RentRollUnit',
+  Chat: 'Chat',
+  ChatMessage: 'ChatMessage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -189,6 +191,26 @@ export const RentRollUnitScalarFieldEnum = {
 } as const
 
 export type RentRollUnitScalarFieldEnum = (typeof RentRollUnitScalarFieldEnum)[keyof typeof RentRollUnitScalarFieldEnum]
+
+
+export const ChatScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  chatId: 'chatId'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
 export const SortOrder = {

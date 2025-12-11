@@ -1,3 +1,4 @@
+import { saveChatHistory } from "@/lib/prisma/models/chat";
 import type { MyUIMessage } from "@/types/ChatMessage";
 import { openai } from "@ai-sdk/openai";
 import { stepCountIs, streamText, type ModelMessage } from "ai";
@@ -11,8 +12,10 @@ export async function POST(req: Request) {
   try {
     const {
       messages,
+      id,
     }: {
       messages: MyUIMessage[];
+      id?: string;
     } = await req.json();
 
     const prismaQueryGenTool = createPrismaQueryGenTool(messages);
@@ -66,6 +69,11 @@ export async function POST(req: Request) {
       messageMetadata: () => ({
         createdAt: Date.now(),
       }),
+      // Persist full chat history when the assistant finishes responding
+      async onFinish({ messages: finishedMessages }) {
+        if (!id) return;
+        await saveChatHistory(id, finishedMessages as MyUIMessage[]);
+      },
     });
   } catch (error: unknown) {
     console.error("Chat API error:", error);

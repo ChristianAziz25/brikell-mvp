@@ -135,6 +135,30 @@ model RentRollUnit {
   @@schema("public")
 }
 
+model Chat {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chatMessages ChatMessage[]
+
+  @@map("chat")
+  @@schema("public")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  message   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chatId String @unique
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@map("chat_message")
+  @@schema("public")
+}
+
 enum RentStatus {
   occupied
   vacant

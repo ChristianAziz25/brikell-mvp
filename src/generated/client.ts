@@ -62,3 +62,13 @@ export type Opex = Prisma.OpexModel
  * 
  */
 export type RentRollUnit = Prisma.RentRollUnitModel
+/**
+ * Model Chat
+ * 
+ */
+export type Chat = Prisma.ChatModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
