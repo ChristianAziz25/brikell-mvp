@@ -4,7 +4,7 @@ import {
     tableDetailEmbeddings,
     type FewShotEmbedding,
     type TableDetailEmbedding,
-} from "./localRagEmbeddings.generated.js";
+} from "./localRagEmbeddings.generated";
 
 type HybridSearchOptions = {
   limit?: number;
