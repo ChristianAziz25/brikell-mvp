@@ -15,7 +15,7 @@ import { extractTextFromMessage } from "./utils/extractLatestMesaage";
  * - Use that to write Prisma queries and reason about the data
  */
 export const createPrismaQueryGenTool = (messages: UIMessage[]) => {
-  // Derive conversation history (everything except the latest user message)
+  // Derive a small conversation history window (everything except the latest user message)
   let latestUserMessage: UIMessage | undefined;
   for (let i = messages.length - 1; i >= 0; i--) {
     if (messages[i]?.role === "user") {
@@ -24,7 +24,10 @@ export const createPrismaQueryGenTool = (messages: UIMessage[]) => {
     }
   }
 
-  const conversationHistory: CoreMessage[] = messages
+  const HISTORY_WINDOW_SIZE = 5;
+  const historyWindow = messages.slice(-HISTORY_WINDOW_SIZE);
+
+  const conversationHistory: CoreMessage[] = historyWindow
     .filter((msg) => {
       if (msg === latestUserMessage) return false;
       return msg.role === "user" || msg.role === "assistant";
@@ -52,7 +55,7 @@ export const createPrismaQueryGenTool = (messages: UIMessage[]) => {
     execute: async ({ userQuery }) => {
       const { tableDetailsText, fewShotExamplesText, schema } =
         await numericalQueryRAG(userQuery, {
-          tableLimit: 3,
+          tableLimit: 2,
           fewShotLimit: 2,
           conversationHistory,
         });

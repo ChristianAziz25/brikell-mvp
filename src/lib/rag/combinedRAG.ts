@@ -54,7 +54,7 @@ export async function numericalQueryRAG(
     );
     console.log("[RAG] TableDetails results:", {
       count: tableResults.length,
-      top: tableResults.slice(0, 3).map((t) => ({
+      top: tableResults.slice(0, options?.tableLimit ?? 5).map((t) => ({
         id: t.id,
         tableName: t.tableName,
         score: t.score,
@@ -62,7 +62,7 @@ export async function numericalQueryRAG(
     });
     console.log("[RAG] FewShot results:", {
       count: fewShotResults.length,
-      top: fewShotResults.slice(0, 3).map((f) => ({
+      top: fewShotResults.slice(0, options?.fewShotLimit ?? 5).map((f) => ({
         id: f.id,
         query: f.query,
         score: f.score,
@@ -71,12 +71,22 @@ export async function numericalQueryRAG(
 
     // Format retrieved context
     const tableDetailsText = tableResults
-      .map((t) => `- ${t.tableName}: ${t.description}`)
+      .map((t) => {
+        const firstLine = t.description.split("\n")[0];
+        return `- ${t.tableName}: ${firstLine}`;
+      })
       .join("\n");
 
+    // Keep few-shot context compact: only include the raw Prisma call if present
+    const extractPrismaCall = (text: string): string => {
+      const match = text.match(/`([^`]+)`/);
+      return match ? match[1] : text;
+    };
+
     const fewShotExamplesText = fewShotResults
-      .map((ex) => `Question: ${ex.query}\nPrismaQuery: ${ex.sql}`)
-      .join("\n\n");
+      .map((ex) => extractPrismaCall(ex.sql))
+      .join("\n");
+    console.log("🚀 [RAG] rag results:", { tableResults, fewShotResults });
 
     const schema = getPrismaSchema();
 
