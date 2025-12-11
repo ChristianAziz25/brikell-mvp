@@ -79,6 +79,8 @@ export default function Page() {
       sendMessage({
         role: "user",
         content: value,
+        // Store the client-side send time on the message
+        metadata: { createdAt: Date.now() },
       } as unknown as Parameters<typeof sendMessage>[0]);
       return;
     }
@@ -96,11 +98,14 @@ export default function Page() {
         sendMessage({
           role: "user",
           content: next,
+          metadata: { createdAt: Date.now() },
         } as unknown as Parameters<typeof sendMessage>[0]);
       }
       setQueue([...queueRef.current]);
     }
   }, [status, sendMessage]);
+
+  console.log(messages);
 
   return (
     <div className="flex w-full h-full flex-col gap-6 lg:flex-row min-h-0 p-4">
@@ -163,11 +168,17 @@ export default function Page() {
                         )}
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {message.metadata?.createdAt &&
-                        new Date(
-                          message.metadata.createdAt
-                        ).toLocaleTimeString()}
+                    <p
+                      className={cn(
+                        "text-xs text-muted-foreground",
+                        message.role === "user" ? "text-right" : "text-left"
+                      )}
+                    >
+                      {message.metadata?.createdAt
+                        ? new Date(
+                            message.metadata.createdAt
+                          ).toLocaleTimeString()
+                        : ""}
                     </p>
                   </div>
                   {message.role === "user" && (

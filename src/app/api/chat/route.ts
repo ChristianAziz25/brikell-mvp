@@ -62,11 +62,10 @@ export async function POST(req: Request) {
 
     // Return a plain text streaming Response compatible with TextStreamChatTransport
     return result.toUIMessageStreamResponse({
-      messageMetadata: ({part}) => {
-        return {
-          createdAt: new Date(Date.now()).toISOString(),
-        };
-      },
+      // Attach a numeric timestamp (ms since epoch) to each assistant message
+      messageMetadata: () => ({
+        createdAt: Date.now(),
+      }),
     });
   } catch (error: unknown) {
     console.error("Chat API error:", error);
