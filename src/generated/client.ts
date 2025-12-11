@@ -62,13 +62,3 @@ export type Opex = Prisma.OpexModel
  * 
  */
 export type RentRollUnit = Prisma.RentRollUnitModel
-/**
- * Model FewShotQuery
- * 
- */
-export type FewShotQuery = Prisma.FewShotQueryModel
-/**
- * Model TableDetails
- * 
- */
-export type TableDetails = Prisma.TableDetailsModel

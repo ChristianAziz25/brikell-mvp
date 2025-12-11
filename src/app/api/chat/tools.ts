@@ -53,7 +53,7 @@ export const createPrismaQueryGenTool = (messages: UIMessage[]) => {
       const { tableDetailsText, fewShotExamplesText, schema } =
         await numericalQueryRAG(userQuery, {
           tableLimit: 3,
-          fewShotLimit: 4,
+          fewShotLimit: 2,
           conversationHistory,
         });
 

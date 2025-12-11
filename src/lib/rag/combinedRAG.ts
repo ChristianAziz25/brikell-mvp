@@ -1,10 +1,10 @@
 import type { CoreMessage } from "ai";
 import { generateEmbeddings } from "./embedding";
-import { getPrismaSchema } from "./schema";
 import {
-  searchFewShotQueries,
-  searchTableDetails,
-} from "./vectorization-service";
+  localSearchFewShotQueries,
+  localSearchTableDetails,
+} from "./localHybridSearch";
+import { getPrismaSchema } from "./schema";
 
 export async function numericalQueryRAG(
   userQuery: string,
@@ -29,10 +29,10 @@ export async function numericalQueryRAG(
     
     const searchStart = performance.now();
     const [tableResults, fewShotResults] = await Promise.all([
-      searchTableDetails(userQuery, queryEmbedding, {
+      localSearchTableDetails(userQuery, queryEmbedding, {
         limit: options?.tableLimit ?? 5,
       }),
-      searchFewShotQueries(userQuery, queryEmbedding, {
+      localSearchFewShotQueries(userQuery, queryEmbedding, {
         limit: options?.fewShotLimit ?? 5,
       }),
     ]);
