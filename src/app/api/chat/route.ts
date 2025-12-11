@@ -1,6 +1,9 @@
 import { openai } from "@ai-sdk/openai";
 import { stepCountIs, streamText, type UIMessage } from "ai";
-import { createPrismaQueryGenTool } from "./tools";
+import {
+  createPrismaExecutionTool,
+  createPrismaQueryGenTool,
+} from "./tools";
 import { extractTextFromMessage } from "./utils/extractLatestMesaage";
 
 export async function POST(req: Request) {
@@ -12,9 +15,10 @@ export async function POST(req: Request) {
     } = await req.json();
 
     const prismaQueryGenTool = createPrismaQueryGenTool(messages);
+    const prismaExecutionTool = createPrismaExecutionTool();
 
     // Build CoreMessages from the UIMessage array
-    const coreMessages = []
+    const coreMessages = [];
 
     for (const msg of messages) {
       if (msg.role === "user" || msg.role === "assistant") {
@@ -29,9 +33,12 @@ export async function POST(req: Request) {
     const result = streamText({
       model: openai("gpt-5-nano"),
       messages: coreMessages,
-      tools: { prismaQueryGenTool },
+      tools: {
+        prismaQueryGenTool,
+        prismaExecutionTool,
+      },
       toolChoice: "auto",
-      stopWhen: stepCountIs(3)
+      stopWhen: stepCountIs(5),
     });
 
     // Return a plain text streaming Response compatible with TextStreamChatTransport

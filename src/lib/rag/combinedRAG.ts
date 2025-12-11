@@ -1,9 +1,10 @@
-import { executePrismaQueryFromText } from '@/lib/ai/tools/ragUtils';
-import { openai } from '@ai-sdk/openai';
-import { streamText, type CoreMessage } from 'ai';
-import { generateEmbeddings } from './embedding';
-import { getPrismaSchema } from './schema';
-import { searchFewShotQueries, searchTableDetails } from './vectorization-service';
+import type { CoreMessage } from "ai";
+import { generateEmbeddings } from "./embedding";
+import { getPrismaSchema } from "./schema";
+import {
+  searchFewShotQueries,
+  searchTableDetails,
+} from "./vectorization-service";
 
 export async function numericalQueryRAG(
   userQuery: string,
@@ -17,121 +18,51 @@ export async function numericalQueryRAG(
   const timings: Record<string, number> = {};
   
   try {
-    console.log('🚀 [RAG] Starting query processing...');
+    console.log("🚀 [RAG] Starting query processing...");
     
-    // OPTIMIZATION: Start embedding and schema retrieval in parallel
     const embeddingStart = performance.now();
     const queryEmbedding = await generateEmbeddings(userQuery);
     timings.embedding = performance.now() - embeddingStart;
-    console.log(`⏱️  [RAG] Embedding generation: ${timings.embedding.toFixed(2)}ms`);
+    console.log(
+      `⏱️  [RAG] Embedding generation: ${timings.embedding.toFixed(2)}ms`
+    );
     
-    // Parallel retrieval of context
     const searchStart = performance.now();
     const [tableResults, fewShotResults] = await Promise.all([
-      searchTableDetails(userQuery, queryEmbedding, { limit: options?.tableLimit ?? 5 }),
-      searchFewShotQueries(userQuery, queryEmbedding, { limit: options?.fewShotLimit ?? 5 }),
+      searchTableDetails(userQuery, queryEmbedding, {
+        limit: options?.tableLimit ?? 5,
+      }),
+      searchFewShotQueries(userQuery, queryEmbedding, {
+        limit: options?.fewShotLimit ?? 5,
+      }),
     ]);
     timings.vectorSearch = performance.now() - searchStart;
-    console.log(`⏱️  [RAG] Vector searches: ${timings.vectorSearch.toFixed(2)}ms`);
+    console.log(
+      `⏱️  [RAG] Vector searches: ${timings.vectorSearch.toFixed(2)}ms`
+    );
 
     // Format retrieved context
     const tableDetailsText = tableResults
       .map((t) => `- ${t.tableName}: ${t.description}`)
-      .join('\n');
+      .join("\n");
 
     const fewShotExamplesText = fewShotResults
       .map((ex) => `Question: ${ex.query}\nPrismaQuery: ${ex.sql}`)
-      .join('\n\n');
+      .join("\n\n");
 
     const schema = getPrismaSchema();
 
-    // Build conversation messages with system context
-    const systemMessage: CoreMessage = {
-      role: 'system',
-      content: `You are a helpful assistant that answers questions by generating Prisma queries and interpreting their results.`,
-    };
+    const totalTime = performance.now() - startTime;
+    console.log(
+      `✅ [RAG] numericalQueryRAG completed in ${totalTime.toFixed(2)}ms`,
+      { timings }
+    );
 
-    // Build messages array: system message + conversation history
-    const messages: CoreMessage[] = [systemMessage];
-    
-    // Add conversation history if provided
-    if (options?.conversationHistory && options.conversationHistory.length > 0) {
-      // Filter to only include user and assistant messages, and limit to last 10 for context
-      const recentHistory = options.conversationHistory
-        .filter(msg => msg.role === 'user' || msg.role === 'assistant')
-        .slice(-10); // Keep last 10 messages for context
-      messages.push(...recentHistory);
-    }
-    
-    messages.push({
-      role: 'user',
-      content: `Answer this question: ${userQuery}
-
-First, generate the Prisma query needed to answer this question. I'll execute it and provide the results for you to interpret.
-
-Database Schema:
-${schema}
-
-Table Details:
-${tableDetailsText}
-
-Few-shot Examples:
-${fewShotExamplesText}
-
-CRITICAL: Asset names are case-sensitive. When filtering by asset.name, you MUST use the exact capitalization as shown. Do NOT convert asset names to lowercase.
-and make sure you look up the database schema as given above and find the closest match for the asset name.
-
-IMPORTANT: Make sure to only include the top 2 fields of whatever table you are searching, so only necessary data is returned (IF the user hasnt sepcific what fields they want). 
-To do so, you need to follow the table scehma given above and use only the top 2 fields of the table you are searching.
-
-Generate ONLY the Prisma query statement (e.g., "prisma.asset.findMany({ where: { name: "Gertrudehus" } })").
-Do NOT wrap in functions, exports, or await keywords.
-Output ONLY the query, nothing else.`,
-    });
-
-    // Single LLM call: First generate the query
-    const queryGenStart = performance.now();
-    const queryStream = streamText({
-      model: openai('gpt-5-nano'),
-      messages,
-    });
-    
-    // Read the stream to get the query
-    let queryText = '';
-    for await (const chunk of queryStream.textStream) {
-      queryText += chunk;
-    }
-    
-    // Clean and extract the query
-    const cleanedQuery = queryText.trim()
-      .replace(/^```(typescript|ts)?/i, '')
-      .replace(/```$/i, '')
-      .trim();
-    
-    timings.queryGeneration = performance.now() - queryGenStart;
-    console.log(`⏱️  [RAG] Query generation (LLM): ${timings.queryGeneration.toFixed(2)}ms`);
-    console.log(`🔍 [RAG] Generated Prisma Query:`, cleanedQuery);
-
-    // Execute query
-    const queryExecStart = performance.now();
-    let queryData: unknown;
-    let queryError: string | null = null;
-    try {
-      queryData = await executePrismaQueryFromText(cleanedQuery);
-      timings.queryExecution = performance.now() - queryExecStart;
-      console.log(`⏱️  [RAG] Query execution (DB): ${timings.queryExecution.toFixed(2)}ms`);
-    } catch (error) {
-      queryError = error instanceof Error ? error.message : String(error);
-      timings.queryExecution = performance.now() - queryExecStart;
-      console.log(`⏱️  [RAG] Query execution (DB) - ERROR: ${queryError} ${timings.queryExecution.toFixed(2)}ms`);
-    }
-
-    console.log(queryData);
- 
     return {
-      response: queryData,
+      userQuery,
       tableDetailsText,
       fewShotExamplesText,
+      schema,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -139,31 +70,14 @@ Output ONLY the query, nothing else.`,
     const totalTime = performance.now() - startTime;
     
     // Log the full error for debugging
-    console.error('❌ [RAG] Error in numericalQueryRAG:', {
+    console.error("❌ [RAG] Error in numericalQueryRAG:", {
       error: errorMessage,
       stack: errorStack,
       userQuery,
       totalTime: `${totalTime.toFixed(2)}ms`,
       timings,
     });
-    
-    // Return a stream text even for errors to maintain consistent return type
-    const errorStream = streamText({
-      model: openai('gpt-5-nano'),
-      prompt: `The user asked: "${userQuery}"
 
-An error occurred while processing this request: ${errorMessage}
-
-Provide a helpful, user-friendly error message explaining what went wrong. Include:
-- A clear explanation of the issue in simple terms
-- Suggestions on how the user might rephrase their question or what they can try instead
-- Be friendly, constructive, and avoid technical jargon when possible
-
-If the error mentions "vector", "embedding", or "search", explain that there was an issue retrieving relevant information from the knowledge base.`,
-    });
-
-    return {
-      response: errorStream,
-    };
+    throw error;
   }
 }
