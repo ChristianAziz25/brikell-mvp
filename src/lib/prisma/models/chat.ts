@@ -18,43 +18,57 @@ export async function getChat(id: string) {
 
 /**
  * Load full chat history for a given chat from the database.
- * We store the entire UIMessage[] JSON in the single ChatMessage row for this chat.
+ * Each ChatMessage row stores a single UIMessage JSON string for this chat.
  */
 export async function loadChatHistory(
   chatId: string,
 ): Promise<MyUIMessage[]> {
-  const row = await prisma.chatMessage.findUnique({
+  const rows = await prisma.chatMessage.findMany({
     where: { chatId },
+    orderBy: { createdAt: "asc" },
   });
 
-  if (!row?.message) return [];
+  const result: MyUIMessage[] = [];
 
-  try {
-    return JSON.parse(row.message) as MyUIMessage[];
-  } catch {
-    // If parsing fails, treat as no history rather than breaking the chat.
-    return [];
+  for (const row of rows) {
+    if (!row.message) continue;
+    try {
+      result.push(JSON.parse(row.message) as MyUIMessage);
+    } catch {
+      // Skip malformed rows instead of breaking the entire history.
+    }
   }
+
+  return result;
 }
 
 /**
  * Persist full chat history (UIMessage[]) for a given chat into the database.
- * Uses a single ChatMessage row per chat (chatId is unique) with JSON-encoded messages.
+ * We keep one ChatMessage row per UI message (many ChatMessages per Chat).
  */
+
+export async function createChatMessage(
+  chatId: string,
+  messages: MyUIMessage[],
+): Promise<{ success: boolean }> {
+  return saveChatHistory(chatId, messages);
+}
+
 export async function saveChatHistory(
   chatId: string,
   messages: MyUIMessage[],
-): Promise<void> {
-  const payload = JSON.stringify(messages);
-
-  await prisma.chatMessage.upsert({
-    where: { chatId },
-    create: {
-      chatId,
-      message: payload,
-    },
-    update: {
-      message: payload,
-    },
-  });
+): Promise<{ success: boolean }> {
+  // Replace the existing message rows for this chat with one row per UI message.
+  // This keeps the database in sync with the in-memory history while keeping
+  // the schema simple (no per-message upsert logic needed).
+  await prisma.$transaction([
+    prisma.chatMessage.deleteMany({ where: { chatId } }),
+    prisma.chatMessage.createMany({
+      data: messages.map((msg) => ({
+        chatId,
+        message: JSON.stringify(msg),
+      })),
+    }),
+  ]);
+  return { success: true };
 }

@@ -1,16 +1,18 @@
 "use client";
 
+import { type Chat as ChatHistory } from "@/app/api/chat-creation/route";
 import Chat from "@/components/chat";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { MyUIMessage } from "@/types/ChatMessage";
 import { useChat } from "@ai-sdk/react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
 import { Brain, Loader2 } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getConversationTurns } from "./utils/convertTurns";
 
 const agents = ["capex", "opex", "all"];
 
@@ -38,11 +40,12 @@ function extractMessageContent(message: UIMessage): string {
 export default function Page() {
   const { chatId } = useParams<{ chatId: string }>();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
-  const { data: chatData, isLoading: isChatLoading } = useQuery({
-    queryKey: ["chat-room", chatId],
+  const { data: chatData, isLoading: isChatLoading } = useQuery<ChatHistory>({
+    queryKey: ["chat-history", chatId],
     queryFn: async () => {
-      const chat = await fetch(`/api/chat-room?chatId=${chatId}`);
+      const chat = await fetch(`/api/chat-creation?chatId=${chatId}`);
       if (!chat.ok) {
         throw new Error("Failed to fetch chat");
       }
@@ -51,22 +54,85 @@ export default function Page() {
     enabled: !!chatId,
   });
 
-  useEffect(() => {
-    if (!isChatLoading && !chatData) {
-      router.push("/diligence");
-    }
-  }, [isChatLoading, chatData, router]);
+  const { mutate: upsertChatHistory } = useMutation({
+    mutationFn: async ({
+      chatId,
+      messages,
+    }: {
+      chatId: string;
+      messages: MyUIMessage[];
+    }) => {
+      const chat = await fetch(`/api/chat-upsert`, {
+        method: "POST",
+        body: JSON.stringify({ chatId, messages }),
+      });
+      if (!chat.ok) {
+        throw new Error("Failed to save chat history");
+      }
+      return chat.json();
+    },
+    onMutate: async (data) => {
+      await queryClient.cancelQueries({
+        queryKey: ["chat-history", data.chatId],
+      });
+      const previousData = queryClient.getQueryData<ChatHistory>([
+        "chat-history",
+        data.chatId,
+      ]);
+      if (previousData) {
+        const optimisticMessages = data.messages.map((msg) => ({
+          id: crypto.randomUUID(),
+          chatId: data.chatId,
+          message: JSON.stringify(msg),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        }));
 
-  // Decode persisted chat history (if any) from the database.
+        queryClient.setQueryData<ChatHistory>(["chat-history", data.chatId], {
+          ...previousData,
+          chatMessages: optimisticMessages,
+        });
+      }
+      return { previousData };
+    },
+    onError: (_err, { chatId }, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["chat-history", chatId],
+          context.previousData
+        );
+      }
+    },
+    onSettled: (_data, _err, { chatId }) => {
+      queryClient.invalidateQueries({ queryKey: ["chat-history", chatId] });
+    },
+  });
+
+  // useEffect(() => {
+  //   if (!isChatLoading && !chatData) {
+  //     router.push("/diligence");
+  //   }
+  // }, [isChatLoading, chatData, router]);
+
   const initialMessages: MyUIMessage[] = useMemo(() => {
-    const raw = chatData?.chatMessages?.[0]?.message as string | undefined;
-    if (!raw) return [];
-    try {
-      return JSON.parse(raw) as MyUIMessage[];
-    } catch {
-      return [];
-    }
+    const rows = chatData?.chatMessages ?? [];
+    if (!rows.length) return [];
+
+    return rows
+      .map((row) => {
+        try {
+          return JSON.parse(row.message) as MyUIMessage;
+        } catch {
+          return null;
+        }
+      })
+      .filter((m): m is MyUIMessage => m !== null);
   }, [chatData]);
+
+  const conversationTurns = useMemo(
+    () => getConversationTurns(initialMessages),
+    [initialMessages]
+  );
 
   const [context, setContext] = useState<"capex" | "opex" | "all">("all");
   const [queue, setQueue] = useState<string[]>([]);
@@ -89,7 +155,6 @@ export default function Page() {
     const handleScroll = () => {
       const distanceFromBottom =
         el.scrollHeight - el.scrollTop - el.clientHeight;
-      // user is considered "scrolling" if they've moved up beyond threshold
       isUserScrolling.current = distanceFromBottom > THRESHOLD;
     };
 
@@ -111,14 +176,11 @@ export default function Page() {
 
   // When user presses Enter:
   function handleChatEvent(value: string) {
-    // If assistant is idle, send immediately
     if (!isLoading) {
       sendMessage({
-        role: "user",
-        content: value,
-        // Store the client-side send time on the message
+        text: value,
         metadata: { createdAt: Date.now() },
-      } as unknown as Parameters<typeof sendMessage>[0]);
+      });
       return;
     }
 
@@ -132,14 +194,19 @@ export default function Page() {
       const next = queueRef.current.shift();
       if (next) {
         sendMessage({
-          role: "user",
-          content: next,
+          text: next,
           metadata: { createdAt: Date.now() },
-        } as unknown as Parameters<typeof sendMessage>[0]);
+        });
       }
       setQueue([...queueRef.current]);
     }
   }, [status, sendMessage]);
+
+  useEffect(() => {
+    if (status === "ready" && chatId) {
+      upsertChatHistory({ chatId, messages });
+    }
+  }, [status, messages, upsertChatHistory, chatId]);
 
   return (
     <div className="flex w-full h-full flex-row gap-6 lg:flex-row min-h-0 p-4">
@@ -150,11 +217,14 @@ export default function Page() {
           </CardHeader>
           <CardContent>
             <ul>
-              {chatData?.chatMessages?.map(
-                (message: { id: string; message: string }) => (
-                  <li key={message.id}>{message.message}</li>
-                )
-              )}
+              {conversationTurns.map((turn, index) => (
+                <li key={index} className="mb-3 text-xs">
+                  <div className="font-semibold">You:</div>
+                  <div className="mb-1 text-muted-foreground">{turn.user}</div>
+                  <div className="font-semibold">Assistant:</div>
+                  <div className="text-muted-foreground">{turn.assistant}</div>
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>

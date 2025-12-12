@@ -1,7 +1,6 @@
 import { UIMessage } from 'ai';
 import { z } from 'zod';
 
-// Define your metadata schema
 export const messageMetadataSchema = z.object({
   createdAt: z.number().optional(),
   model: z.string().optional(),
@@ -10,5 +9,4 @@ export const messageMetadataSchema = z.object({
 
 export type MessageMetadata = z.infer<typeof messageMetadataSchema>;
 
-// Create a typed UIMessage
 export type MyUIMessage = UIMessage<MessageMetadata>;

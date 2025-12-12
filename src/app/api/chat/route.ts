@@ -21,7 +21,7 @@ export async function POST(req: Request) {
     const prismaQueryGenTool = createPrismaQueryGenTool(messages);
     const prismaExecutionTool = createPrismaExecutionTool();
 
-    // Build CoreMessages from the UIMessage array
+    // TODO: CHANEG THIS PROMPT TOP LEVEL TO SOMETHING REAL ESTATE RELATED
     const coreMessages = [
       {
         role: "system",

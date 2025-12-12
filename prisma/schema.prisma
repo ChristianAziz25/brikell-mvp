@@ -152,7 +152,7 @@ model ChatMessage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  chatId String @unique
+  chatId String
   chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   @@map("chat_message")
