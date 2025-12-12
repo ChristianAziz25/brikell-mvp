@@ -132,7 +132,6 @@ export default function Page() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [smoothPosition, setSmoothPosition] = useState({ x: 0, y: 0 });
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
-  const [previewOrigin, setPreviewOrigin] = useState({ left: 0, top: 0 });
   const previewContainerRef = useRef<HTMLDivElement | null>(null);
   const previewAnimationRef = useRef<number | null>(null);
 
@@ -162,23 +161,6 @@ export default function Page() {
 
     el.addEventListener("scroll", handleScroll);
     return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const updateOrigin = () => {
-      if (!previewContainerRef.current) return;
-      const rect = previewContainerRef.current.getBoundingClientRect();
-      setPreviewOrigin({ left: rect.left, top: rect.top });
-    };
-
-    updateOrigin();
-    window.addEventListener("resize", updateOrigin);
-    window.addEventListener("scroll", updateOrigin);
-
-    return () => {
-      window.removeEventListener("resize", updateOrigin);
-      window.removeEventListener("scroll", updateOrigin);
-    };
   }, []);
 
   useEffect(() => {
@@ -270,7 +252,7 @@ export default function Page() {
       <section
         ref={previewContainerRef}
         onMouseMove={handlePreviewMouseMove}
-        className="flex flex-col min-h-0 w-32 h-full gap-4"
+        className="relative flex flex-col min-h-0 w-32 h-full gap-4"
       >
         <div className="flex flex-col gap-2 overflow-y-auto no-scrollbar overscroll-y-contain p-2">
           {conversationTurns.map((turn, index) => (
@@ -314,12 +296,10 @@ export default function Page() {
           ))}
         </div>
         <div
-          className="pointer-events-none fixed z-50 overflow-hidden rounded-xl shadow-2xl"
+          className="pointer-events-none absolute z-50 overflow-hidden rounded-xl shadow-2xl"
           style={{
-            left: previewOrigin.left,
-            top: previewOrigin.top,
-            transform: `translate3d(${smoothPosition.x + 20}px, ${
-              smoothPosition.y - 100
+            transform: `translate3d(${smoothPosition.x + 16}px, ${
+              smoothPosition.y - 60
             }px, 0)`,
             opacity:
               isPreviewVisible &&
