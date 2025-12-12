@@ -148,7 +148,7 @@ export default function HelpPage() {
                 Contact our support team for personalized assistance
               </p>
             </div>
-            <Button className="cursor-pointer hover:bg-muted/30">
+            <Button className="cursor-pointer hover:bg-muted">
               Contact Support
             </Button>
           </div>

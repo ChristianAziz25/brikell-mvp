@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function HomeSkeleton() {
   return (
-    <div className="max-w-4xl mx-auto space-y-12 py-12">
+    <div>
       {/* Header */}
       <div className="space-y-3 text-center">
         <Skeleton className="h-8 w-64 mx-auto" />
@@ -33,10 +33,7 @@ export function HomeSkeleton() {
         <Skeleton className="h-4 w-32" />
         <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card
-              key={i}
-              className="mt-2 h-40 border border-border/40 bg-card"
-            >
+            <Card key={i} className="mt-2 h-40 border border-border/40 bg-card">
               <div className="p-4 space-y-3">
                 <Skeleton className="h-4 w-32" />
                 <Skeleton className="h-3 w-40" />
@@ -49,5 +46,3 @@ export function HomeSkeleton() {
     </div>
   );
 }
-
-

@@ -2,6 +2,7 @@
 
 import { Chat } from "@/components";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ChartLineMultiple } from "@/components/ui/multi-line-chart";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import {
@@ -88,7 +89,7 @@ export default function Home() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-12 py-12">
+    <div className="w-full h-full space-y-12">
       <div className="space-y-2">
         <h2 className="text-3xl font-bold text-foreground text-center">
           Welcome{" "}
@@ -133,9 +134,28 @@ export default function Home() {
         </h3>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
           {dashboards.map(({ key, title, description, Chart, data }) => (
-            <div key={key} className="mt-2">
-              <Chart title={title} description={description} data={data} />
-            </div>
+            <Dialog key={key}>
+              <DialogTrigger
+                className="mt-2 cursor-pointer hover:bg-muted/30"
+                asChild
+              >
+                <Chart
+                  title={title}
+                  // description={description}
+                  data={data}
+                  interactive={false}
+                />
+              </DialogTrigger>
+              <DialogContent>
+                <Chart
+                  className="w-full h-full"
+                  title={title}
+                  description={description}
+                  data={data}
+                  fullscreen={true}
+                />
+              </DialogContent>
+            </Dialog>
           ))}
         </div>
       </div>

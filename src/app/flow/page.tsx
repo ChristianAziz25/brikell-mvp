@@ -375,13 +375,13 @@ export default function Page() {
       : stages.filter((stage) => stage === selectedStage);
 
   return (
-    <div className="w-full h-screen">
+    <div className="w-full h-full">
       {isUnitsLoading ? (
         <FlowSkeleton />
       ) : (
         <div className="w-full">
           <div className="space-y-6 max-w-full">
-            <div className="w-full p-6 ">
+            <div className="w-full">
               <h2 className="text-3xl font-bold tracking-tight text-foreground">
                 Leasing Pipeline
               </h2>
@@ -399,9 +399,9 @@ export default function Page() {
                   }
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border min-w-fit cursor-pointer transition-colors",
-                    selectedStage === stage && "bg-muted/50",
-                    index === 0 && "ml-6",
-                    index === stages.length && "mr-4"
+                    selectedStage === stage && "bg-muted/50"
+                    // index === 0 && "ml-6",
+                    // index === stages.length && "mr-4"
                   )}
                 >
                   <span className="text-sm font-medium text-foreground">
@@ -428,10 +428,10 @@ export default function Page() {
                     key={stage}
                     stage={stage}
                     cards={getCardsByStage(stage)}
-                    className={cn(
-                      index === 0 && "md:ml-6",
-                      index === filteredStages.length - 1 && "md:mr-6"
-                    )}
+                    className={cn()
+                    // index === 0 && "md:ml-6",
+                    // index === filteredStages.length - 1 && "md:mr-6"
+                    }
                   />
                 ))}
               </div>

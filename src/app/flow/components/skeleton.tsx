@@ -4,7 +4,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function FlowSkeleton() {
   return (
-    <div className="w-full h-screen px-6">
+    <div className="w-full h-full px-6">
       <div className="w-full">
         <div className="space-y-6 max-w-full">
           {/* Header skeleton */}
