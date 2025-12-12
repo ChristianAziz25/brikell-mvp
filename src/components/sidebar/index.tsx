@@ -3,12 +3,14 @@ import { Icon } from "@/components/icon";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
-  FileCheckIcon,
-  FileIcon,
-  FolderIcon,
+  Building2Icon,
+  HammerIcon,
   HouseIcon,
+  LayoutDashboardIcon,
   MessageCircleQuestionMarkIcon,
+  MessageSquareIcon,
   SettingsIcon,
+  TrendingDownIcon,
   TrendingUpIcon,
   WorkflowIcon,
 } from "lucide-react";
@@ -39,24 +41,38 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    title: "My assets",
-    url: "/my-assets",
+    title: "Properties",
+    url: "/properties",
     icon: (
-      <FolderIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <LayoutDashboardIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
-    title: "Rent-roll",
-    url: "/rent-roll",
+    title: "Units & Rent-rolls",
+    url: "/units-and-rent-rolls",
     icon: (
-      <FileIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <Building2Icon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    title: "OPEX",
+    url: "/opex",
+    icon: (
+      <TrendingDownIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    title: "CAPEX",
+    url: "/capex",
+    icon: (
+      <HammerIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Diligence",
     url: "/diligence",
     icon: (
-      <FileCheckIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <MessageSquareIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
@@ -151,7 +167,9 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-1 p-2">
       <div className="p-2 md:p-10 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full overflow-y-auto no-scrollbar overscroll-y-contain">
-        <div className="max-w-4xl mx-auto py-12">{children}</div>
+        <div className="w-full max-w-4xl mx-auto px-4 md:px-8 py-12">
+          {children}
+        </div>
       </div>
     </div>
   );
