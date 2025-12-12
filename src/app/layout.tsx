@@ -1,4 +1,4 @@
-import { Sidebar } from "@/components";
+import { AppSidebar } from "@/components";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import type { Metadata } from "next";
 import "./globals.css";
@@ -21,7 +21,7 @@ export default function RootLayout({
         <Providers>
           <SidebarProvider>
             <div className="flex w-full min-h-svh bg-muted/5 overflow-hidden">
-              <Sidebar>{children}</Sidebar>
+              <AppSidebar>{children}</AppSidebar>
             </div>
           </SidebarProvider>
         </Providers>

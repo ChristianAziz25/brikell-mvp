@@ -234,7 +234,6 @@ export default function Page() {
     });
   }, [isLoading, messages.length]);
 
-  // When user presses Enter:
   function handleChatEvent(value: string) {
     if (!isLoading) {
       sendMessage({
@@ -243,8 +242,6 @@ export default function Page() {
       });
       return;
     }
-
-    // Otherwise, enqueue the message
     queueRef.current.push(value);
     setQueue([...queueRef.current]);
   }

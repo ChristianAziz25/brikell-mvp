@@ -1,6 +1,6 @@
 import { BreadCrumbsBar } from "./breadcrumbsBar";
 import Card from "./card";
 import Chat from "./chat";
-import { Sidebar } from "./sidebar";
+import { AppSidebar } from "./sidebar";
 
-export { BreadCrumbsBar, Card, Chat, Sidebar };
+export { AppSidebar, BreadCrumbsBar, Card, Chat };
