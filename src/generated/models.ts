@@ -8,11 +8,11 @@
  *
  * 🟢 You can import this file directly.
  */
-export type * from './models/Asset'
-export type * from './models/TheoreticalRentalIncome'
-export type * from './models/Capex'
-export type * from './models/Opex'
-export type * from './models/RentRollUnit'
-export type * from './models/Chat'
-export type * from './models/ChatMessage'
-export type * from './commonInputTypes'
+export type * from './models/Asset.js'
+export type * from './models/TheoreticalRentalIncome.js'
+export type * from './models/Capex.js'
+export type * from './models/Opex.js'
+export type * from './models/RentRollUnit.js'
+export type * from './models/Chat.js'
+export type * from './models/ChatMessage.js'
+export type * from './commonInputTypes.js'

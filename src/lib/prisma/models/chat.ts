@@ -2,9 +2,8 @@ import type { MyUIMessage } from "@/types/ChatMessage";
 import { prisma } from "../client";
 
 export async function createChat() {
-  const id = crypto.randomUUID();
   const chat = await prisma.chat.create({
-    data: { id, chatMessages: { create: [] } },
+    data: { chatMessages: { create: [] } },
   });
   return chat;
 }

@@ -19,7 +19,7 @@ import * as $Class from "./internal/class"
 import * as Prisma from "./internal/prismaNamespace"
 
 export * from "./enums"
-export * as $Enums from './enums'
+export * as $Enums from "./enums"
 export { Prisma }
 /**
  * ## Prisma Client
