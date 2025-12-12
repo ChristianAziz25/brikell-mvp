@@ -7,6 +7,8 @@ import {
   FileIcon,
   FolderIcon,
   HouseIcon,
+  MessageCircleQuestionMarkIcon,
+  SettingsIcon,
   TrendingUpIcon,
   WorkflowIcon,
 } from "lucide-react";
@@ -26,35 +28,35 @@ const navItems: NavItem[] = [
     title: "Home",
     url: "/",
     icon: (
-      <HouseIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <HouseIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Flow",
     url: "/flow",
     icon: (
-      <WorkflowIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <WorkflowIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "My assets",
     url: "/my-assets",
     icon: (
-      <FolderIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <FolderIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Rent-roll",
     url: "/rent-roll",
     icon: (
-      <FileIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <FileIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Diligence",
     url: "/diligence",
     icon: (
-      <FileCheckIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <FileCheckIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
@@ -62,7 +64,24 @@ const navItems: NavItem[] = [
     beta: true,
     url: "/performance",
     icon: (
-      <TrendingUpIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <TrendingUpIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+];
+
+const footerItems: NavItem[] = [
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: (
+      <SettingsIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    title: "Help",
+    url: "/help",
+    icon: (
+      <MessageCircleQuestionMarkIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
 ];
@@ -94,18 +113,29 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div>
+            {footerItems.map((item, idx) => (
+              <SidebarLink
+                key={idx}
+                link={{
+                  label: item.title,
+                  href: item.url,
+                  icon: item.icon,
+                }}
+              />
+            ))}
             <SidebarLink
               link={{
-                label: "Manu Arora",
+                label: "Christian Aziz",
                 href: "#",
                 icon: (
-                  <Image
-                    src="https://media.licdn.com/dms/image/v2/D4D03AQHUjH0mftm-9w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1718977943739?e=1767225600&v=beta&t=qcQSAZuYN6QJQfDIA4ddEQVQSVRQue2W-wpGwVBK0uU"
-                    className="h-7 w-7 shrink-0 rounded-full"
-                    width={50}
-                    height={50}
-                    alt="Avatar"
-                  />
+                  <div className="relative size-6 flex shrink-0 items-center gap-2">
+                    <Image
+                      src="https://media.licdn.com/dms/image/v2/D4D03AQHUjH0mftm-9w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1718977943739?e=1767225600&v=beta&t=qcQSAZuYN6QJQfDIA4ddEQVQSVRQue2W-wpGwVBK0uU"
+                      fill
+                      className="w-full h-full object-contain shrink-0 rounded-full"
+                      alt="Avatar"
+                    />
+                  </div>
                 ),
               }}
             />
