@@ -2,14 +2,14 @@
 
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { LucideIcon, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link, { LinkProps } from "next/link";
 import React, { createContext, useContext, useState } from "react";
 
 interface Links {
   label: string;
   href: string;
-  icon: LucideIcon | React.ReactElement;
+  icon: React.ReactElement | React.ReactNode;
 }
 
 interface SidebarContextProps {
@@ -89,7 +89,7 @@ export const DesktopSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] flex-shrink-0",
+        "h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0",
         className
       )}
       animate={{
@@ -114,7 +114,7 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-4 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-10 px-2 py-4 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
         )}
         {...props}
       >
@@ -135,7 +135,7 @@ export const MobileSidebar = ({
                 ease: "easeInOut",
               }}
               className={cn(
-                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-[100] flex flex-col justify-between",
+                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-100 flex flex-col justify-between",
                 className
               )}
             >
@@ -164,9 +164,6 @@ export const SidebarLink = ({
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
-  const iconElement = React.isValidElement(link.icon)
-    ? link.icon
-    : React.createElement(link.icon as LucideIcon);
   return (
     <Link
       href={link.href}
@@ -176,8 +173,9 @@ export const SidebarLink = ({
       )}
       {...props}
     >
-      {iconElement}
+      {link.icon}
       <motion.span
+        initial={false}
         animate={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,

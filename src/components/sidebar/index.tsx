@@ -7,7 +7,6 @@ import {
   FileIcon,
   FolderIcon,
   HouseIcon,
-  LucideIcon,
   TrendingUpIcon,
   WorkflowIcon,
 } from "lucide-react";
@@ -17,7 +16,7 @@ import { useState } from "react";
 type NavItem = {
   title: string;
   url: string;
-  icon: LucideIcon;
+  icon: React.ReactNode;
   disabled?: boolean;
   beta?: boolean;
 };
@@ -26,33 +25,45 @@ const navItems: NavItem[] = [
   {
     title: "Home",
     url: "/",
-    icon: HouseIcon,
+    icon: (
+      <HouseIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
   },
   {
     title: "Flow",
     url: "/flow",
-    icon: WorkflowIcon,
+    icon: (
+      <WorkflowIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
   },
   {
     title: "My assets",
     url: "/my-assets",
-    icon: FolderIcon,
+    icon: (
+      <FolderIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
   },
   {
     title: "Rent-roll",
     url: "/rent-roll",
-    icon: FileIcon,
+    icon: (
+      <FileIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
   },
   {
     title: "Diligence",
     url: "/diligence",
-    icon: FileCheckIcon,
+    icon: (
+      <FileCheckIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
   },
   {
     title: "Performance",
     beta: true,
     url: "/performance",
-    icon: TrendingUpIcon,
+    icon: (
+      <TrendingUpIcon className="size-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
   },
 ];
 
