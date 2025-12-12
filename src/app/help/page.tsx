@@ -92,7 +92,7 @@ export default function HelpPage() {
                 <Button
                   key={article.title}
                   variant="ghost"
-                  className="w-full flex items-center justify-between p-4 h-auto rounded-none hover:bg-muted/30 text-left"
+                  className="w-full flex items-center justify-between p-4 h-auto rounded-none hover:bg-muted/30 text-left cursor-pointer"
                 >
                   <div className="flex flex-col items-start">
                     <p className="font-medium text-foreground">
@@ -123,9 +123,9 @@ export default function HelpPage() {
                 <AccordionItem
                   key={faq.id}
                   value={faq.id}
-                  className="border border-border rounded-lg px-3"
+                  className="border border-border rounded-lg px-4"
                 >
-                  <AccordionTrigger className="text-left font-medium text-foreground py-2">
+                  <AccordionTrigger className="text-left font-medium text-foreground py-4 cursor-pointer">
                     {faq.question}
                   </AccordionTrigger>
                   <AccordionContent className="text-sm text-muted-foreground pb-3">
@@ -148,7 +148,9 @@ export default function HelpPage() {
                 Contact our support team for personalized assistance
               </p>
             </div>
-            <Button>Contact Support</Button>
+            <Button className="cursor-pointer hover:bg-muted/30">
+              Contact Support
+            </Button>
           </div>
         </CardContent>
       </Card>
