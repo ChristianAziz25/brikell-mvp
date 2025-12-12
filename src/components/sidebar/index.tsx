@@ -100,7 +100,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                 href: "#",
                 icon: (
                   <Image
-                    src="https://assets.aceternity.com/manu.png"
+                    src="https://media.licdn.com/dms/image/v2/D4D03AQHUjH0mftm-9w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1718977943739?e=1767225600&v=beta&t=qcQSAZuYN6QJQfDIA4ddEQVQSVRQue2W-wpGwVBK0uU"
                     className="h-7 w-7 shrink-0 rounded-full"
                     width={50}
                     height={50}
