@@ -56,12 +56,12 @@ export default function SettingsPage() {
           return (
             <Card
               key={section.title}
-              className="bg-card border border-border rounded-lg shadow-elevation-1 text-left card-interactive animate-fade-in cursor-pointer transition-colors hover:bg-muted/60"
+              className="bg-card border border-border rounded-lg shadow-elevation-1 text-left card-interactive animate-fade-in cursor-pointer transition-colors hover:bg-muted/30"
               style={{ animationDelay: `${section.delay}ms` }}
             >
               <CardHeader className="p-5 pb-3">
                 <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-muted">
+                  <div className="p-2 rounded-lg bg-muted/60">
                     <Icon className="w-5 h-5 text-foreground" />
                   </div>
                   <div>
