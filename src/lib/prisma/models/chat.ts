@@ -57,17 +57,23 @@ export async function saveChatHistory(
   chatId: string,
   messages: MyUIMessage[],
 ): Promise<{ success: boolean }> {
-  // Replace the existing message rows for this chat with one row per UI message.
-  // This keeps the database in sync with the in-memory history while keeping
-  // the schema simple (no per-message upsert logic needed).
-  await prisma.$transaction([
-    prisma.chatMessage.deleteMany({ where: { chatId } }),
-    prisma.chatMessage.createMany({
-      data: messages.map((msg) => ({
-        chatId,
-        message: JSON.stringify(msg),
-      })),
-    }),
-  ]);
+  // Upsert one ChatMessage row per UI message, keyed by the UI message id.
+  // This allows multiple ChatMessage rows per Chat over time without
+  // deleting existing history.
+  await prisma.$transaction(
+    messages.map((msg) =>
+      prisma.chatMessage.upsert({
+        where: { id: msg.id },
+        create: {
+          id: msg.id,
+          chatId,
+          message: JSON.stringify(msg),
+        },
+        update: {
+          message: JSON.stringify(msg),
+        },
+      }),
+    ),
+  );
   return { success: true };
 }

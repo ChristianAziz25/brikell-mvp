@@ -9,8 +9,9 @@ import type { MyUIMessage } from "@/types/ChatMessage";
 import { useChat } from "@ai-sdk/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
+import { motion } from "framer-motion";
 import { Brain, Loader2 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getConversationTurns } from "./utils/convertTurns";
 
@@ -39,10 +40,9 @@ function extractMessageContent(message: UIMessage): string {
 
 export default function Page() {
   const { chatId } = useParams<{ chatId: string }>();
-  const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { data: chatData, isLoading: isChatLoading } = useQuery<ChatHistory>({
+  const { data: chatData } = useQuery<ChatHistory>({
     queryKey: ["chat-history", chatId],
     queryFn: async () => {
       const chat = await fetch(`/api/chat-creation?chatId=${chatId}`);
@@ -107,13 +107,6 @@ export default function Page() {
       queryClient.invalidateQueries({ queryKey: ["chat-history", chatId] });
     },
   });
-
-  // useEffect(() => {
-  //   if (!isChatLoading && !chatData) {
-  //     router.push("/diligence");
-  //   }
-  // }, [isChatLoading, chatData, router]);
-
   const initialMessages: MyUIMessage[] = useMemo(() => {
     const rows = chatData?.chatMessages ?? [];
     if (!rows.length) return [];
@@ -210,24 +203,54 @@ export default function Page() {
 
   return (
     <div className="flex w-full h-full flex-row gap-6 lg:flex-row min-h-0 p-4">
-      <section className="flex flex-col min-h-0 w-48 h-full gap-4">
-        <Card className="h-full">
-          <CardHeader>
-            <CardTitle>Chat History</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul>
-              {conversationTurns.map((turn, index) => (
-                <li key={index} className="mb-3 text-xs">
-                  <div className="font-semibold">You:</div>
-                  <div className="mb-1 text-muted-foreground">{turn.user}</div>
-                  <div className="font-semibold">Assistant:</div>
-                  <div className="text-muted-foreground">{turn.assistant}</div>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
+      <section className="flex flex-col min-h-0 w-32 h-full gap-4">
+        <div className="flex flex-col gap-2 overflow-y-auto no-scrollbar overscroll-y-contain">
+          {conversationTurns.map((turn, index) => (
+            <div
+              key={index}
+              style={{
+                perspective: 900,
+                width: "100%",
+                height: 160,
+                aspectRatio: "16/9",
+              }}
+            >
+              <motion.div
+                whileHover={{
+                  rotateX: -8,
+                  rotateY: 8,
+                  zIndex: 20,
+                  scale: 1.04,
+                }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  transformStyle: "preserve-3d",
+                  cursor: "pointer",
+                  position: "relative",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+                className="rounded-xl bg-card shadow-lg px-3 py-2"
+              >
+                <div className="mb-1 text-xs font-semibold text-muted-foreground truncate">
+                  You:
+                </div>
+                <div className="mb-1 text-xs text-muted-foreground truncate">
+                  {turn.user}
+                </div>
+                <div className="mb-1 text-xs font-semibold text-muted-foreground truncate">
+                  Assistant:
+                </div>
+                <div className="text-xs text-muted-foreground line-clamp-3">
+                  {turn.assistant}
+                </div>
+              </motion.div>
+            </div>
+          ))}
+        </div>
       </section>
       <section className="flex flex-1 flex-col min-h-0 gap-4">
         <div className="relative flex-1 min-h-0 rounded-2xl border bg-card shadow-md">
