@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChartLineDefault } from "@/components/ui/line-chart";
 import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
@@ -241,8 +240,6 @@ export default function MyAssets() {
     return sum + asset.rentRoll.length;
   }, 0);
 
-  const capexAvg = capexTotal / totalUnits;
-
   const cardConfig = [
     {
       title: "Total NOI",
@@ -265,6 +262,16 @@ export default function MyAssets() {
       data: capexTotal,
     },
   ];
+
+  if (isAssetsLoading) {
+    return <MyAssetsSkeleton />;
+  }
+
+  if (!assets || assets.length === 0) {
+    return (
+      <div className="text-muted-foreground">No asset data available.</div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -294,27 +301,6 @@ export default function MyAssets() {
           isLoading={isAssetsLoading}
         />
       </section>
-      {isAssetsLoading ? (
-        <MyAssetsSkeleton />
-      ) : !assets ? (
-        <div className="text-muted-foreground">No asset data available.</div>
-      ) : (
-        <>
-          <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
-            {assets.map((asset) => (
-              <Button
-                key={asset.id}
-                onClick={() => router.push(`/properties/${asset.name}`)}
-              >
-                <span className="font-medium">{asset.name}</span>
-              </Button>
-            ))}
-          </div>
-          <div className="space-y-8">
-            <section className="space-y-3"></section>
-          </div>
-        </>
-      )}
     </div>
   );
 }
