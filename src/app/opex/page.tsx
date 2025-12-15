@@ -453,16 +453,15 @@ export default function Opex() {
         {budgetVsActualData.length > 0 ? (
           <Dialog>
             <DialogTrigger asChild>
-              <div className="cursor-pointer">
-                <ChartBarMultiple
-                  data={budgetVsActualData.slice(0, 3)}
-                  config={chartConfig}
-                  title="Budget vs Actual"
-                  categoryKey="category"
-                  valueKey="budget"
-                  interactive={false}
-                />
-              </div>
+              <ChartBarMultiple
+                data={budgetVsActualData.slice(0, 3)}
+                config={chartConfig}
+                title="Budget vs Actual"
+                categoryKey="category"
+                valueKey="budget"
+                interactive={false}
+                className="cursor-pointer hover:bg-muted/30"
+              />
             </DialogTrigger>
             <DialogContent className="max-w-4xl">
               <ChartBarMultiple
