@@ -194,4 +194,20 @@
   .accordion-content[data-state="closed"] {
     animation: accordion-up 0.2s ease-out;
   }
+
+  .kpi-label {
+    @apply text-sm text-muted-foreground mb-2;
+  }
+
+  .trend-pill {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+
+  .trend-pill.trend-down {
+    @apply bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400;
+  }
+
+  .trend-pill.trend-up {
+    @apply bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-400;
+  }
 }

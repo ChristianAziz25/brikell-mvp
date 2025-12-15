@@ -2,8 +2,6 @@
 
 import { type Chat as ChatHistory } from "@/app/api/chat-creation/route";
 import Chat from "@/components/chat";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { MyUIMessage } from "@/types/ChatMessage";
 import { useChat } from "@ai-sdk/react";
@@ -248,13 +246,14 @@ export default function Page() {
   }, [status, messages, upsertChatHistory, chatId]);
 
   return (
-    <div className="flex w-full h-full flex-row gap-6 lg:flex-row min-h-0">
+    <div className="flex w-full min-h-screen gap-6">
       <section
         ref={previewContainerRef}
         onMouseMove={handlePreviewMouseMove}
-        className="relative flex flex-col min-h-0 w-32 h-full gap-4"
+        className="relative flex flex-col w-32 sticky top-0 self-start"
+        style={{ height: "calc(100vh - 2rem)" }}
       >
-        <div className="flex flex-col gap-2 overflow-y-auto no-scrollbar overscroll-y-contain p-2">
+        <div className="flex flex-col gap-2 overflow-y-auto no-scrollbar overscroll-y-contain p-2 flex-1 min-h-0">
           {conversationTurns.map((turn, index) => (
             <div
               key={index}
@@ -337,11 +336,11 @@ export default function Page() {
           </div>
         </div>
       </section>
-      <section className="flex flex-1 flex-col min-h-0 gap-4">
-        <div className="relative flex-1 min-h-0 rounded-2xl border bg-card shadow-md">
+      <section className="flex flex-1 flex-col min-h-0 relative">
+        <div className="relative flex-1 min-h-0 mb-4">
           <div
             ref={messageScrollRef}
-            className="h-full space-y-4 overflow-y-auto p-6 pb-16 no-scrollbar"
+            className="h-full space-y-4 overflow-y-auto p-6 pb-32 no-scrollbar"
           >
             {messages.length === 0 && (
               <div className="flex justify-start">
@@ -439,7 +438,7 @@ export default function Page() {
               )}
           </div>
 
-          <div className="pointer-events-none absolute w-full inset-x-0 bottom-0 flex justify-between p-4">
+          {/* <div className="pointer-events-none absolute w-full inset-x-0 bottom-0 flex justify-between p-4">
             <div className="hidden md:flex items-center gap-2 pointer-events-auto">
               {agents.map((agent) => (
                 <button
@@ -472,10 +471,10 @@ export default function Page() {
                 </CardContent>
               </Card>
             )}
-          </div>
+          </div> */}
         </div>
 
-        <div className="shrink-0">
+        <div className="sticky bottom-0 z-50 bg-white dark:bg-neutral-900 pt-4">
           <Chat eventHandler={handleChatEvent} className="shadow-md" />
         </div>
       </section>

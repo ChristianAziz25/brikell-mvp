@@ -275,10 +275,10 @@ export default function MyAssets() {
 
   return (
     <div className="space-y-6">
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-4">
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-4">
         {cardConfig.map((card) => (
           <Card key={card.title}>
-            <CardContent className="p-5">
+            <CardContent className="p-5 overflow-hidden">
               <p className="text-sm text-muted-foreground">{card.title}</p>
               <h3 className="text-2xl font-bold">
                 {dollarStringify(card.data)}
