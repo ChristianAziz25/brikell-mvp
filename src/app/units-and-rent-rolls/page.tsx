@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RentRollUnitModel } from "@/generated/models/RentRollUnit";
-import { cn } from "@/lib/utils";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   flexRender,
@@ -29,10 +28,11 @@ import {
   useReactTable,
   type ColumnDef,
   type ColumnFiltersState,
+  type FilterFn,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { DownloadIcon, Plus, Upload, X } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { RentStatus } from "../type/rent-roll";
 import { RentRollSkeleton } from "./components/skeleton";
 
@@ -65,8 +65,31 @@ export default function Page() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [showFilter, setShowFilter] = useState(false);
   const [isUploading, setIsUploading] = useState(false); // <- new state
+
+  type RangeFilter = {
+    min?: number;
+    max?: number;
+  };
+
+  const rangeFilterFn: FilterFn<RentRollUnitModel> = (
+    row,
+    columnId,
+    filterValue
+  ) => {
+    const value = row.getValue<number | string | null | undefined>(columnId);
+    if (value == null || value === "") return false;
+
+    const numericValue = typeof value === "number" ? value : Number(value);
+    if (Number.isNaN(numericValue)) return false;
+
+    const { min, max } = (filterValue || {}) as RangeFilter;
+
+    if (typeof min === "number" && numericValue < min) return false;
+    if (typeof max === "number" && numericValue > max) return false;
+
+    return true;
+  };
 
   const { data: rentRollData = [], isLoading } = useQuery<RentRollUnitModel[]>({
     queryKey: ["rentRollData"],
@@ -97,183 +120,182 @@ export default function Page() {
     }
   };
 
-  const columns = useMemo<ColumnDef<RentRollUnitModel>[]>(
-    () => [
-      {
-        accessorKey: "unit_id",
-        header: "Unit ID",
-        cell: ({ getValue }) => (
-          <span className="font-medium text-foreground">
-            {getValue<string>()}
-          </span>
-        ),
-        enableColumnFilter: false,
+  const columns: ColumnDef<RentRollUnitModel>[] = [
+    {
+      accessorKey: "unit_id",
+      header: "Unit ID",
+      cell: ({ getValue }) => (
+        <span className="font-medium text-foreground">
+          {getValue<string>()}
+        </span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "property_build_year",
+      header: "Property Year",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "property_name",
+      header: "Property Name",
+      enableColumnFilter: true,
+    },
+    {
+      accessorKey: "unit_address",
+      header: "Unit Address",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "unit_zipcode",
+      header: "Zipcode",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "unit_door",
+      header: "Unit Door",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "unit_floor",
+      header: "Floor",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "utilites_cost",
+      header: "Utilities Cost",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "unit_type",
+      header: "Unit Type",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "size_sqm",
+      header: "Size (sqm)",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "rooms_amount",
+      header: "Rooms",
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "bedrooms_amount",
+      header: "Bedrooms",
+      enableColumnFilter: true,
+      filterFn: rangeFilterFn,
+    },
+    {
+      accessorKey: "bathrooms_amount",
+      header: "Bathrooms",
+      enableColumnFilter: true,
+      filterFn: rangeFilterFn,
+    },
+    {
+      accessorKey: "rent_current_gri",
+      header: "Rent Current",
+      enableColumnFilter: true,
+      filterFn: rangeFilterFn,
+    },
+    {
+      accessorKey: "rent_budget_tri",
+      header: "Rent Budget",
+      enableColumnFilter: true,
+      filterFn: rangeFilterFn,
+    },
+    {
+      accessorKey: "units_status",
+      header: "Status",
+      cell: ({ row }) => {
+        const status = row.getValue("units_status") as RentStatus;
+        const className = rentStatusVariants[status];
+        return (
+          <Badge
+            variant="outline"
+            className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-primary/80 ${className}`}
+          >
+            {status}
+          </Badge>
+        );
       },
-      {
-        accessorKey: "property_build_year",
-        header: "Property Year",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "property_name",
-        header: "Property Name",
-        enableColumnFilter: true,
-      },
-      {
-        accessorKey: "unit_address",
-        header: "Unit Address",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "unit_zipcode",
-        header: "Zipcode",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "unit_door",
-        header: "Unit Door",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "unit_floor",
-        header: "Floor",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "utilites_cost",
-        header: "Utilities Cost",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "unit_type",
-        header: "Unit Type",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "size_sqm",
-        header: "Size (sqm)",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "rooms_amount",
-        header: "Rooms",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "bedrooms_amount",
-        header: "Bedrooms",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "bathrooms_amount",
-        header: "Bathrooms",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "rent_current_gri",
-        header: "Rent Current",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "rent_budget_tri",
-        header: "Rent Budget",
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "units_status",
-        header: "Status",
-        cell: ({ row }) => {
-          const status = row.getValue("units_status") as RentStatus;
-          const className = rentStatusVariants[status];
-          return (
-            <Badge
-              variant="outline"
-              className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 hover:bg-primary/80 ${className}`}
-            >
-              {status}
-            </Badge>
-          );
-        },
-        enableColumnFilter: true,
-      },
-      {
-        accessorKey: "lease_start",
-        header: "Lease Start",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "lease_end",
-        header: "Lease End",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "tenant_name1",
-        header: "Tenant Name",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "tenant_name2",
-        header: "Tenant Name 2",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "tenant_number1",
-        header: "Tenant Number 1",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "tenant_number2",
-        header: "Tenant Number 2",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "tenant_mail1",
-        header: "Tenant Mail 1",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "tenant_mail2",
-        header: "Tenant Mail 2",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<string>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-      {
-        accessorKey: "rent_erv_tri",
-        header: "ERV/TRI",
-        cell: ({ getValue }) => (
-          <span className="whitespace-nowrap">{getValue<number>()}</span>
-        ),
-        enableColumnFilter: false,
-      },
-    ],
-    []
-  );
+      enableColumnFilter: true,
+    },
+    {
+      accessorKey: "lease_start",
+      header: "Lease Start",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "lease_end",
+      header: "Lease End",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "tenant_name1",
+      header: "Tenant Name",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "tenant_name2",
+      header: "Tenant Name 2",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "tenant_number1",
+      header: "Tenant Number 1",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "tenant_number2",
+      header: "Tenant Number 2",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "tenant_mail1",
+      header: "Tenant Mail 1",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "tenant_mail2",
+      header: "Tenant Mail 2",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<string>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+    {
+      accessorKey: "rent_erv_tri",
+      header: "ERV/TRI",
+      cell: ({ getValue }) => (
+        <span className="whitespace-nowrap">{getValue<number>()}</span>
+      ),
+      enableColumnFilter: false,
+    },
+  ];
 
-  // React Compiler can't memoize TanStack Table yet; suppress lint until upstream fix.
-  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: rentRollData,
     columns,
@@ -319,25 +341,9 @@ export default function Page() {
         <RentRollSkeleton />
       ) : (
         <div className="relative flex flex-col md:flex-row gap-4">
-          {/* Filter toggle pill */}
-          <button
-            type="button"
-            onClick={() => setShowFilter((prev) => !prev)}
-            className="self-start mt-1 inline-flex h-7 w-7 items-center justify-center rounded-full border bg-background text-xs font-medium text-foreground shadow-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            {showFilter ? <X className="h-3 w-3" /> : "F"}
-          </button>
-
-          {/* Collapsible filter panel */}
-          <div
-            className={cn(
-              "relative overflow-hidden transition-all duration-200",
-              showFilter
-                ? "w-full md:w-50 opacity-100"
-                : "w-0 md:w-0 opacity-0 pointer-events-none"
-            )}
-          >
-            <div className="space-y-4 min-h-0 px-0 md:pr-2">
+          {/* Filter sidebar (always visible) */}
+          <div className="sticky top-0 left-0 w-full md:w-72 md:shrink-0">
+            <div className="mt-1 space-y-4 rounded-lg border bg-card/60 p-3">
               <div className="flex items-center gap-2">
                 <Input
                   placeholder="Search all columns..."
@@ -347,7 +353,7 @@ export default function Page() {
                 />
               </div>
 
-              <div className="relative rounded-md flex items-center justify-end gap-2">
+              <div className="flex items-center justify-end gap-2">
                 {hasActiveFilters && (
                   <Button
                     variant="outline"
@@ -361,89 +367,363 @@ export default function Page() {
                 )}
               </div>
 
-              <div className="grid overflow-hidden transition-[grid-template-rows] duration-200">
-                <div className="min-h-0">
-                  <div className="flex flex-wrap gap-2 p-2 pb-0 mb-4">
-                    {table.getAllColumns().map((column) => {
-                      if (
-                        !column.getCanFilter() ||
-                        column.id === "units_status"
-                      )
-                        return null;
-                    })}
-
-                    {table.getColumn("property_name") && (
-                      <div className="flex items-center gap-2">
-                        <Select
-                          value={
-                            (
-                              table
-                                .getColumn("property_name")
-                                ?.getFilterValue() as string[]
-                            )?.join(",") || "all"
-                          }
-                          onValueChange={(value: string) => {
-                            table
-                              .getColumn("property_name")
-                              ?.setFilterValue(
-                                value === "all" ? undefined : value.split(",")
-                              );
-                          }}
-                        >
-                          <SelectTrigger className="h-8 w-[140px]">
-                            <SelectValue placeholder="All Properties" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Properties</SelectItem>
-                            {Array.from(
-                              table
-                                .getColumn("property_name")
-                                ?.getFacetedUniqueValues()
-                                .keys() || []
-                            ).map((value) => (
-                              <SelectItem key={value} value={value}>
-                                {value as string}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
-
-                    {table.getColumn("units_status") && (
-                      <div className="flex items-center gap-2">
-                        <Select
-                          value={
-                            (
-                              table
-                                .getColumn("units_status")
-                                ?.getFilterValue() as string[]
-                            )?.join(",") || "all"
-                          }
-                          onValueChange={(value: string) => {
-                            table
-                              .getColumn("units_status")
-                              ?.setFilterValue(
-                                value === "all" ? undefined : value.split(",")
-                              );
-                          }}
-                        >
-                          <SelectTrigger className="h-8 w-[140px]">
-                            <SelectValue placeholder="All Status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="occupied">Occupied</SelectItem>
-                            <SelectItem value="vacant">Vacant</SelectItem>
-                            <SelectItem value="terminated">
-                              Terminated
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
+              <div className="flex flex-col gap-3">
+                {table.getColumn("property_name") && (
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={
+                        (
+                          table
+                            .getColumn("property_name")
+                            ?.getFilterValue() as string[]
+                        )?.join(",") || "all"
+                      }
+                      onValueChange={(value: string) => {
+                        table
+                          .getColumn("property_name")
+                          ?.setFilterValue(
+                            value === "all" ? undefined : value.split(",")
+                          );
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-full">
+                        <SelectValue placeholder="All Properties" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Properties</SelectItem>
+                        {Array.from(
+                          table
+                            .getColumn("property_name")
+                            ?.getFacetedUniqueValues()
+                            .keys() || []
+                        ).map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {value as string}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                </div>
+                )}
+
+                {table.getColumn("units_status") && (
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={
+                        (
+                          table
+                            .getColumn("units_status")
+                            ?.getFilterValue() as string[]
+                        )?.join(",") || "all"
+                      }
+                      onValueChange={(value: string) => {
+                        table
+                          .getColumn("units_status")
+                          ?.setFilterValue(
+                            value === "all" ? undefined : value.split(",")
+                          );
+                      }}
+                    >
+                      <SelectTrigger className="h-8 w-full">
+                        <SelectValue placeholder="All Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="occupied">Occupied</SelectItem>
+                        <SelectItem value="vacant">Vacant</SelectItem>
+                        <SelectItem value="terminated">Terminated</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Rent Current range filter */}
+                {table.getColumn("rent_current_gri") && (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Rent Current
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const col = table.getColumn("rent_current_gri");
+                        const value = (col?.getFilterValue() ||
+                          {}) as RangeFilter;
+                        return (
+                          <>
+                            <Input
+                              type="number"
+                              inputMode="decimal"
+                              placeholder="Min"
+                              className="h-8 w-24"
+                              value={
+                                typeof value.min === "number" ? value.min : ""
+                              }
+                              onChange={(e) => {
+                                const min = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  min,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                            <Input
+                              type="number"
+                              inputMode="decimal"
+                              placeholder="Max"
+                              className="h-8 w-24"
+                              value={
+                                typeof value.max === "number" ? value.max : ""
+                              }
+                              onChange={(e) => {
+                                const max = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  max,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+
+                {/* Rent Budget range filter */}
+                {table.getColumn("rent_budget_tri") && (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Rent Budget
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const col = table.getColumn("rent_budget_tri");
+                        const value = (col?.getFilterValue() ||
+                          {}) as RangeFilter;
+                        return (
+                          <>
+                            <Input
+                              type="number"
+                              inputMode="decimal"
+                              placeholder="Min"
+                              className="h-8 w-24"
+                              value={
+                                typeof value.min === "number" ? value.min : ""
+                              }
+                              onChange={(e) => {
+                                const min = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  min,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                            <Input
+                              type="number"
+                              inputMode="decimal"
+                              placeholder="Max"
+                              className="h-8 w-24"
+                              value={
+                                typeof value.max === "number" ? value.max : ""
+                              }
+                              onChange={(e) => {
+                                const max = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  max,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+
+                {/* Bedrooms range filter */}
+                {table.getColumn("bedrooms_amount") && (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Bedrooms
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const col = table.getColumn("bedrooms_amount");
+                        const value = (col?.getFilterValue() ||
+                          {}) as RangeFilter;
+                        return (
+                          <>
+                            <Input
+                              type="number"
+                              inputMode="numeric"
+                              placeholder="Min"
+                              className="h-8 w-20"
+                              value={
+                                typeof value.min === "number" ? value.min : ""
+                              }
+                              onChange={(e) => {
+                                const min = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  min,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                            <Input
+                              type="number"
+                              inputMode="numeric"
+                              placeholder="Max"
+                              className="h-8 w-20"
+                              value={
+                                typeof value.max === "number" ? value.max : ""
+                              }
+                              onChange={(e) => {
+                                const max = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  max,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
+
+                {/* Bathrooms range filter */}
+                {table.getColumn("bathrooms_amount") && (
+                  <div className="flex flex-col gap-1">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      Bathrooms
+                    </span>
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const col = table.getColumn("bathrooms_amount");
+                        const value = (col?.getFilterValue() ||
+                          {}) as RangeFilter;
+                        return (
+                          <>
+                            <Input
+                              type="number"
+                              inputMode="numeric"
+                              placeholder="Min"
+                              className="h-8 w-20"
+                              value={
+                                typeof value.min === "number" ? value.min : ""
+                              }
+                              onChange={(e) => {
+                                const min = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  min,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                            <Input
+                              type="number"
+                              inputMode="numeric"
+                              placeholder="Max"
+                              className="h-8 w-20"
+                              value={
+                                typeof value.max === "number" ? value.max : ""
+                              }
+                              onChange={(e) => {
+                                const max = e.target.value
+                                  ? Number(e.target.value)
+                                  : undefined;
+                                const next: RangeFilter = {
+                                  ...value,
+                                  max,
+                                };
+                                if (
+                                  typeof next.min !== "number" &&
+                                  typeof next.max !== "number"
+                                ) {
+                                  col?.setFilterValue(undefined);
+                                } else {
+                                  col?.setFilterValue(next);
+                                }
+                              }}
+                            />
+                          </>
+                        );
+                      })()}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
