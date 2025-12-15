@@ -11,7 +11,6 @@ import {
   MessageSquareIcon,
   SettingsIcon,
   TrendingDownIcon,
-  TrendingUpIcon,
   WorkflowIcon,
 } from "lucide-react";
 import Image from "next/image";
@@ -67,20 +66,13 @@ const navItems: NavItem[] = [
     icon: (
       <HammerIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
+    beta: true,
   },
   {
     title: "Diligence",
     url: "/diligence",
     icon: (
       <MessageSquareIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
-    ),
-  },
-  {
-    title: "Performance",
-    beta: true,
-    url: "/performance",
-    icon: (
-      <TrendingUpIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
 ];
@@ -123,6 +115,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     label: item.title,
                     href: item.url,
                     icon: item.icon,
+                    beta: item.beta,
                   }}
                 />
               ))}
