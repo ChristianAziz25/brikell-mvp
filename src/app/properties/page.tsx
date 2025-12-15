@@ -288,7 +288,6 @@ export default function MyAssets() {
         <ChartLineDefault data={chartData} title="Total NOI" />
       </section>
       <section className="space-y-3">
-        <h3 className="text-lg font-semibold">Property Performance</h3>
         <Table
           table={portfolioTable}
           columnCount={portfolioTable.getAllLeafColumns().length}
