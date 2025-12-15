@@ -4,6 +4,8 @@ import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
   Building2Icon,
+  ClipboardListIcon,
+  DatabaseIcon,
   HammerIcon,
   HouseIcon,
   LayoutDashboardIcon,
@@ -73,6 +75,20 @@ const navItems: NavItem[] = [
     url: "/diligence",
     icon: (
       <MessageSquareIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    title: "Reports",
+    url: "/reports",
+    icon: (
+      <ClipboardListIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+    ),
+  },
+  {
+    title: "Data Library",
+    url: "/data-library",
+    icon: (
+      <DatabaseIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
 ];
