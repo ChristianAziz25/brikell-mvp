@@ -93,6 +93,7 @@
 
   --border-medium: 0.1rem solid var(--border);
   --main-bg: oklch(0.9458 0 0);
+  --page-bottom-padding: 4rem;
 }
 
 .dark {

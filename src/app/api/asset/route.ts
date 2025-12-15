@@ -1,6 +1,6 @@
 import { getAllAssetsCapexOpexTri } from "@/lib/prisma/models/asset";
 import { NextRequest, NextResponse } from "next/server";
-import { getTableData } from "../assets/getTriTableData";
+import { getTableData } from "../assets/getTableData";
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
     const asset =
       (name && assets.find((a) => a.name === name)) ?? assets[0];
 
-    console.log(asset);
     if (!asset) {
       return NextResponse.json(
         { error: "Asset not found" },
@@ -28,6 +27,7 @@ export async function GET(request: NextRequest) {
     }
 
     const tableData = await getTableData(asset);
+    console.log(tableData);
     return NextResponse.json(tableData);
   } catch (error) {
     console.error("Error fetching asset:", error);

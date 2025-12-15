@@ -616,7 +616,7 @@ export default function MyAssets() {
 
                 const gri =
                   triNumber != null && vacancyNumber != null
-                    ? triNumber - vacancyNumber
+                    ? triNumber - (triNumber * vacancyNumber) / 100
                     : undefined;
 
                 const totalOpex = opexRows.reduce((sum, row) => {
@@ -642,6 +642,20 @@ export default function MyAssets() {
 
               const value = row.original[year];
               const actual = Array.isArray(value) ? value[0] : value;
+
+              // Keep whole value for vacancy loss
+              if (row.original.metric === "vacancyLoss") {
+                const displayValue =
+                  typeof actual === "number"
+                    ? actual.toFixed(2).toString()
+                    : "-";
+                return (
+                  <div className="text-center max-w-40">
+                    <span className="">{displayValue}%</span>
+                  </div>
+                );
+              }
+
               const displayValue =
                 typeof actual === "number" ? dollarStringify(actual) : "-";
               return (
@@ -741,7 +755,7 @@ export default function MyAssets() {
 
                 const gri =
                   triNumber != null && vacancyNumber != null
-                    ? triNumber - vacancyNumber
+                    ? triNumber - (triNumber * vacancyNumber) / 100
                     : undefined;
 
                 const totalOpex = opexRows.reduce((sum, row) => {
@@ -767,6 +781,19 @@ export default function MyAssets() {
 
               const value = row.original[year];
               const budget = Array.isArray(value) ? value[1] : value;
+
+              if (row.original.metric === "vacancyLoss") {
+                const displayValue =
+                  typeof budget === "number"
+                    ? budget.toFixed(2).toString()
+                    : "-";
+                return (
+                  <div className="text-center max-w-40">
+                    <span className="">{displayValue}%</span>
+                  </div>
+                );
+              }
+
               const displayValue =
                 typeof budget === "number" ? dollarStringify(budget) : "-";
               return (
@@ -805,26 +832,26 @@ export default function MyAssets() {
         <div className="text-muted-foreground">No asset data available.</div>
       ) : (
         <>
-      <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
-        {assets.map((asset) => (
-          <Button
-            key={asset.id}
+          <div className="flex flex-row gap-2 overflow-x-auto no-scrollbar overscroll-x-contain">
+            {assets.map((asset) => (
+              <Button
+                key={asset.id}
                 variant={asset.name === activeAssetName ? "default" : "outline"}
-            onClick={() => setSelectedAsset(asset.name)}
-          >
-            <span className="font-medium">{asset.name}</span>
-          </Button>
-        ))}
-      </div>
-        <div className="space-y-8">
-          <section className="space-y-3">
-            <Table
-              table={unifiedTable}
-              columnCount={unifiedTable.getAllLeafColumns().length}
+                onClick={() => setSelectedAsset(asset.name)}
+              >
+                <span className="font-medium">{asset.name}</span>
+              </Button>
+            ))}
+          </div>
+          <div className="space-y-8">
+            <section className="space-y-3">
+              <Table
+                table={unifiedTable}
+                columnCount={unifiedTable.getAllLeafColumns().length}
                 isLoading={false}
-            />
-          </section>
-        </div>
+              />
+            </section>
+          </div>
         </>
       )}
     </div>

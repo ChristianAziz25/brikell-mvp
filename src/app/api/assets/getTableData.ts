@@ -98,6 +98,22 @@ export async function getTableData(
     const triHasActualBudget = hasActualBudgetPattern(triMetricKeys);
 
     triMetricKeys.forEach((key) => {
+        if (key === "vacancyLoss") {
+            triTableData.push({
+                metric: key,
+                ...asset.tri.reduce((acc, tri) => {
+                    if (tri.triAmount != null && tri.triAmount !== 0 && tri.vacancyLoss != null) {
+                        const value = (tri.vacancyLoss / tri.triAmount) * 100;
+                        if (typeof value === "number" && !Number.isNaN(value)) {
+                            acc[tri.triYear.toString()] = [value, value];
+                        }
+                    }
+                    return acc;
+                }, {} as Record<string, number[]>),
+            });
+            return;
+        }
+
         if (triHasActualBudget) {
             const segments = key.split("_");
             const lastSegment = segments[segments.length - 1];
@@ -160,6 +176,7 @@ export async function getTableData(
             }
         }
 
+        // Default case for other keys
         triTableData.push({
             metric: key,
             ...asset.tri.reduce((acc, tri) => {
@@ -263,6 +280,8 @@ export async function getTableData(
             }, {} as Record<string, number[]>),
         });
     });
+
+    console.log(triTableData);
 
   return {
     name: asset.name,
