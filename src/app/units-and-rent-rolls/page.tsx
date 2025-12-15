@@ -370,30 +370,45 @@ export default function Page() {
                         column.id === "units_status"
                       )
                         return null;
-
-                      if (column.id === "property_name") {
-                        const propertyUniqueValues = Array.from(
-                          column?.getFacetedUniqueValues().keys()
-                        ).sort();
-                        return (
-                          <div
-                            key={column.id}
-                            className="flex items-center gap-2"
-                          >
-                            {propertyUniqueValues.map((property) => (
-                              <Button
-                                key={property}
-                                variant="secondary"
-                                size="sm"
-                                onClick={() => column.setFilterValue(property)}
-                              >
-                                {property}
-                              </Button>
-                            ))}
-                          </div>
-                        );
-                      }
                     })}
+
+                    {table.getColumn("property_name") && (
+                      <div className="flex items-center gap-2">
+                        <Select
+                          value={
+                            (
+                              table
+                                .getColumn("property_name")
+                                ?.getFilterValue() as string[]
+                            )?.join(",") || "all"
+                          }
+                          onValueChange={(value: string) => {
+                            table
+                              .getColumn("property_name")
+                              ?.setFilterValue(
+                                value === "all" ? undefined : value.split(",")
+                              );
+                          }}
+                        >
+                          <SelectTrigger className="h-8 w-[140px]">
+                            <SelectValue placeholder="All Properties" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Properties</SelectItem>
+                            {Array.from(
+                              table
+                                .getColumn("property_name")
+                                ?.getFacetedUniqueValues()
+                                .keys() || []
+                            ).map((value) => (
+                              <SelectItem key={value} value={value}>
+                                {value as string}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
 
                     {table.getColumn("units_status") && (
                       <div className="flex items-center gap-2">
