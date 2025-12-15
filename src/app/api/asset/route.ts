@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
     }
 
     const tableData = await getTableData(asset);
-    console.log(tableData);
     return NextResponse.json(tableData);
   } catch (error) {
     console.error("Error fetching asset:", error);

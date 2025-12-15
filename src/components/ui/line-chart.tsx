@@ -1,13 +1,11 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,8 +17,6 @@ import {
   formatCompactNumber,
 } from "@/components/ui/chart";
 
-export const description = "A line chart";
-
 const chartConfig = {
   value: {
     label: "Value",
@@ -30,8 +26,12 @@ const chartConfig = {
 
 export function ChartLineDefault({
   data,
+  title,
+  description,
 }: {
   data: { year: number; value: number }[];
+  title: string;
+  description?: string;
 }) {
   const chartData = data
     .map((item) => ({
@@ -61,8 +61,8 @@ export function ChartLineDefault({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Line Chart</CardTitle>
-        <CardDescription>Value over time</CardDescription>
+        <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -117,14 +117,6 @@ export function ChartLineDefault({
           </LineChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
-        <div className="flex gap-2 leading-none font-medium">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
-        <div className="text-muted-foreground leading-none">
-          Showing total visitors for the last 6 months
-        </div>
-      </CardFooter>
     </Card>
   );
 }

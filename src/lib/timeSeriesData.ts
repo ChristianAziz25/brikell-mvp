@@ -1,9 +1,9 @@
 import type {
-    Asset,
-    Capex,
-    Opex,
-    RentRollUnit,
-    TheoreticalRentalIncome,
+  Asset,
+  Capex,
+  Opex,
+  RentRollUnit,
+  TheoreticalRentalIncome,
 } from "@/generated/client";
 
 export type AssetWithRelations = Asset & {
@@ -64,7 +64,7 @@ export type AssetWithRelations = Asset & {
   /**
    * Helper to sum all numeric fields on a record that match a predicate on the key.
    */
-  function sumFields<T extends Record<string, unknown>>(
+  export function sumFields<T extends Record<string, unknown>>(
     row: T,
     predicate: (key: string) => boolean
   ): number {

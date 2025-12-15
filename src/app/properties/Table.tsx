@@ -18,7 +18,6 @@ export function Table<TData extends RowData>({
   noHeader = false,
 }: TableProp<TData>) {
   const rows = table.getRowModel().rows;
-
   return (
     <div className="rounded-lg border bg-card overflow-hidden">
       <div className="relative w-full overflow-auto no-scrollbar overscroll-x-contain">
