@@ -166,6 +166,7 @@ export const SidebarLink = ({
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
+  const displayType = link.beta ? "flex" : "inline-block";
   return (
     <Link
       href={link.href}
@@ -176,12 +177,12 @@ export const SidebarLink = ({
       <motion.span
         initial={false}
         animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
+          display: animate ? (open ? displayType : "none") : displayType,
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
         className={cn(
-          "text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0",
-          link.beta && "flex flex-row items-center justify-between",
+          "text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre p-0! m-0!",
+          link.beta ? "flex flex-row items-center" : "inline-block",
           "leading-none"
         )}
       >
@@ -189,7 +190,7 @@ export const SidebarLink = ({
         {link.beta && (
           <Badge
             variant="outline"
-            className="ml-2 text-[0.5rem] text-neutral-500 dark:text-neutral-400 leading-none"
+            className="ml-2 text-[0.5rem] text-neutral-500 dark:text-neutral-400 leading-none shrink-0"
           >
             Beta
           </Badge>
