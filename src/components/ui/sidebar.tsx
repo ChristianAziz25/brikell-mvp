@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import Link, { LinkProps } from "next/link";
+import { usePathname } from "next/navigation";
 import React, { createContext, useContext, useState } from "react";
 import { Badge } from "./badge";
 
@@ -96,7 +97,7 @@ export const DesktopSidebar = ({
         className
       )}
       animate={{
-        width: animate ? (open ? "300px" : "48px") : "300px",
+        width: animate ? (open ? "300px" : "64px") : "300px",
       }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
@@ -167,12 +168,25 @@ export const SidebarLink = ({
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
+  const pathname = usePathname();
   const displayType = link.beta ? "flex" : "inline-block";
+
+  // Check if the link is active (safely handle null pathname)
+  const isActive = pathname
+    ? link.href === "/"
+      ? pathname === "/"
+      : pathname.startsWith(link.href)
+    : false;
+
   return (
     <>
       <Link
         href={link.href}
-        className={cn("flex items-center group/sidebar py-2 gap-2", className)}
+        className={cn(
+          "flex items-center group/sidebar p-2 gap-2 rounded-md transition-colors",
+          isActive && "bg-neutral-200 dark:bg-neutral-700",
+          className
+        )}
         {...props}
       >
         {link.icon}
