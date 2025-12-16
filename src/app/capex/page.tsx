@@ -144,7 +144,7 @@ export default function Capex() {
         <Card className="rounded-lg shadow-sm border-border">
           <CardContent className="p-5">
             <p className="kpi-label mb-2">CAPEX YTD</p>
-            <p className="text-2xl font-semibold text-foreground tracking-tight font-serif">
+            <p className="text-2xl font-semibold text-foreground tracking-tight">
               {dollarStringify({ value: kpis.capexYtd, format: "text" })} DKK
             </p>
             <div className="flex items-center gap-1.5 mt-2">
@@ -161,7 +161,7 @@ export default function Capex() {
         <Card className="rounded-lg shadow-sm border-border">
           <CardContent className="p-5">
             <p className="kpi-label mb-2">5-Year Forecast</p>
-            <p className="text-2xl font-semibold text-foreground tracking-tight font-serif">
+            <p className="text-2xl font-semibold text-foreground tracking-tight">
               {dollarStringify({
                 value: kpis.fiveYearForecast,
                 format: "text",
@@ -177,7 +177,7 @@ export default function Capex() {
         <Card className="rounded-lg shadow-sm border-border">
           <CardContent className="p-5">
             <p className="kpi-label mb-2">Projects Active</p>
-            <p className="text-2xl font-semibold text-foreground tracking-tight font-serif">
+            <p className="text-2xl font-semibold text-foreground tracking-tight">
               3
             </p>
             <p className="text-xs text-muted-foreground mt-2">
@@ -189,7 +189,7 @@ export default function Capex() {
         <Card className="rounded-lg shadow-sm border-border">
           <CardContent className="p-5">
             <p className="kpi-label mb-2">Reserve Fund</p>
-            <p className="text-2xl font-semibold text-foreground tracking-tight font-serif">
+            <p className="text-2xl font-semibold text-foreground tracking-tight">
               {dollarStringify({ value: kpis.reserveFund, format: "text" })} DKK
             </p>
             <div className="flex items-center gap-1.5 mt-2">
