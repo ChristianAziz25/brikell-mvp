@@ -12,6 +12,7 @@ interface Links {
   href: string;
   icon: React.ReactElement | React.ReactNode;
   beta?: boolean;
+  divider?: boolean;
 }
 
 interface SidebarContextProps {
@@ -168,34 +169,39 @@ export const SidebarLink = ({
   const { open, animate } = useSidebar();
   const displayType = link.beta ? "flex" : "inline-block";
   return (
-    <Link
-      href={link.href}
-      className={cn("flex items-center group/sidebar py-2 gap-2", className)}
-      {...props}
-    >
-      {link.icon}
-      <motion.span
-        initial={false}
-        animate={{
-          display: animate ? (open ? displayType : "none") : displayType,
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
-        className={cn(
-          "text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre p-0! m-0!",
-          link.beta ? "flex flex-row items-center" : "inline-block",
-          "leading-none"
-        )}
+    <>
+      <Link
+        href={link.href}
+        className={cn("flex items-center group/sidebar py-2 gap-2", className)}
+        {...props}
       >
-        {link.label}
-        {link.beta && (
-          <Badge
-            variant="outline"
-            className="ml-2 text-[0.5rem] text-neutral-500 dark:text-neutral-400 leading-none shrink-0"
-          >
-            Beta
-          </Badge>
-        )}
-      </motion.span>
-    </Link>
+        {link.icon}
+        <motion.span
+          initial={false}
+          animate={{
+            display: animate ? (open ? displayType : "none") : displayType,
+            opacity: animate ? (open ? 1 : 0) : 1,
+          }}
+          className={cn(
+            "text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre p-0! m-0!",
+            link.beta ? "flex flex-row items-center" : "inline-block",
+            "leading-none"
+          )}
+        >
+          {link.label}
+          {link.beta && (
+            <Badge
+              variant="outline"
+              className="ml-2 text-[0.5rem] text-neutral-500 dark:text-neutral-400 leading-none shrink-0"
+            >
+              Beta
+            </Badge>
+          )}
+        </motion.span>
+      </Link>
+      {link.divider && (
+        <div className="h-px w-full bg-neutral-200 dark:bg-neutral-700 shrink-0" />
+      )}
+    </>
   );
 };

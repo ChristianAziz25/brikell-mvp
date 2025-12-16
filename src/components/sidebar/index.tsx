@@ -24,6 +24,7 @@ type NavItem = {
   icon: React.ReactNode;
   disabled?: boolean;
   beta?: boolean;
+  divider?: boolean;
 };
 
 const navItems: NavItem[] = [
@@ -54,6 +55,7 @@ const navItems: NavItem[] = [
     icon: (
       <Building2Icon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
+    divider: true,
   },
   {
     title: "OPEX",
@@ -76,6 +78,7 @@ const navItems: NavItem[] = [
     icon: (
       <MessageSquareIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
+    divider: true,
   },
   {
     title: "Reports",
@@ -122,10 +125,11 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
+        <SidebarBody className="justify-between gap-4">
+          <Icon className="size-4 flex shrink-0 py-2" />
+          <div className="h-px w-full bg-neutral-200 dark:bg-neutral-700 shrink-0" />
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden no-scrollbar overscroll-y-contain">
-            <Icon className="size-4" />
-            <div className="mt-8 flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
               {navItems.map((item, idx) => (
                 <SidebarLink
                   key={idx}
@@ -134,11 +138,13 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                     href: item.url,
                     icon: item.icon,
                     beta: item.beta,
+                    divider: item.divider,
                   }}
                 />
               ))}
             </div>
           </div>
+          <div className="h-px w-full bg-neutral-200 dark:bg-neutral-700" />
           <div>
             {footerItems.map((item, idx) => (
               <SidebarLink
