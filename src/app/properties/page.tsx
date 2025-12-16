@@ -65,46 +65,57 @@ export default function MyAssets() {
     refetchOnWindowFocus: false,
   });
 
-  const timeSeries = buildAssetTimeSeries(assets);
-  // Map of year -> aggregated NOI across all assets
-  const noiByAsset = new Map<number, number>();
-  const capexTotal = timeSeries.reduce((sum, asset) => {
-    const localVal = asset.capex.find(
-      (c) => c.year === CURRENT_YEAR
-    )?.totalCapexActual;
-    return sum + (localVal ?? 0);
-  }, 0);
-  // for one year, sum all the noi values
-  const opexTotal = timeSeries.reduce((sum, asset) => {
-    const localVal = asset.opex.find(
-      (c) => c.year === CURRENT_YEAR
-    )?.totalOpexActual;
-    return sum + (localVal ?? 0);
-  }, 0);
-  const griTotal = timeSeries.reduce((sum, asset) => {
-    const localVal = asset.gri.find((c) => c.year === CURRENT_YEAR)?.gri;
-    return sum + (localVal ?? 0);
-  }, 0);
+  const timeSeries = useMemo(() => buildAssetTimeSeries(assets), [assets]);
+
+  const capexTotal = useMemo(() => {
+    return timeSeries.reduce((sum, asset) => {
+      const localVal = asset.capex.find(
+        (c) => c.year === CURRENT_YEAR
+      )?.totalCapexActual;
+      return sum + (localVal ?? 0);
+    }, 0);
+  }, [timeSeries]);
+
+  const opexTotal = useMemo(() => {
+    return timeSeries.reduce((sum, asset) => {
+      const localVal = asset.opex.find(
+        (c) => c.year === CURRENT_YEAR
+      )?.totalOpexActual;
+      return sum + (localVal ?? 0);
+    }, 0);
+  }, [timeSeries]);
+
+  const griTotal = useMemo(() => {
+    return timeSeries.reduce((sum, asset) => {
+      const localVal = asset.gri.find((c) => c.year === CURRENT_YEAR)?.gri;
+      return sum + (localVal ?? 0);
+    }, 0);
+  }, [timeSeries]);
+
   const noiTotal = griTotal - opexTotal;
-  const noiMarginTotal = (noiTotal / griTotal) * 100;
 
   // For all years, aggregate NOI (GRI - OPEX) per year across assets
-  timeSeries.forEach((asset) => {
-    const opexArr = asset.opex.map((opex) => {
-      return opex.totalOpexActual as number;
-    });
-    asset.gri.forEach((gri, index) => {
-      noiByAsset.set(
-        gri.year,
-        (noiByAsset.get(gri.year) ?? 0) + (gri.gri - opexArr[index])
-      );
-    });
-  });
+  const chartData = useMemo(() => {
+    const noiByYear = new Map<number, number>();
 
-  const chartData = Array.from(noiByAsset.entries()).map(([year, noi]) => ({
-    year,
-    value: noi,
-  }));
+    timeSeries.forEach((asset) => {
+      const opexByYear = new Map<number, number>();
+      asset.opex.forEach((opex) => {
+        opexByYear.set(opex.year, opex.totalOpexActual);
+      });
+
+      asset.gri.forEach((gri) => {
+        const opexForYear = opexByYear.get(gri.year) ?? 0;
+        const noi = gri.gri - opexForYear;
+        const current = noiByYear.get(gri.year) ?? 0;
+        noiByYear.set(gri.year, current + noi);
+      });
+    });
+
+    return Array.from(noiByYear.entries())
+      .map(([year, noi]) => ({ year, value: noi }))
+      .sort((a, b) => a.year - b.year);
+  }, [timeSeries]);
 
   // Map assetId -> unit count for OPEX/Unit calculations
   const unitsByAssetId = useMemo(() => {
@@ -142,6 +153,26 @@ export default function MyAssets() {
       };
     });
   }, [timeSeries, unitsByAssetId]);
+
+  const vacancyRateTotal = useMemo(() => {
+    const validRates = timeSeries
+      .map(
+        (asset) =>
+          asset.occupancy.find((c) => c.year === CURRENT_YEAR)?.occupancyRate
+      )
+      .filter((rate): rate is number => rate !== undefined);
+
+    if (validRates.length === 0) return 0;
+    const avgOccupancy =
+      validRates.reduce((sum, rate) => sum + rate, 0) / validRates.length;
+    return (1 - avgOccupancy) * 100;
+  }, [timeSeries]);
+
+  const totalUnits = useMemo(() => {
+    return assets.reduce((sum, asset) => {
+      return sum + asset.rentRoll.length;
+    }, 0);
+  }, [assets]);
 
   const portfolioColumns: ColumnDef<PortfolioRow>[] = useMemo(
     () => [
@@ -227,7 +258,7 @@ export default function MyAssets() {
         },
       },
     ],
-    []
+    [router]
   );
 
   const portfolioTable = useReactTable({
@@ -235,16 +266,6 @@ export default function MyAssets() {
     columns: portfolioColumns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  const vacancyRateTotal = timeSeries.reduce((sum, asset) => {
-    const localVal = asset.occupancy.find(
-      (c) => c.year === CURRENT_YEAR
-    )?.occupancyRate;
-    return sum + (localVal ?? 0);
-  }, 0);
-  const totalUnits = assets.reduce((sum, asset) => {
-    return sum + asset.rentRoll.length;
-  }, 0);
 
   const cardConfig = [
     {

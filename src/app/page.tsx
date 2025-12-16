@@ -5,53 +5,71 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { ChartLineMultiple } from "@/components/ui/multi-line-chart";
 import { TextShimmer } from "@/components/ui/text-shimmer";
-import {
-  buildYearByAssetForMetric,
-  type AssetWithRelations,
-} from "@/lib/timeSeriesData";
+import type { YearByAssetRow } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
 import { HomeSkeleton } from "./home-skeleton";
 
 // TODO: add models for different data types
 export default function Home() {
-  const { data: assets = [], isLoading: isAssetsLoading } = useQuery<
-    AssetWithRelations[]
+  // Optimized: Fetch pre-aggregated data from TimescaleDB
+  const { data: capexData = [], isLoading: isCapexLoading } = useQuery<
+    YearByAssetRow[]
   >({
-    // Use a distinct key from other asset queries so we don't get mismatched cached data
-    queryKey: ["assets", "detailed"],
+    queryKey: ["yearly-metrics", "capex"],
     queryFn: async () => {
-      const res = await fetch(`/api/assets?detailed=true`);
-      if (!res.ok) {
-        throw new Error("Failed to fetch detailed assets");
-      }
-      const data = await res.json();
-      return data;
+      const res = await fetch("/api/assets/yearly-metrics?metric=capex");
+      if (!res.ok) throw new Error("Failed to fetch CAPEX data");
+      return res.json();
     },
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
-  const capexData = useMemo(
-    () => buildYearByAssetForMetric(assets, "capex"),
-    [assets]
-  );
+  const { data: opexData = [], isLoading: isOpexLoading } = useQuery<
+    YearByAssetRow[]
+  >({
+    queryKey: ["yearly-metrics", "opex"],
+    queryFn: async () => {
+      const res = await fetch("/api/assets/yearly-metrics?metric=opex");
+      if (!res.ok) throw new Error("Failed to fetch OPEX data");
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
-  const opexData = useMemo(
-    () => buildYearByAssetForMetric(assets, "opex"),
-    [assets]
-  );
+  const { data: griData = [], isLoading: isGriLoading } = useQuery<
+    YearByAssetRow[]
+  >({
+    queryKey: ["yearly-metrics", "gri"],
+    queryFn: async () => {
+      const res = await fetch("/api/assets/yearly-metrics?metric=gri");
+      if (!res.ok) throw new Error("Failed to fetch GRI data");
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
-  const griData = useMemo(
-    () => buildYearByAssetForMetric(assets, "gri"),
-    [assets]
-  );
+  const { data: occupancyData = [], isLoading: isOccupancyLoading } = useQuery<
+    YearByAssetRow[]
+  >({
+    queryKey: ["yearly-metrics", "occupancy"],
+    queryFn: async () => {
+      const res = await fetch("/api/assets/yearly-metrics?metric=occupancy");
+      if (!res.ok) throw new Error("Failed to fetch Occupancy data");
+      return res.json();
+    },
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 
-  const occupancyData = useMemo(
-    () => buildYearByAssetForMetric(assets, "occupancy"),
-    [assets]
-  );
+  const isAssetsLoading =
+    isCapexLoading || isOpexLoading || isGriLoading || isOccupancyLoading;
 
   const dashboards = [
     {
