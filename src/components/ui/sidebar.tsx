@@ -184,14 +184,15 @@ export const SidebarLink = ({
         }}
         className={cn(
           "text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0",
-          link.beta && "flex flex-row items-center justify-between"
+          link.beta && "flex flex-row items-center justify-between",
+          "leading-none"
         )}
       >
         {link.label}
         {link.beta && (
           <Badge
             variant="outline"
-            className="ml-2 text-xs text-neutral-500 dark:text-neutral-400"
+            className="ml-2 text-[0.5rem] text-neutral-500 dark:text-neutral-400 leading-none"
           >
             Beta
           </Badge>

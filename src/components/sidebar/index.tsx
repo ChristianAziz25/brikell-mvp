@@ -31,42 +31,42 @@ const navItems: NavItem[] = [
     title: "Home",
     url: "/",
     icon: (
-      <HouseIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <HouseIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Flow",
     url: "/flow",
     icon: (
-      <WorkflowIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <WorkflowIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Properties",
     url: "/properties",
     icon: (
-      <LayoutDashboardIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <LayoutDashboardIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Units & Rent-rolls",
     url: "/units-and-rent-rolls",
     icon: (
-      <Building2Icon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <Building2Icon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "OPEX",
     url: "/opex",
     icon: (
-      <TrendingDownIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <TrendingDownIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "CAPEX",
     url: "/capex",
     icon: (
-      <HammerIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <HammerIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
     beta: true,
   },
@@ -74,14 +74,14 @@ const navItems: NavItem[] = [
     title: "Diligence",
     url: "/diligence",
     icon: (
-      <MessageSquareIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <MessageSquareIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Reports",
     url: "/reports",
     icon: (
-      <ClipboardListIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <ClipboardListIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
     beta: true,
   },
@@ -89,7 +89,7 @@ const navItems: NavItem[] = [
     title: "Data Library",
     url: "/data-library",
     icon: (
-      <DatabaseIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <DatabaseIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
     beta: true,
   },
@@ -100,14 +100,14 @@ const footerItems: NavItem[] = [
     title: "Settings",
     url: "/settings",
     icon: (
-      <SettingsIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <SettingsIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
   {
     title: "Help",
     url: "/help",
     icon: (
-      <MessageCircleQuestionMarkIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <MessageCircleQuestionMarkIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
   },
 ];
@@ -123,8 +123,8 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
     >
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <Icon className="size-6" />
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden no-scrollbar overscroll-y-contain">
+            <Icon className="size-4" />
             <div className="mt-8 flex flex-col gap-2">
               {navItems.map((item, idx) => (
                 <SidebarLink
@@ -155,7 +155,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
                 label: "Christian Aziz",
                 href: "#",
                 icon: (
-                  <div className="relative size-6 flex shrink-0 items-center gap-2">
+                  <div className="relative size-4 flex shrink-0 items-center gap-2">
                     <Image
                       src="https://media.licdn.com/dms/image/v2/D4D03AQHUjH0mftm-9w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1718977943739?e=1767225600&v=beta&t=qcQSAZuYN6QJQfDIA4ddEQVQSVRQue2W-wpGwVBK0uU"
                       fill
@@ -176,7 +176,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex flex-1 p-2 min-h-0">
+    <div className="flex flex-1 pt-2 min-h-0">
       <div className="p-2 md:p-10 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full min-h-0 overflow-y-auto no-scrollbar overscroll-y-contain">
         <div className="w-full max-w-7xl mx-auto">{children}</div>
       </div>

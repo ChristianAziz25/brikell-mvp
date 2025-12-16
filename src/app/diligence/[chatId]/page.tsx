@@ -474,7 +474,7 @@ export default function Page() {
           </div> */}
         </div>
 
-        <div className="sticky bottom-0 z-50 bg-white dark:bg-neutral-900 pt-4">
+        <div className="sticky bottom-0 z-50 bg-white dark:bg-neutral-900">
           <Chat eventHandler={handleChatEvent} className="shadow-md" />
         </div>
       </section>
