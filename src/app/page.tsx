@@ -113,7 +113,7 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-full space-y-12">
+    <div className="w-full max-w-5xl mx-auto h-full space-y-12">
       <section className="max-w-2xl mx-auto space-y-8 pt-12">
         <div className="space-y-2">
           <h2 className="text-3xl font-bold text-foreground text-center">
@@ -165,10 +165,7 @@ export default function Home() {
                 className="mt-2 cursor-pointer hover:bg-muted/30"
                 asChild
               >
-                <Chart
-                  data={data}
-                  interactive={false}
-                />
+                <Chart data={data} interactive={false} />
               </DialogTrigger>
               <DialogContent>
                 <DialogTitle>{title}</DialogTitle>
