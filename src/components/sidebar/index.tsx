@@ -83,6 +83,7 @@ const navItems: NavItem[] = [
     icon: (
       <ClipboardListIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
+    beta: true,
   },
   {
     title: "Data Library",
@@ -90,6 +91,7 @@ const navItems: NavItem[] = [
     icon: (
       <DatabaseIcon className="size-6 shrink-0 text-neutral-700 dark:text-neutral-200" />
     ),
+    beta: true,
   },
 ];
 
