@@ -126,7 +126,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
     >
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-4">
-          <Icon className="size-4 flex shrink-0 m-2" />
+          <Icon className="size-8 flex shrink-0" />
           <div className="h-px w-full bg-neutral-200 dark:bg-neutral-700 shrink-0" />
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden no-scrollbar overscroll-y-contain">
             <div className="flex flex-col gap-2">
