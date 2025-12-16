@@ -31,42 +31,42 @@ const navItems: NavItem[] = [
     title: "Home",
     url: "/",
     icon: (
-      <HouseIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <HouseIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
   },
   {
     title: "Flow",
     url: "/flow",
     icon: (
-      <WorkflowIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <WorkflowIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
   },
   {
     title: "Properties",
     url: "/properties",
     icon: (
-      <LayoutDashboardIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <LayoutDashboardIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
   },
   {
     title: "Units & Rent-rolls",
     url: "/units-and-rent-rolls",
     icon: (
-      <Building2Icon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <Building2Icon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
   },
   {
     title: "OPEX",
     url: "/opex",
     icon: (
-      <TrendingDownIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <TrendingDownIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
   },
   {
     title: "CAPEX",
     url: "/capex",
     icon: (
-      <HammerIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <HammerIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
     beta: true,
   },
@@ -74,14 +74,14 @@ const navItems: NavItem[] = [
     title: "Diligence",
     url: "/diligence",
     icon: (
-      <MessageSquareIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <MessageSquareIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
   },
   {
     title: "Reports",
     url: "/reports",
     icon: (
-      <ClipboardListIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <ClipboardListIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
     beta: true,
   },
@@ -89,7 +89,7 @@ const navItems: NavItem[] = [
     title: "Data Library",
     url: "/data-library",
     icon: (
-      <DatabaseIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200" />
+      <DatabaseIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
     beta: true,
   },
@@ -117,7 +117,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
+        "flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
         "h-screen"
       )}
     >
