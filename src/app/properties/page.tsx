@@ -179,7 +179,9 @@ export default function MyAssets() {
           const value = row.original.opex;
           return (
             <div className="text-right">
-              {Number.isFinite(value) ? `${dollarStringify(value)} DKK` : "-"}
+              {Number.isFinite(value)
+                ? `${dollarStringify({ value, format: "text" })} DKK`
+                : "-"}
             </div>
           );
         },
@@ -191,7 +193,9 @@ export default function MyAssets() {
           const value = row.original.opexPerUnit;
           return (
             <div className="text-right">
-              {Number.isFinite(value) ? `${dollarStringify(value)} DKK` : "-"}
+              {Number.isFinite(value)
+                ? `${dollarStringify({ value, format: "text" })} DKK`
+                : "-"}
             </div>
           );
         },
@@ -203,7 +207,9 @@ export default function MyAssets() {
           const value = row.original.noi;
           return (
             <div className="text-right">
-              {Number.isFinite(value) ? `${dollarStringify(value)} DKK` : "-"}
+              {Number.isFinite(value)
+                ? `${dollarStringify({ value, format: "text" })} DKK`
+                : "-"}
             </div>
           );
         },
@@ -281,7 +287,7 @@ export default function MyAssets() {
             <CardContent className="p-5 overflow-hidden">
               <p className="text-sm text-muted-foreground">{card.title}</p>
               <h3 className="text-2xl font-bold">
-                {dollarStringify(card.data)}
+                {dollarStringify({ value: card.data, format: "text" })}{" "}
                 {card.title === "Vacancy Rate" ? "%" : "DKK"}
               </h3>
               <p className="text-sm text-muted-foreground">

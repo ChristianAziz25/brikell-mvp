@@ -567,7 +567,9 @@ export default function PropertyPage({
                 }
 
                 const displayValue =
-                  typeof actual === "number" ? dollarStringify(actual) : "-";
+                  typeof actual === "number"
+                    ? dollarStringify({ value: actual })
+                    : "-";
                 return (
                   <div className="text-center max-w-40 font-semibold">
                     <span className="">{displayValue}</span>
@@ -635,7 +637,7 @@ export default function PropertyPage({
 
                 const displayValue =
                   typeof netIncome === "number"
-                    ? dollarStringify(netIncome)
+                    ? dollarStringify({ value: netIncome })
                     : "-";
                 return (
                   <div className="text-center max-w-40">
@@ -661,7 +663,9 @@ export default function PropertyPage({
               }
 
               const displayValue =
-                typeof actual === "number" ? dollarStringify(actual) : "-";
+                typeof actual === "number"
+                  ? dollarStringify({ value: actual })
+                  : "-";
               return (
                 <div className="text-center max-w-40">
                   <span className="">{displayValue}</span>
@@ -706,7 +710,9 @@ export default function PropertyPage({
                 }
 
                 const displayValue =
-                  typeof budget === "number" ? dollarStringify(budget) : "-";
+                  typeof budget === "number"
+                    ? dollarStringify({ value: budget })
+                    : "-";
                 return (
                   <div className="text-center max-w-40 font-semibold">
                     <span className="">{displayValue}</span>
@@ -774,7 +780,7 @@ export default function PropertyPage({
 
                 const displayValue =
                   typeof netIncome === "number"
-                    ? dollarStringify(netIncome)
+                    ? dollarStringify({ value: netIncome })
                     : "-";
                 return (
                   <div className="text-center max-w-40">
@@ -799,7 +805,9 @@ export default function PropertyPage({
               }
 
               const displayValue =
-                typeof budget === "number" ? dollarStringify(budget) : "-";
+                typeof budget === "number"
+                  ? dollarStringify({ value: budget })
+                  : "-";
               return (
                 <div className="text-center max-w-40">
                   <span className="">{displayValue}</span>

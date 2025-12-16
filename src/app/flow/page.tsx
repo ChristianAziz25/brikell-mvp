@@ -208,7 +208,7 @@ function KanbanColumn({
           ref={setNodeRef}
           data-stage={stage}
           className={cn(
-            "bg-muted/10 border border-t-0 border-border rounded-b-xl p-3 h-[500px] overflow-y-auto space-y-3 transition-colors",
+            "bg-muted/10 border border-t-0 border-border rounded-b-xl p-3 h-[500px] overflow-y-auto no-scrollbar overscroll-y-contain space-y-3 transition-colors",
             isOver && "bg-muted/20"
           )}
         >
@@ -380,7 +380,7 @@ export default function Page() {
         <FlowSkeleton />
       ) : (
         <div className="w-full">
-          <div className="space-y-6 max-w-full">
+          <div className="space-y-6 w-full min-w-0 overflow-x-visible">
             <div className="w-full">
               <h2 className="text-3xl font-bold tracking-tight text-foreground">
                 Leasing Pipeline
@@ -390,30 +390,35 @@ export default function Page() {
               </p>
             </div>
 
-            <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
-              {(["All", ...stages] as const).map((stage, index) => (
-                <div
-                  key={stage}
-                  onClick={() =>
-                    setSelectedStage(stage === "All" ? "All" : stage)
-                  }
-                  className={cn(
-                    "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border min-w-fit cursor-pointer transition-colors",
-                    selectedStage === stage && "bg-muted/50"
-                    // index === 0 && "ml-6",
-                    // index === stages.length && "mr-4"
-                  )}
-                >
-                  <span className="text-sm font-medium text-foreground">
-                    {stage}
-                  </span>
-                  {stage !== "All" && (
-                    <Badge variant="secondary" className="bg-muted/50 text-xs">
-                      {stageCounts[stage]}
-                    </Badge>
-                  )}
-                </div>
-              ))}
+            <div className="w-full relative">
+              <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar overscroll-x-contain">
+                {(["All", ...stages] as const).map((stage, index) => (
+                  <div
+                    key={stage}
+                    onClick={() =>
+                      setSelectedStage(stage === "All" ? "All" : stage)
+                    }
+                    className={cn(
+                      "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border whitespace-nowrap shrink-0 cursor-pointer transition-colors",
+                      selectedStage === stage && "bg-muted/50"
+                      // index === 0 && "ml-6",
+                      // index === stages.length && "mr-4"
+                    )}
+                  >
+                    <span className="text-sm font-medium text-foreground">
+                      {stage}
+                    </span>
+                    {stage !== "All" && (
+                      <Badge
+                        variant="secondary"
+                        className="bg-muted/50 hover:bg-muted/70 text-xs"
+                      >
+                        {stageCounts[stage]}
+                      </Badge>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             <DndContext
@@ -422,18 +427,21 @@ export default function Page() {
               onDragStart={handleDragStart}
               onDragEnd={handleDragEnd}
             >
-              <div className="flex flex-col md:flex-row p-4 md:p-0 md:pb-4 gap-4 overflow-x-auto pb-4 no-scrollbar">
-                {filteredStages.map((stage, index) => (
-                  <KanbanColumn
-                    key={stage}
-                    stage={stage}
-                    cards={getCardsByStage(stage)}
-                    className={cn()
-                    // index === 0 && "md:ml-6",
-                    // index === filteredStages.length - 1 && "md:mr-6"
-                    }
-                  />
-                ))}
+              <div className="w-full relative">
+                <div className="flex flex-col md:flex-row gap-4 overflow-x-auto pb-4 no-scrollbar overscroll-x-contain">
+                  {filteredStages.map((stage, index) => (
+                    <KanbanColumn
+                      key={stage}
+                      stage={stage}
+                      cards={getCardsByStage(stage)}
+                      className={
+                        cn()
+                        // index === 0 && "md:ml-6",
+                        // index === filteredStages.length - 1 && "md:mr-6"
+                      }
+                    />
+                  ))}
+                </div>
               </div>
               <DragOverlay
                 dropAnimation={{
