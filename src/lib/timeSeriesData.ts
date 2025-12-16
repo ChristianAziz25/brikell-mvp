@@ -109,7 +109,7 @@ export type AssetWithRelations = Asset & {
       for (const row of capexRows) {
         const year = row.capex_year;
         const actual = sumFields(row, (k) => k.includes("actuals") || k.includes("actual"));
-        const budget = sumFields(row, (k) => k.includes("budget"));
+        const budget = sumFields(row, (k) => k.includes("budget") || k.includes("budget"));
   
         if (!capexByYear[year]) {
           capexByYear[year] = { totalActual: 0, totalBudget: 0 };

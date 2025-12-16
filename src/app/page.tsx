@@ -11,7 +11,7 @@ import { HomeSkeleton } from "./home-skeleton";
 
 // TODO: add models for different data types
 export default function Home() {
-  // Optimized: Fetch pre-aggregated data from TimescaleDB
+  // Fetch pre-aggregated yearly metrics by asset
   const { data: capexData = [], isLoading: isCapexLoading } = useQuery<
     YearByAssetRow[]
   >({

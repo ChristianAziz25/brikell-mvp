@@ -48,7 +48,7 @@ export default function Performance() {
     setSelectedAsset(activeAssetName);
   }, [activeAssetName]);
 
-  // Optimized: Fetch pre-aggregated yearly metrics from TimescaleDB
+  // Fetch pre-aggregated yearly metrics for a single asset
   const { data: yearBasedData = [], isLoading: isAssetLoading } = useQuery<
     Array<{ year: number; capex: number; opex: number; tri: number; occupancy: number }>
   >({
