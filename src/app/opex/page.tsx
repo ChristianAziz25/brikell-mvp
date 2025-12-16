@@ -460,6 +460,7 @@ export default function Opex() {
                 categoryKey="category"
                 valueKey="budget"
                 interactive={false}
+                horizontal={true}
                 className="cursor-pointer hover:bg-muted/30"
               />
             </DialogTrigger>

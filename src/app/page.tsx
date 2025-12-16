@@ -2,7 +2,13 @@
 
 import { Chat } from "@/components";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { ChartLineMultiple } from "@/components/ui/multi-line-chart";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import type { YearByAssetRow } from "@/lib/timeSeriesData";
@@ -160,17 +166,15 @@ export default function Home() {
                 asChild
               >
                 <Chart
-                  title={title}
-                  // description={description}
                   data={data}
                   interactive={false}
                 />
               </DialogTrigger>
               <DialogContent>
+                <DialogTitle>{title}</DialogTitle>
+                <DialogDescription>{description}</DialogDescription>
                 <Chart
                   className="w-full h-full"
-                  title={title}
-                  description={description}
                   data={data}
                   fullscreen={true}
                 />

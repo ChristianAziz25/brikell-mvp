@@ -25,6 +25,7 @@ export function ChartBarMultiple<T>({
   categoryKey = "category",
   valueKey = "value",
   interactive = true,
+  horizontal = false,
   className,
 }: {
   data: T[];
@@ -34,8 +35,10 @@ export function ChartBarMultiple<T>({
   categoryKey?: string;
   valueKey?: string;
   interactive?: boolean;
+  horizontal?: boolean;
   className?: string;
 }) {
+  console.log(data);
   return (
     <Card className={className}>
       <CardHeader>
@@ -44,22 +47,35 @@ export function ChartBarMultiple<T>({
       </CardHeader>
       <CardContent>
         <ChartContainer config={config}>
-          <BarChart accessibilityLayer data={data} layout="vertical">
-            <CartesianGrid vertical={false} />
+          <BarChart
+            accessibilityLayer
+            data={data}
+            layout={horizontal ? "vertical" : "horizontal"}
+          >
+            <CartesianGrid vertical={horizontal ? false : true} />
             <XAxis
-              type="number"
-              dataKey={valueKey}
+              type={horizontal ? "number" : "category"}
+              dataKey={horizontal ? valueKey : categoryKey}
               tickLine={false}
               tickMargin={10}
               axisLine={false}
             />
-            <YAxis
-              dataKey={categoryKey}
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-            />
+            {horizontal ? (
+              <YAxis
+                dataKey={categoryKey}
+                type="category"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+              />
+            ) : (
+              <YAxis
+                type="number"
+                tickLine={false}
+                tickMargin={0}
+                axisLine={false}
+              />
+            )}
             {interactive && (
               <ChartTooltip
                 cursor={false}

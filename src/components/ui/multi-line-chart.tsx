@@ -23,8 +23,6 @@ export const description = "A multiple line chart";
 type ChartLineMultipleProps = {
   // Rows like: { year: 2024, Emmahus: 123000, Gethus: 98000, ... }
   data: { year: number; [seriesKey: string]: number }[];
-  title: string;
-  description?: string;
   /** When false, disables hover tooltip/interaction (useful for small preview cards). */
   interactive?: boolean;
   /** When true, render bare chart without Card wrapper (for fullscreen dialog). */
@@ -33,8 +31,6 @@ type ChartLineMultipleProps = {
 
 export function ChartLineMultiple({
   data,
-  title,
-  description,
   className,
   interactive = true,
   fullscreen = false,
@@ -137,28 +133,12 @@ export function ChartLineMultiple({
   );
 
   if (fullscreen) {
-    return (
-      <div className="w-full h-full">
-        <h2 className="text-lg font-semibold leading-none tracking-tight mb-2">
-          {title}
-        </h2>
-        <p className="text-sm text-muted-foreground mb-12">{description}</p>
-        {chartBody}
-      </div>
-    );
+    return <div className="w-full h-full">{chartBody}</div>;
   }
 
   return (
     <Card className={className} {...cardProps}>
-      <CardHeader className="p-4">
-        <CardTitle>{title}</CardTitle>
-        {description && (
-          <CardDescription className="text-xs text-muted-foreground">
-            {description}
-          </CardDescription>
-        )}
-      </CardHeader>
-      <CardContent className="p-4 pt-0">{chartBody}</CardContent>
+      <CardContent className="p-4">{chartBody}</CardContent>
     </Card>
   );
 }
