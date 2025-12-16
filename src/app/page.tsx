@@ -132,7 +132,7 @@ export default function Home() {
         <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
           My Dashboards
         </h3>
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-3">
           {dashboards.map(({ key, title, description, Chart, data }) => (
             <Dialog key={key}>
               <DialogTrigger
