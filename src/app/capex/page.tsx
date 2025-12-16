@@ -229,7 +229,7 @@ export default function Capex() {
               {replacementTimeline.map((item, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border"
+                  className="flex items-center justify-between p-3 rounded-lg border border-muted/30"
                 >
                   <div>
                     <p className="font-medium text-sm text-foreground">
