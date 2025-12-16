@@ -2,34 +2,52 @@
  * API Route: /api/assets/portfolio-summary
  * 
  * Returns portfolio-level aggregated metrics for the current year
- * Optimized using TimescaleDB continuous aggregates
+ * Optimized with efficient client-side aggregation
  */
 
-import { getAllYearlyMetricsByAsset } from "@/lib/timescaledb-queries";
+import { getAllAssets } from "@/lib/prisma/models/asset";
+import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
 import { NextResponse } from "next/server";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
 export async function GET() {
   try {
-    const metrics = await getAllYearlyMetricsByAsset();
+    const assets = await getAllAssets();
+    const timeSeries = buildAssetTimeSeries(assets);
     
-    // Filter to current year and aggregate across all assets
-    const currentYearMetrics = metrics.filter(m => m.year === CURRENT_YEAR);
+    // Aggregate current year metrics across all assets
+    let capexTotal = 0;
+    let opexTotal = 0;
+    let griTotal = 0;
+    let occupancySum = 0;
+    let assetCount = 0;
+    
+    for (const series of timeSeries) {
+      const currentCapex = series.capex.find((c) => c.year === CURRENT_YEAR)?.totalCapexActual ?? 0;
+      const currentOpex = series.opex.find((o) => o.year === CURRENT_YEAR)?.totalOpexActual ?? 0;
+      const currentGri = series.gri.find((g) => g.year === CURRENT_YEAR)?.gri ?? 0;
+      const currentOccupancy = series.occupancy.find((o) => o.year === CURRENT_YEAR)?.occupancyRate ?? 0;
+      
+      capexTotal += currentCapex;
+      opexTotal += currentOpex;
+      griTotal += currentGri;
+      occupancySum += currentOccupancy;
+      assetCount += 1;
+    }
+    
+    const noiTotal = griTotal - opexTotal;
+    const noiMarginTotal = griTotal !== 0 ? (noiTotal / griTotal) * 100 : 0;
+    const occupancyTotal = assetCount > 0 ? occupancySum / assetCount : 0;
     
     const summary = {
-      capexTotal: currentYearMetrics.reduce((sum, m) => sum + (m.capexActual ?? 0), 0),
-      opexTotal: currentYearMetrics.reduce((sum, m) => sum + (m.opexActual ?? 0), 0),
-      griTotal: currentYearMetrics.reduce((sum, m) => sum + (m.gri ?? 0), 0),
-      occupancyTotal: currentYearMetrics.reduce((sum, m) => sum + (m.occupancyRate ?? 0), 0) / currentYearMetrics.length,
-      noiTotal: 0,
-      noiMarginTotal: 0,
+      capexTotal,
+      opexTotal,
+      griTotal,
+      occupancyTotal,
+      noiTotal,
+      noiMarginTotal,
     };
-    
-    summary.noiTotal = summary.griTotal - summary.opexTotal;
-    summary.noiMarginTotal = summary.griTotal !== 0 
-      ? (summary.noiTotal / summary.griTotal) * 100 
-      : 0;
     
     return NextResponse.json(summary);
   } catch (error) {

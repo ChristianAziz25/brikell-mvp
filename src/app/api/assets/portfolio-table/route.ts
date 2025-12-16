@@ -2,54 +2,45 @@
  * API Route: /api/assets/portfolio-table
  * 
  * Returns portfolio table data with current year metrics per asset
- * Optimized using TimescaleDB continuous aggregates
+ * Optimized with efficient client-side aggregation
  */
 
-import { getAllYearlyMetricsByAsset } from "@/lib/timescaledb-queries";
-import prisma from "@/lib/prisma/client";
+import { getAllAssets } from "@/lib/prisma/models/asset";
+import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
 import { NextResponse } from "next/server";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
 export async function GET() {
   try {
-    // Get yearly metrics
-    const metrics = await getAllYearlyMetricsByAsset();
-    const currentYearMetrics = metrics.filter(m => m.year === CURRENT_YEAR);
+    const assets = await getAllAssets();
+    const timeSeries = buildAssetTimeSeries(assets);
     
-    // Get unit counts per asset
-    const assets = await prisma.asset.findMany({
-      select: {
-        id: true,
-        name: true,
-        rentRoll: {
-          select: {
-            unit_id: true,
-          },
-        },
-      },
+    // Map assetId -> unit count for OPEX/Unit calculations
+    const unitsByAssetId = new Map<string, number>();
+    assets.forEach((asset) => {
+      unitsByAssetId.set(asset.id, asset.rentRoll.length);
     });
     
-    const unitsByAssetId = new Map(
-      assets.map(a => [a.id, a.rentRoll.length])
-    );
-    
-    // Build portfolio rows
-    const portfolioRows = currentYearMetrics.map((metric) => {
-      const gri = metric.gri ?? 0;
-      const opex = metric.opexActual ?? 0;
-      const occupancy = metric.occupancyRate ?? 0;
-      const unitCount = unitsByAssetId.get(metric.assetId) ?? 0;
-      
-      const noi = gri - opex;
-      const noiMargin = gri !== 0 ? (noi / gri) * 100 : 0;
-      const vacancy = (1 - occupancy) * 100;
-      const opexPerUnit = unitCount > 0 ? opex / unitCount : 0;
-      
+    // Build portfolio rows for current year
+    const portfolioRows = timeSeries.map((series) => {
+      const currentOpex =
+        series.opex.find((o) => o.year === CURRENT_YEAR)?.totalOpexActual ?? 0;
+      const currentGri =
+        series.gri.find((g) => g.year === CURRENT_YEAR)?.gri ?? 0;
+      const currentOccupancy =
+        series.occupancy.find((o) => o.year === CURRENT_YEAR)?.occupancyRate ?? 0;
+      const unitCount = unitsByAssetId.get(series.assetId) ?? 0;
+
+      const noi = currentGri - currentOpex;
+      const noiMargin = currentGri !== 0 ? (noi / currentGri) * 100 : 0;
+      const vacancy = (1 - currentOccupancy) * 100;
+      const opexPerUnit = unitCount > 0 ? currentOpex / unitCount : 0;
+
       return {
-        property: metric.assetName,
+        property: series.assetName,
         vacancy,
-        opex,
+        opex: currentOpex,
         opexPerUnit,
         noi,
         noiMargin,

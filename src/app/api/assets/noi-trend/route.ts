@@ -2,27 +2,36 @@
  * API Route: /api/assets/noi-trend
  * 
  * Returns NOI (GRI - OPEX) trend by year across all assets
- * Optimized using TimescaleDB continuous aggregates
+ * Optimized with efficient client-side aggregation
  */
 
-import { getAllYearlyMetricsByAsset } from "@/lib/timescaledb-queries";
+import { getAllAssets } from "@/lib/prisma/models/asset";
+import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const metrics = await getAllYearlyMetricsByAsset();
+    const assets = await getAllAssets();
+    const timeSeries = buildAssetTimeSeries(assets);
     
     // Aggregate NOI by year across all assets
     const noiByYear = new Map<number, number>();
     
-    metrics.forEach((metric) => {
-      const gri = metric.gri ?? 0;
-      const opex = metric.opexActual ?? 0;
-      const noi = gri - opex;
+    for (const series of timeSeries) {
+      // Build OPEX map by year for this asset
+      const opexByYear = new Map<number, number>();
+      series.opex.forEach((opex) => {
+        opexByYear.set(opex.year, opex.totalOpexActual);
+      });
       
-      const current = noiByYear.get(metric.year) ?? 0;
-      noiByYear.set(metric.year, current + noi);
-    });
+      // Calculate NOI for each GRI year
+      series.gri.forEach((gri) => {
+        const opexForYear = opexByYear.get(gri.year) ?? 0;
+        const noi = gri.gri - opexForYear;
+        const current = noiByYear.get(gri.year) ?? 0;
+        noiByYear.set(gri.year, current + noi);
+      });
+    }
     
     const trendData = Array.from(noiByYear.entries())
       .map(([year, value]) => ({ year, value }))

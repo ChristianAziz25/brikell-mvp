@@ -2,10 +2,11 @@
  * API Route: /api/asset/yearly-metrics
  * 
  * Returns yearly aggregated metrics for a single asset
- * Optimized using TimescaleDB continuous aggregates
+ * Optimized with efficient client-side aggregation
  */
 
-import { getAllYearlyMetricsByAsset } from "@/lib/timescaledb-queries";
+import { getAllAssets } from "@/lib/prisma/models/asset";
+import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -20,17 +21,91 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const metrics = await getAllYearlyMetricsByAsset();
-    const assetMetrics = metrics.filter(m => m.assetName === assetName);
+    const assets = await getAllAssets();
+    const timeSeries = buildAssetTimeSeries(assets);
     
-    // Transform to the format expected by performance page
-    const yearBasedData = assetMetrics.map(m => ({
-      year: m.year,
-      capex: m.capexActual ?? 0,
-      opex: m.opexActual ?? 0,
-      tri: m.gri ?? 0, // GRI is TRI - vacancy loss, which is what we want
-      occupancy: m.occupancyRate ?? 0,
-    })).sort((a, b) => a.year - b.year);
+    // Find the asset by name
+    const assetSeries = timeSeries.find((s) => s.assetName === assetName);
+    
+    if (!assetSeries) {
+      return NextResponse.json(
+        { error: "Asset not found" },
+        { status: 404 }
+      );
+    }
+    
+    // Build year-based map to combine all metrics
+    const yearMap = new Map<number, {
+      year: number;
+      capex: number;
+      opex: number;
+      tri: number;
+      occupancy: number;
+    }>();
+    
+    // Add CAPEX data
+    assetSeries.capex.forEach((capex) => {
+      if (!yearMap.has(capex.year)) {
+        yearMap.set(capex.year, {
+          year: capex.year,
+          capex: 0,
+          opex: 0,
+          tri: 0,
+          occupancy: 0,
+        });
+      }
+      const entry = yearMap.get(capex.year)!;
+      entry.capex = capex.totalCapexActual;
+    });
+    
+    // Add OPEX data
+    assetSeries.opex.forEach((opex) => {
+      if (!yearMap.has(opex.year)) {
+        yearMap.set(opex.year, {
+          year: opex.year,
+          capex: 0,
+          opex: 0,
+          tri: 0,
+          occupancy: 0,
+        });
+      }
+      const entry = yearMap.get(opex.year)!;
+      entry.opex = opex.totalOpexActual;
+    });
+    
+    // Add GRI (TRI) data
+    assetSeries.gri.forEach((gri) => {
+      if (!yearMap.has(gri.year)) {
+        yearMap.set(gri.year, {
+          year: gri.year,
+          capex: 0,
+          opex: 0,
+          tri: 0,
+          occupancy: 0,
+        });
+      }
+      const entry = yearMap.get(gri.year)!;
+      entry.tri = gri.gri;
+    });
+    
+    // Add occupancy data
+    assetSeries.occupancy.forEach((occupancy) => {
+      if (!yearMap.has(occupancy.year)) {
+        yearMap.set(occupancy.year, {
+          year: occupancy.year,
+          capex: 0,
+          opex: 0,
+          tri: 0,
+          occupancy: 0,
+        });
+      }
+      const entry = yearMap.get(occupancy.year)!;
+      entry.occupancy = occupancy.occupancyRate;
+    });
+    
+    // Convert to array and sort by year
+    const yearBasedData = Array.from(yearMap.values())
+      .sort((a, b) => a.year - b.year);
     
     return NextResponse.json(yearBasedData);
   } catch (error) {
