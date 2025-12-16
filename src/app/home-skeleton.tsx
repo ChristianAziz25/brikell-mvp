@@ -31,7 +31,7 @@ export function HomeSkeleton() {
       {/* Dashboards header + cards */}
       <div className="space-y-4">
         <Skeleton className="h-4 w-32" />
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(16rem,1fr))] gap-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
             <Card key={i} className="mt-2 h-40 border border-border/40 bg-card">
               <div className="p-4 space-y-3">
