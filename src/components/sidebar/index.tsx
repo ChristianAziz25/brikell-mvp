@@ -145,7 +145,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div className="h-px w-full bg-neutral-200 dark:bg-neutral-700" />
-          <div>
+          <div className="flex flex-col gap-2">
             {footerItems.map((item, idx) => (
               <SidebarLink
                 key={idx}
