@@ -2,13 +2,6 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -31,7 +24,7 @@ import {
   type FilterFn,
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { DownloadIcon, Plus, Upload, X } from "lucide-react";
+import { Building2Icon, FileSpreadsheet, FileText } from "lucide-react";
 import { useRef, useState } from "react";
 import type { RentStatus } from "../type/rent-roll";
 import { RentRollSkeleton } from "./components/skeleton";
@@ -62,10 +55,8 @@ async function fetchRentRollData(): Promise<RentRollUnitModel[]> {
 export default function Page() {
   const queryClient = useQueryClient();
   const tableContainerRef = useRef<HTMLDivElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
-  const [isUploading, setIsUploading] = useState(false); // <- new state
 
   type RangeFilter = {
     min?: number;
@@ -95,30 +86,6 @@ export default function Page() {
     queryKey: ["rentRollData"],
     queryFn: fetchRentRollData,
   });
-
-  const handleFileUpload = async (file: File) => {
-    setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const result = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!result.ok) {
-        throw new Error("Failed to upload file");
-      }
-
-      await result.json();
-      await queryClient.invalidateQueries({ queryKey: ["rentRollData"] });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   const columns: ColumnDef<RentRollUnitModel>[] = [
     {
@@ -328,13 +295,6 @@ export default function Page() {
       ? rowVirtualizer.getTotalSize() - virtualRows[virtualRows.length - 1].end
       : 0;
 
-  const clearFilters = () => {
-    setColumnFilters([]);
-    setGlobalFilter("");
-  };
-
-  const hasActiveFilters = columnFilters.length > 0 || globalFilter.length > 0;
-
   return (
     <div className="w-full">
       {isLoading ? (
@@ -342,388 +302,191 @@ export default function Page() {
       ) : (
         <div className="relative flex flex-col md:flex-row gap-4">
           {/* Filter sidebar (always visible) */}
-          <div className="sticky top-0 left-0 w-full md:w-72 md:shrink-0">
-            <div className="mt-1 space-y-4 rounded-lg border bg-card/60 p-3">
-              <div className="flex items-center gap-2">
-                <Input
-                  placeholder="Search all columns..."
-                  value={globalFilter}
-                  onChange={(e) => setGlobalFilter(e.target.value)}
-                  className="max-w-sm"
-                />
-              </div>
-
-              <div className="flex items-center justify-end gap-2">
-                {hasActiveFilters && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={clearFilters}
-                    className="gap-2"
-                  >
-                    <X className="h-4 w-4" />
-                    Clear Filters
-                  </Button>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-3">
-                {table.getColumn("property_name") && (
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={
-                        (
-                          table
-                            .getColumn("property_name")
-                            ?.getFilterValue() as string[]
-                        )?.join(",") || "all"
-                      }
-                      onValueChange={(value: string) => {
+          <div className="sticky top-0 left-0 w-full md:w-72 md:shrink-0 border border-border rounded-lg">
+            <div className="p-6 space-y-4">
+              {table.getColumn("property_name") && (
+                <div className="space-y-2">
+                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                    Building
+                  </label>
+                  <Select
+                    value={
+                      (
                         table
                           .getColumn("property_name")
-                          ?.setFilterValue(
-                            value === "all" ? undefined : value.split(",")
-                          );
-                      }}
-                    >
-                      <SelectTrigger className="h-8 w-full">
-                        <SelectValue placeholder="All Properties" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Properties</SelectItem>
-                        {Array.from(
-                          table
-                            .getColumn("property_name")
-                            ?.getFacetedUniqueValues()
-                            .keys() || []
-                        ).map((value) => (
-                          <SelectItem key={value} value={value}>
-                            {value as string}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
+                          ?.getFilterValue() as string[]
+                      )?.join(",") || "all"
+                    }
+                    onValueChange={(value: string) => {
+                      table
+                        .getColumn("property_name")
+                        ?.setFilterValue(
+                          value === "all" ? undefined : value.split(",")
+                        );
+                    }}
+                  >
+                    <SelectTrigger className="h-10 w-full">
+                      <SelectValue placeholder="All Buildings" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">
+                        <div className="flex flex-row items-center gap-2">
+                          <Building2Icon className="w-4 h-4" />
+                          <span>All Buildings</span>
+                        </div>
+                      </SelectItem>
+                      {Array.from(
+                        table
+                          .getColumn("property_name")
+                          ?.getFacetedUniqueValues()
+                          .keys() || []
+                      ).map((value) => (
+                        <SelectItem key={value} value={value}>
+                          {value as string}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-                {table.getColumn("units_status") && (
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={
-                        (
-                          table
-                            .getColumn("units_status")
-                            ?.getFilterValue() as string[]
-                        )?.join(",") || "all"
-                      }
-                      onValueChange={(value: string) => {
+              {table.getColumn("units_status") && (
+                <div className="space-y-2">
+                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                    Occupancy
+                  </label>
+                  <Select
+                    value={
+                      (
                         table
                           .getColumn("units_status")
-                          ?.setFilterValue(
-                            value === "all" ? undefined : value.split(",")
-                          );
-                      }}
-                    >
-                      <SelectTrigger className="h-8 w-full">
-                        <SelectValue placeholder="All Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="occupied">Occupied</SelectItem>
-                        <SelectItem value="vacant">Vacant</SelectItem>
-                        <SelectItem value="terminated">Terminated</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                )}
-
-                {/* Rent Current range filter */}
-                {table.getColumn("rent_current_gri") && (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Rent Current
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const col = table.getColumn("rent_current_gri");
-                        const value = (col?.getFilterValue() ||
-                          {}) as RangeFilter;
-                        return (
-                          <>
-                            <Input
-                              type="number"
-                              inputMode="decimal"
-                              placeholder="Min"
-                              className="h-8 w-24"
-                              value={
-                                typeof value.min === "number" ? value.min : ""
-                              }
-                              onChange={(e) => {
-                                const min = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  min,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                            <Input
-                              type="number"
-                              inputMode="decimal"
-                              placeholder="Max"
-                              className="h-8 w-24"
-                              value={
-                                typeof value.max === "number" ? value.max : ""
-                              }
-                              onChange={(e) => {
-                                const max = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  max,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                          </>
+                          ?.getFilterValue() as string[]
+                      )?.join(",") || "all"
+                    }
+                    onValueChange={(value: string) => {
+                      table
+                        .getColumn("units_status")
+                        ?.setFilterValue(
+                          value === "all" ? undefined : value.split(",")
                         );
-                      })()}
-                    </div>
-                  </div>
-                )}
+                    }}
+                  >
+                    <SelectTrigger className="h-10 w-full">
+                      <SelectValue placeholder="All Units" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Units</SelectItem>
+                      <SelectItem value="occupied">Occupied</SelectItem>
+                      <SelectItem value="vacant">Vacant</SelectItem>
+                      <SelectItem value="terminated">Terminated</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-                {/* Rent Budget range filter */}
-                {table.getColumn("rent_budget_tri") && (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Rent Budget
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const col = table.getColumn("rent_budget_tri");
-                        const value = (col?.getFilterValue() ||
-                          {}) as RangeFilter;
-                        return (
-                          <>
-                            <Input
-                              type="number"
-                              inputMode="decimal"
-                              placeholder="Min"
-                              className="h-8 w-24"
-                              value={
-                                typeof value.min === "number" ? value.min : ""
-                              }
-                              onChange={(e) => {
-                                const min = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  min,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                            <Input
-                              type="number"
-                              inputMode="decimal"
-                              placeholder="Max"
-                              className="h-8 w-24"
-                              value={
-                                typeof value.max === "number" ? value.max : ""
-                              }
-                              onChange={(e) => {
-                                const max = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  max,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                )}
+              {table.getColumn("bedrooms_amount") && (
+                <div className="space-y-2">
+                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                    Amount of rooms
+                  </label>
+                  {(() => {
+                    const col = table.getColumn("bedrooms_amount");
+                    const value = (col?.getFilterValue() || {}) as RangeFilter;
+                    return (
+                      <Input
+                        type="number"
+                        inputMode="numeric"
+                        placeholder="1"
+                        className="h-10 w-full"
+                        value={typeof value.min === "number" ? value.min : ""}
+                        onChange={(e) => {
+                          const min = e.target.value
+                            ? Number(e.target.value)
+                            : undefined;
+                          const next: RangeFilter = {
+                            ...value,
+                            min,
+                          };
+                          if (
+                            typeof next.min !== "number" &&
+                            typeof next.max !== "number"
+                          ) {
+                            col?.setFilterValue(undefined);
+                          } else {
+                            col?.setFilterValue(next);
+                          }
+                        }}
+                      />
+                    );
+                  })()}
+                </div>
+              )}
 
-                {/* Bedrooms range filter */}
-                {table.getColumn("bedrooms_amount") && (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Bedrooms
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const col = table.getColumn("bedrooms_amount");
-                        const value = (col?.getFilterValue() ||
-                          {}) as RangeFilter;
-                        return (
-                          <>
-                            <Input
-                              type="number"
-                              inputMode="numeric"
-                              placeholder="Min"
-                              className="h-8 w-20"
-                              value={
-                                typeof value.min === "number" ? value.min : ""
-                              }
-                              onChange={(e) => {
-                                const min = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  min,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                            <Input
-                              type="number"
-                              inputMode="numeric"
-                              placeholder="Max"
-                              className="h-8 w-20"
-                              value={
-                                typeof value.max === "number" ? value.max : ""
-                              }
-                              onChange={(e) => {
-                                const max = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  max,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                )}
+              {table.getColumn("rent_current_gri") && (
+                <div className="space-y-2">
+                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                    Area
+                  </label>
+                  <Select>
+                    <SelectTrigger className="h-10 w-full">
+                      <SelectValue placeholder="All Areas" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Areas</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-                {/* Bathrooms range filter */}
-                {table.getColumn("bathrooms_amount") && (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-xs font-medium text-muted-foreground">
-                      Bathrooms
-                    </span>
-                    <div className="flex items-center gap-2">
-                      {(() => {
-                        const col = table.getColumn("bathrooms_amount");
-                        const value = (col?.getFilterValue() ||
-                          {}) as RangeFilter;
-                        return (
-                          <>
-                            <Input
-                              type="number"
-                              inputMode="numeric"
-                              placeholder="Min"
-                              className="h-8 w-20"
-                              value={
-                                typeof value.min === "number" ? value.min : ""
-                              }
-                              onChange={(e) => {
-                                const min = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  min,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                            <Input
-                              type="number"
-                              inputMode="numeric"
-                              placeholder="Max"
-                              className="h-8 w-20"
-                              value={
-                                typeof value.max === "number" ? value.max : ""
-                              }
-                              onChange={(e) => {
-                                const max = e.target.value
-                                  ? Number(e.target.value)
-                                  : undefined;
-                                const next: RangeFilter = {
-                                  ...value,
-                                  max,
-                                };
-                                if (
-                                  typeof next.min !== "number" &&
-                                  typeof next.max !== "number"
-                                ) {
-                                  col?.setFilterValue(undefined);
-                                } else {
-                                  col?.setFilterValue(next);
-                                }
-                              }}
-                            />
-                          </>
-                        );
-                      })()}
-                    </div>
-                  </div>
-                )}
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  className="h-9 flex-1 gap-2"
+                  onClick={() => {
+                    void fetch("/api/export?format=csv", {
+                      method: "GET",
+                    }).then((response) => {
+                      if (!response.ok) {
+                        throw new Error("Failed to download CSV");
+                      }
+                      response.blob().then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "rent-roll-export.csv";
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                      });
+                    });
+                  }}
+                >
+                  <FileText className="h-4 w-4" />
+                  CSV
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-9 flex-1 gap-2"
+                  onClick={() => {
+                    void fetch("/api/export?format=xlsx", {
+                      method: "GET",
+                    }).then((response) => {
+                      if (!response.ok) {
+                        throw new Error("Failed to download XLSX");
+                      }
+                      response.blob().then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "rent-roll-export.xlsx";
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                      });
+                    });
+                  }}
+                >
+                  <FileSpreadsheet className="h-4 w-4" />
+                  Excel
+                </Button>
               </div>
             </div>
           </div>
@@ -737,125 +500,26 @@ export default function Page() {
                   Comprehensive unit and lease data
                 </p>
               </div>
-              <div className="flex flex-col md:flex-row items-center gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button size="lg" className="w-full gap-2 md:w-fit">
-                      <Plus className="h-4 w-4" />
-                      Add Unit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Upload CSV File</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex items-center justify-center py-6">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={isUploading}
-                      >
-                        <Upload className="h-4 w-4 mr-2" />
-                        {isUploading ? "Uploading..." : "Upload CSV"}
-                      </Button>
-                      <input
-                        ref={fileInputRef}
-                        id="csv"
-                        type="file"
-                        accept=".csv, .xlsx, .xls, .pdf"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            void handleFileUpload(file);
-                            // Optional: allow re‑uploading the same file
-                            e.target.value = "";
-                          }
-                        }}
-                      />
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="w-full gap-2 md:w-fit"
-                    >
-                      <DownloadIcon className="h-4 w-4" />
-                      Export
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Export as</DialogTitle>
-                    </DialogHeader>
-                    <div className="flex items-center justify-center py-6 gap-2">
-                      <Button
-                        size="lg"
-                        className="w-full gap-2 md:w-fit"
-                        onClick={() => {
-                          void fetch("/api/export?format=csv", {
-                            method: "GET",
-                          }).then((response) => {
-                            if (!response.ok) {
-                              throw new Error("Failed to download CSV");
-                            }
-                            response.blob().then((blob) => {
-                              const url = window.URL.createObjectURL(blob);
-                              const a = document.createElement("a");
-                              a.href = url;
-                              a.download = "rent-roll-export.csv";
-                              a.click();
-                              window.URL.revokeObjectURL(url);
-                            });
-                          });
-                        }}
-                      >
-                        <DownloadIcon className="h-4 w-4" />
-                        Download csv
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="w-full gap-2 md:w-fit"
-                        onClick={() => {
-                          void fetch("/api/export?format=xlsx", {
-                            method: "GET",
-                          }).then((response) => {
-                            if (!response.ok) {
-                              throw new Error("Failed to download XLSX");
-                            }
-                            response.blob().then((blob) => {
-                              const url = window.URL.createObjectURL(blob);
-                              const a = document.createElement("a");
-                              a.href = url;
-                              a.download = "rent-roll-export.xlsx";
-                              a.click();
-                              window.URL.revokeObjectURL(url);
-                            });
-                          });
-                        }}
-                      >
-                        <DownloadIcon className="h-4 w-4" />
-                        Download xlsx
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
             </div>
 
             <div className="overflow-hidden rounded-lg border bg-card">
+              <div className="border-b p-4">
+                <div className="flex flex-row items-center justify-between w-full">
+                  <p className="font-medium text-muted-foreground">
+                    All Buildings
+                  </p>
+                  <p className="font-medium text-muted-foreground">
+                    {table.getFilteredRowModel().rows.length} units
+                  </p>
+                </div>
+              </div>
               <div
                 ref={tableContainerRef}
                 className="relative w-full overflow-x-auto no-scrollbar"
               >
                 <table className="w-full caption-bottom text-sm">
                   <thead className="[&_tr]:border-b">
+                    {/* Column header rows */}
                     {table.getHeaderGroups().map((headerGroup) => (
                       <tr key={headerGroup.id} className="border-b">
                         {headerGroup.headers.map((header) => (
