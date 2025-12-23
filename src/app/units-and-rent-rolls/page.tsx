@@ -300,298 +300,300 @@ export default function Page() {
       {isLoading ? (
         <RentRollSkeleton />
       ) : (
-        <div className="relative flex flex-col md:flex-row gap-4">
-          {/* Filter sidebar (always visible) */}
-          <div className="sticky top-0 left-0 w-full md:w-72 md:shrink-0 border border-border rounded-lg">
-            <div className="p-6 space-y-4">
-              {table.getColumn("property_name") && (
-                <div className="space-y-2">
-                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
-                    Building
-                  </label>
-                  <Select
-                    value={
-                      (
-                        table
-                          .getColumn("property_name")
-                          ?.getFilterValue() as string[]
-                      )?.join(",") || "all"
-                    }
-                    onValueChange={(value: string) => {
-                      table
-                        .getColumn("property_name")
-                        ?.setFilterValue(
-                          value === "all" ? undefined : value.split(",")
-                        );
-                    }}
-                  >
-                    <SelectTrigger className="h-10 w-full">
-                      <SelectValue placeholder="All Buildings" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">
-                        <div className="flex flex-row items-center gap-2">
-                          <Building2Icon className="w-4 h-4" />
-                          <span>All Buildings</span>
-                        </div>
-                      </SelectItem>
-                      {Array.from(
-                        table
-                          .getColumn("property_name")
-                          ?.getFacetedUniqueValues()
-                          .keys() || []
-                      ).map((value) => (
-                        <SelectItem key={value} value={value}>
-                          {value as string}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {table.getColumn("units_status") && (
-                <div className="space-y-2">
-                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
-                    Occupancy
-                  </label>
-                  <Select
-                    value={
-                      (
-                        table
-                          .getColumn("units_status")
-                          ?.getFilterValue() as string[]
-                      )?.join(",") || "all"
-                    }
-                    onValueChange={(value: string) => {
-                      table
-                        .getColumn("units_status")
-                        ?.setFilterValue(
-                          value === "all" ? undefined : value.split(",")
-                        );
-                    }}
-                  >
-                    <SelectTrigger className="h-10 w-full">
-                      <SelectValue placeholder="All Units" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Units</SelectItem>
-                      <SelectItem value="occupied">Occupied</SelectItem>
-                      <SelectItem value="vacant">Vacant</SelectItem>
-                      <SelectItem value="terminated">Terminated</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              {table.getColumn("bedrooms_amount") && (
-                <div className="space-y-2">
-                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
-                    Amount of rooms
-                  </label>
-                  {(() => {
-                    const col = table.getColumn("bedrooms_amount");
-                    const value = (col?.getFilterValue() || {}) as RangeFilter;
-                    return (
-                      <Input
-                        type="number"
-                        inputMode="numeric"
-                        placeholder="1"
-                        className="h-10 w-full"
-                        value={typeof value.min === "number" ? value.min : ""}
-                        onChange={(e) => {
-                          const min = e.target.value
-                            ? Number(e.target.value)
-                            : undefined;
-                          const next: RangeFilter = {
-                            ...value,
-                            min,
-                          };
-                          if (
-                            typeof next.min !== "number" &&
-                            typeof next.max !== "number"
-                          ) {
-                            col?.setFilterValue(undefined);
-                          } else {
-                            col?.setFilterValue(next);
-                          }
-                        }}
-                      />
-                    );
-                  })()}
-                </div>
-              )}
-
-              {table.getColumn("rent_current_gri") && (
-                <div className="space-y-2">
-                  <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
-                    Area
-                  </label>
-                  <Select>
-                    <SelectTrigger className="h-10 w-full">
-                      <SelectValue placeholder="All Areas" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Areas</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-
-              <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  className="h-9 flex-1 gap-2"
-                  onClick={() => {
-                    void fetch("/api/export?format=csv", {
-                      method: "GET",
-                    }).then((response) => {
-                      if (!response.ok) {
-                        throw new Error("Failed to download CSV");
-                      }
-                      response.blob().then((blob) => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "rent-roll-export.csv";
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                      });
-                    });
-                  }}
-                >
-                  <FileText className="h-4 w-4" />
-                  CSV
-                </Button>
-                <Button
-                  variant="outline"
-                  className="h-9 flex-1 gap-2"
-                  onClick={() => {
-                    void fetch("/api/export?format=xlsx", {
-                      method: "GET",
-                    }).then((response) => {
-                      if (!response.ok) {
-                        throw new Error("Failed to download XLSX");
-                      }
-                      response.blob().then((blob) => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "rent-roll-export.xlsx";
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                      });
-                    });
-                  }}
-                >
-                  <FileSpreadsheet className="h-4 w-4" />
-                  Excel
-                </Button>
-              </div>
+        <div className="w-full flex flex-col gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                Rent Roll
+              </h2>
+              <p className="text-muted-foreground mt-2">
+                Comprehensive unit and lease data
+              </p>
             </div>
           </div>
-          <div className="flex-1 overflow-x-auto no-scrollbar overscroll-x-contain">
-            <div className="flex flex-wrap items-center justify-between gap-2 mb-6">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                  Rent Roll
-                </h2>
-                <p className="text-muted-foreground mt-2">
-                  Comprehensive unit and lease data
-                </p>
-              </div>
-            </div>
+          <div className="relative flex flex-col md:flex-row gap-4">
+            {/* Filter sidebar (always visible) */}
+            <div className="sticky top-0 left-0 w-full md:w-72 md:shrink-0 border border-border rounded-lg">
+              <div className="p-6 space-y-4">
+                {table.getColumn("property_name") && (
+                  <div className="flex flex-col gap-2">
+                    <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                      Building
+                    </label>
+                    <Select
+                      value={
+                        (
+                          table
+                            .getColumn("property_name")
+                            ?.getFilterValue() as string[]
+                        )?.join(",") || "all"
+                      }
+                      onValueChange={(value: string) => {
+                        table
+                          .getColumn("property_name")
+                          ?.setFilterValue(
+                            value === "all" ? undefined : value.split(",")
+                          );
+                      }}
+                    >
+                      <SelectTrigger className="h-10 w-full">
+                        <SelectValue placeholder="All Buildings" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">
+                          <div className="flex flex-row items-center gap-2">
+                            <Building2Icon className="w-4 h-4" />
+                            <span>All Buildings</span>
+                          </div>
+                        </SelectItem>
+                        {Array.from(
+                          table
+                            .getColumn("property_name")
+                            ?.getFacetedUniqueValues()
+                            .keys() || []
+                        ).map((value) => (
+                          <SelectItem key={value} value={value}>
+                            {value as string}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
-            <div className="overflow-hidden rounded-lg border bg-card">
-              <div className="border-b p-4">
-                <div className="flex flex-row items-center justify-between w-full">
-                  <p className="font-medium text-muted-foreground">
-                    All Buildings
-                  </p>
-                  <p className="font-medium text-muted-foreground">
-                    {table.getFilteredRowModel().rows.length} units
-                  </p>
+                {table.getColumn("units_status") && (
+                  <div className="flex flex-col gap-2">
+                    <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                      Occupancy
+                    </label>
+                    <Select
+                      value={
+                        (
+                          table
+                            .getColumn("units_status")
+                            ?.getFilterValue() as string[]
+                        )?.join(",") || "all"
+                      }
+                      onValueChange={(value: string) => {
+                        table
+                          .getColumn("units_status")
+                          ?.setFilterValue(
+                            value === "all" ? undefined : value.split(",")
+                          );
+                      }}
+                    >
+                      <SelectTrigger className="h-10 w-full">
+                        <SelectValue placeholder="All Units" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Units</SelectItem>
+                        <SelectItem value="occupied">Occupied</SelectItem>
+                        <SelectItem value="vacant">Vacant</SelectItem>
+                        <SelectItem value="terminated">Terminated</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {table.getColumn("bedrooms_amount") && (
+                  <div className="flex flex-col gap-2">
+                    <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                      Amount of rooms
+                    </label>
+                    {(() => {
+                      const col = table.getColumn("bedrooms_amount");
+                      const value = (col?.getFilterValue() ||
+                        {}) as RangeFilter;
+                      return (
+                        <Input
+                          type="number"
+                          inputMode="numeric"
+                          placeholder="1"
+                          className="h-10 w-full"
+                          value={typeof value.min === "number" ? value.min : ""}
+                          onChange={(e) => {
+                            const min = e.target.value
+                              ? Number(e.target.value)
+                              : undefined;
+                            const next: RangeFilter = {
+                              ...value,
+                              min,
+                            };
+                            if (
+                              typeof next.min !== "number" &&
+                              typeof next.max !== "number"
+                            ) {
+                              col?.setFilterValue(undefined);
+                            } else {
+                              col?.setFilterValue(next);
+                            }
+                          }}
+                        />
+                      );
+                    })()}
+                  </div>
+                )}
+
+                {table.getColumn("rent_current_gri") && (
+                  <div className="flex flex-col gap-2">
+                    <label className="font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-sm text-muted-foreground">
+                      Area
+                    </label>
+                    <Select>
+                      <SelectTrigger className="h-10 w-full">
+                        <SelectValue placeholder="All Areas" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Areas</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    variant="outline"
+                    className="h-9 flex-1 gap-2"
+                    onClick={() => {
+                      void fetch("/api/export?format=csv", {
+                        method: "GET",
+                      }).then((response) => {
+                        if (!response.ok) {
+                          throw new Error("Failed to download CSV");
+                        }
+                        response.blob().then((blob) => {
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = "rent-roll-export.csv";
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                        });
+                      });
+                    }}
+                  >
+                    <FileText className="h-4 w-4" />
+                    CSV
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="h-9 flex-1 gap-2"
+                    onClick={() => {
+                      void fetch("/api/export?format=xlsx", {
+                        method: "GET",
+                      }).then((response) => {
+                        if (!response.ok) {
+                          throw new Error("Failed to download XLSX");
+                        }
+                        response.blob().then((blob) => {
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = "rent-roll-export.xlsx";
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                        });
+                      });
+                    }}
+                  >
+                    <FileSpreadsheet className="h-4 w-4" />
+                    Excel
+                  </Button>
                 </div>
               </div>
-              <div
-                ref={tableContainerRef}
-                className="relative w-full overflow-x-auto no-scrollbar"
-              >
-                <table className="w-full caption-bottom text-sm">
-                  <thead className="[&_tr]:border-b">
-                    {/* Column header rows */}
-                    {table.getHeaderGroups().map((headerGroup) => (
-                      <tr key={headerGroup.id} className="border-b">
-                        {headerGroup.headers.map((header) => (
-                          <th
-                            key={header.id}
-                            className="h-12 px-4 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0"
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext()
-                                )}
-                          </th>
-                        ))}
-                      </tr>
-                    ))}
-                  </thead>
-                  <tbody className="[&_tr:last-child]:border-0">
-                    {rows.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={columns.length}
-                          className="h-24 text-center text-muted-foreground"
-                        >
-                          No units found
-                        </td>
-                      </tr>
-                    ) : (
-                      <>
-                        {paddingTop > 0 && (
-                          <tr>
-                            <td
-                              style={{ height: `${paddingTop}px` }}
-                              colSpan={columns.length}
-                            />
-                          </tr>
-                        )}
-                        {virtualRows.map((virtualRow) => {
-                          const row = rows[virtualRow.index];
-                          return (
-                            <tr
-                              key={row.id}
-                              data-index={virtualRow.index}
-                              className="border-b transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted"
+            </div>
+            <div className="flex-1 overflow-x-auto no-scrollbar overscroll-x-contain">
+              <div className="overflow-hidden rounded-lg border bg-card">
+                <div className="border-b p-4">
+                  <div className="flex flex-row items-center justify-between w-full">
+                    <p className="font-medium text-muted-foreground">
+                      All Buildings
+                    </p>
+                    <p className="font-medium text-muted-foreground">
+                      {table.getFilteredRowModel().rows.length} units
+                    </p>
+                  </div>
+                </div>
+                <div
+                  ref={tableContainerRef}
+                  className="relative w-full overflow-x-auto no-scrollbar"
+                >
+                  <table className="w-full caption-bottom text-sm">
+                    <thead className="[&_tr]:border-b">
+                      {/* Column header rows */}
+                      {table.getHeaderGroups().map((headerGroup) => (
+                        <tr key={headerGroup.id} className="border-b">
+                          {headerGroup.headers.map((header) => (
+                            <th
+                              key={header.id}
+                              className="h-12 px-4 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0"
                             >
-                              {row.getVisibleCells().map((cell) => (
-                                <td
-                                  key={cell.id}
-                                  className="p-4 align-middle [&:has([role=checkbox])]:pr-0"
-                                >
-                                  {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext()
+                              {header.isPlaceholder
+                                ? null
+                                : flexRender(
+                                    header.column.columnDef.header,
+                                    header.getContext()
                                   )}
-                                </td>
-                              ))}
+                            </th>
+                          ))}
+                        </tr>
+                      ))}
+                    </thead>
+                    <tbody className="[&_tr:last-child]:border-0">
+                      {rows.length === 0 ? (
+                        <tr>
+                          <td
+                            colSpan={columns.length}
+                            className="h-24 text-center text-muted-foreground"
+                          >
+                            No units found
+                          </td>
+                        </tr>
+                      ) : (
+                        <>
+                          {paddingTop > 0 && (
+                            <tr>
+                              <td
+                                style={{ height: `${paddingTop}px` }}
+                                colSpan={columns.length}
+                              />
                             </tr>
-                          );
-                        })}
-                        {paddingBottom > 0 && (
-                          <tr>
-                            <td
-                              style={{ height: `${paddingBottom}px` }}
-                              colSpan={columns.length}
-                            />
-                          </tr>
-                        )}
-                      </>
-                    )}
-                  </tbody>
-                </table>
+                          )}
+                          {virtualRows.map((virtualRow) => {
+                            const row = rows[virtualRow.index];
+                            return (
+                              <tr
+                                key={row.id}
+                                data-index={virtualRow.index}
+                                className="border-b transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted"
+                              >
+                                {row.getVisibleCells().map((cell) => (
+                                  <td
+                                    key={cell.id}
+                                    className="p-4 align-middle [&:has([role=checkbox])]:pr-0"
+                                  >
+                                    {flexRender(
+                                      cell.column.columnDef.cell,
+                                      cell.getContext()
+                                    )}
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                          {paddingBottom > 0 && (
+                            <tr>
+                              <td
+                                style={{ height: `${paddingBottom}px` }}
+                                colSpan={columns.length}
+                              />
+                            </tr>
+                          )}
+                        </>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
