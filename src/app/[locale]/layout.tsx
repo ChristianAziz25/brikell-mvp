@@ -1,6 +1,10 @@
 import { AppSidebar } from "@/components";
 import { SidebarProvider } from "@/components/ui/sidebar";
+import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
+import { notFound } from "next/navigation";
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -10,23 +14,33 @@ export const metadata: Metadata = {
     "Brikell is a platform for creating and managing your housing data",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+  // TODO: add not found page if no locale is provided
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+  const messages = await getMessages();
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <link rel="icon" href="/brikell.ico" sizes="any" />
       </head>
       <body className="bg-background text-foreground antialiased">
         <Providers>
-          <SidebarProvider>
-            <div className="flex w-full min-h-svh bg-muted/5 overflow-hidden">
-              <AppSidebar>{children}</AppSidebar>
-            </div>
-          </SidebarProvider>
+          <NextIntlClientProvider messages={messages}>
+            <SidebarProvider>
+              <div className="flex w-full min-h-svh bg-muted/5 overflow-hidden">
+                <AppSidebar>{children}</AppSidebar>
+              </div>
+            </SidebarProvider>
+          </NextIntlClientProvider>
         </Providers>
       </body>
     </html>
