@@ -17,7 +17,7 @@ import {
   Opex,
   RentRollUnit,
   TheoreticalRentalIncome,
-} from "../../generated/client";
+} from "../../../generated/client";
 import { MyAssetsSkeleton } from "./components/skeleton";
 import { Table } from "./Table";
 import { dollarStringify } from "./util/dollarStringify";

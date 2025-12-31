@@ -26,7 +26,7 @@ import {
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Building2Icon, FileSpreadsheet, FileText } from "lucide-react";
 import { useRef, useState } from "react";
-import type { RentStatus } from "../type/rent-roll";
+import type { RentStatus } from "../../type/rent-roll";
 import { RentRollSkeleton } from "./components/skeleton";
 
 const rentStatusVariants: Record<RentStatus, string> = {

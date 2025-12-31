@@ -1,6 +1,6 @@
 "use client";
 
-import { dollarStringify } from "@/app/properties/util/dollarStringify";
+import { dollarStringify } from "@/app/[locale]/properties/util/dollarStringify";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig } from "@/components/ui/chart";
 import { ChartBarMultiple } from "@/components/ui/multiple-bar-chart";

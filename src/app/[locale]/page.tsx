@@ -13,7 +13,7 @@ import { ChartLineMultiple } from "@/components/ui/multi-line-chart";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import type { YearByAssetRow } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
-import { HomeSkeleton } from "./[locale]/home-skeleton";
+import { HomeSkeleton } from "./home-skeleton";
 
 // TODO: add models for different data types
 export default function Home() {
