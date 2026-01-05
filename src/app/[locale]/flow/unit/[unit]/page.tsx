@@ -129,7 +129,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
                 </p>
               </div>
 
-              <div className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border border-border bg-muted text-muted-foreground">
+              <div className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border border-border bg-muted-foreground/20 text-muted-foreground">
                 {getStatusText(unit.units_status)}
               </div>
 
@@ -234,7 +234,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
           </div>
 
           {/* Middle column: activity */}
-          <div className="border bg-card text-card-foreground shadow-sm h-full rounded-2xl flex flex-col md:w-120 md:shrink-0">
+          <div className="border bg-card text-card-foreground shadow-sm h-full rounded-2xl flex flex-col md:flex-1 md:min-w-0">
             <div className="p-6 border-b">
               <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 <svg
@@ -431,7 +431,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
 
                 {/* Internal note */}
                 <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-muted-foreground/20 flex items-center justify-center shrink-0">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="24"
@@ -531,7 +531,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
           </div>
 
           {/* Right column: current tenant */}
-          <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl h-fit md:flex-1 md:min-w-0">
+          <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl h-fit md:w-100 md:shrink-0">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-foreground flex items-center gap-2">
                 <svg
