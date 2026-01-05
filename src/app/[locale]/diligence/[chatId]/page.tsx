@@ -250,7 +250,7 @@ export default function Page() {
       <section
         ref={previewContainerRef}
         onMouseMove={handlePreviewMouseMove}
-        className="relative flex flex-col w-32 sticky top-0 self-start"
+        className="relative flex flex-col w-32 top-0 self-start"
         style={{ height: "calc(100vh - 2rem)" }}
       >
         <div className="flex flex-col gap-2 overflow-y-auto no-scrollbar overscroll-y-contain p-2 flex-1 min-h-0">
@@ -474,7 +474,7 @@ export default function Page() {
           </div> */}
         </div>
 
-        <div className="sticky bottom-0 z-50 bg-white dark:bg-neutral-900">
+        <div className="sticky bottom-0 bg-white dark:bg-neutral-900">
           <Chat eventHandler={handleChatEvent} className="shadow-md" />
         </div>
       </section>
