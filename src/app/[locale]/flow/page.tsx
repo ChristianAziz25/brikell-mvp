@@ -1,5 +1,6 @@
 "use client";
 
+import { PageAnimation } from "@/components/page-animation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { RentRollUnit } from "@/generated/client";
@@ -194,34 +195,36 @@ function KanbanColumn({
   });
 
   return (
-    <div className={cn("shrink-0 w-full md:w-80", className)}>
-      <div className="bg-muted/30 border border-border rounded-t-xl px-4 py-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium text-foreground text-sm">{stage}</h3>
-          <Badge variant="outline" className="text-xs">
-            {cards.length}
-          </Badge>
+    <PageAnimation>
+      <div className={cn("shrink-0 w-full md:w-80", className)}>
+        <div className="bg-muted/30 border border-border rounded-t-xl px-4 py-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-foreground text-sm">{stage}</h3>
+            <Badge variant="outline" className="text-xs">
+              {cards.length}
+            </Badge>
+          </div>
         </div>
+        <SortableContext items={cardIds}>
+          <div
+            ref={setNodeRef}
+            data-stage={stage}
+            className={cn(
+              "bg-muted/10 border border-t-0 border-border rounded-b-xl p-3 h-[500px] overflow-y-auto no-scrollbar overscroll-y-contain space-y-3 transition-colors",
+              isOver && "bg-muted/20"
+            )}
+          >
+            {cards.length > 0 ? (
+              cards.map((card) => <SortableCard key={card.id} card={card} />)
+            ) : (
+              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                No cards in this stage
+              </div>
+            )}
+          </div>
+        </SortableContext>
       </div>
-      <SortableContext items={cardIds}>
-        <div
-          ref={setNodeRef}
-          data-stage={stage}
-          className={cn(
-            "bg-muted/10 border border-t-0 border-border rounded-b-xl p-3 h-[500px] overflow-y-auto no-scrollbar overscroll-y-contain space-y-3 transition-colors",
-            isOver && "bg-muted/20"
-          )}
-        >
-          {cards.length > 0 ? (
-            cards.map((card) => <SortableCard key={card.id} card={card} />)
-          ) : (
-            <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
-              No cards in this stage
-            </div>
-          )}
-        </div>
-      </SortableContext>
-    </div>
+    </PageAnimation>
   );
 }
 
@@ -375,101 +378,103 @@ export default function Page() {
       : stages.filter((stage) => stage === selectedStage);
 
   return (
-    <div className="w-full h-full">
-      {isUnitsLoading ? (
-        <FlowSkeleton />
-      ) : (
-        <div className="w-full">
-          <div className="space-y-6 w-full min-w-0 overflow-x-visible">
-            <div className="w-full">
-              <h2 className="text-3xl font-bold tracking-tight text-foreground">
-                Leasing Pipeline
-              </h2>
-              <p className="text-muted-foreground text-sm mt-1">
-                Track prospects through the leasing process
-              </p>
-            </div>
-
-            <div className="w-full relative">
-              <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar overscroll-x-contain">
-                {(["All", ...stages] as const).map((stage, index) => (
-                  <div
-                    key={stage}
-                    onClick={() =>
-                      setSelectedStage(stage === "All" ? "All" : stage)
-                    }
-                    className={cn(
-                      "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border whitespace-nowrap shrink-0 cursor-pointer transition-colors",
-                      selectedStage === stage && "bg-muted/50"
-                      // index === 0 && "ml-6",
-                      // index === stages.length && "mr-4"
-                    )}
-                  >
-                    <span className="text-sm font-medium text-foreground">
-                      {stage}
-                    </span>
-                    {stage !== "All" && (
-                      <Badge
-                        variant="secondary"
-                        className="bg-muted/50 hover:bg-muted/70 text-xs"
-                      >
-                        {stageCounts[stage]}
-                      </Badge>
-                    )}
-                  </div>
-                ))}
+    <PageAnimation>
+      <div className="w-full h-full">
+        {isUnitsLoading ? (
+          <FlowSkeleton />
+        ) : (
+          <div className="w-full">
+            <div className="space-y-6 w-full min-w-0 overflow-x-visible">
+              <div className="w-full">
+                <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                  Leasing Pipeline
+                </h2>
+                <p className="text-muted-foreground text-sm mt-1">
+                  Track prospects through the leasing process
+                </p>
               </div>
-            </div>
 
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-            >
               <div className="w-full relative">
-                <div className="flex flex-col md:flex-row gap-4 overflow-x-auto pb-4 no-scrollbar overscroll-x-contain">
-                  {filteredStages.map((stage, index) => (
-                    <KanbanColumn
+                <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar overscroll-x-contain">
+                  {(["All", ...stages] as const).map((stage, index) => (
+                    <div
                       key={stage}
-                      stage={stage}
-                      cards={getCardsByStage(stage)}
-                      className={
-                        cn()
-                        // index === 0 && "md:ml-6",
-                        // index === filteredStages.length - 1 && "md:mr-6"
+                      onClick={() =>
+                        setSelectedStage(stage === "All" ? "All" : stage)
                       }
-                    />
+                      className={cn(
+                        "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border whitespace-nowrap shrink-0 cursor-pointer transition-colors",
+                        selectedStage === stage && "bg-muted/50"
+                        // index === 0 && "ml-6",
+                        // index === stages.length && "mr-4"
+                      )}
+                    >
+                      <span className="text-sm font-medium text-foreground">
+                        {stage}
+                      </span>
+                      {stage !== "All" && (
+                        <Badge
+                          variant="secondary"
+                          className="bg-muted/50 hover:bg-muted/70 text-xs"
+                        >
+                          {stageCounts[stage]}
+                        </Badge>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>
-              <DragOverlay
-                dropAnimation={{
-                  duration: 200,
-                  easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
-                }}
-                style={{
-                  cursor: "grabbing",
-                }}
+
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
               >
-                {activeId
-                  ? (() => {
-                      const card = cards.find((card) => card.id === activeId);
-                      if (!card) {
-                        return null;
-                      }
-                      return (
-                        <div style={{ transform: "rotate(5deg)" }}>
-                          <DragPreviewCard card={card} />
-                        </div>
-                      );
-                    })()
-                  : null}
-              </DragOverlay>
-            </DndContext>
+                <div className="w-full relative">
+                  <div className="flex flex-col md:flex-row gap-4 overflow-x-auto pb-4 no-scrollbar overscroll-x-contain">
+                    {filteredStages.map((stage, index) => (
+                      <KanbanColumn
+                        key={stage}
+                        stage={stage}
+                        cards={getCardsByStage(stage)}
+                        className={
+                          cn()
+                          // index === 0 && "md:ml-6",
+                          // index === filteredStages.length - 1 && "md:mr-6"
+                        }
+                      />
+                    ))}
+                  </div>
+                </div>
+                <DragOverlay
+                  dropAnimation={{
+                    duration: 200,
+                    easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
+                  }}
+                  style={{
+                    cursor: "grabbing",
+                  }}
+                >
+                  {activeId
+                    ? (() => {
+                        const card = cards.find((card) => card.id === activeId);
+                        if (!card) {
+                          return null;
+                        }
+                        return (
+                          <div style={{ transform: "rotate(5deg)" }}>
+                            <DragPreviewCard card={card} />
+                          </div>
+                        );
+                      })()
+                    : null}
+                </DragOverlay>
+              </DndContext>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </PageAnimation>
   );
 }

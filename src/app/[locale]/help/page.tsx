@@ -4,6 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { PageAnimation } from "@/components/page-animation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -56,7 +57,8 @@ const faqs = [
 
 export default function HelpPage() {
   return (
-    <div className="space-y-6 animate-fade-in">
+    <PageAnimation>
+      <div className="space-y-6 animate-fade-in">
       {/* Search card */}
       <Card className="shadow-card">
         <CardContent className="p-6 pt-6">
@@ -155,5 +157,6 @@ export default function HelpPage() {
         </CardContent>
       </Card>
     </div>
+    </PageAnimation>
   );
 }

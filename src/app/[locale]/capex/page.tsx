@@ -1,6 +1,7 @@
 "use client";
 
 import { dollarStringify } from "@/app/[locale]/properties/util/dollarStringify";
+import { PageAnimation } from "@/components/page-animation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { type ChartConfig } from "@/components/ui/chart";
 import { ChartBarMultiple } from "@/components/ui/multiple-bar-chart";
@@ -138,7 +139,8 @@ export default function Capex() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <PageAnimation>
+      <div className="space-y-6 animate-fade-in">
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="rounded-lg shadow-sm border-border">
@@ -250,5 +252,6 @@ export default function Capex() {
         </Card>
       </div>
     </div>
+    </PageAnimation>
   );
 }

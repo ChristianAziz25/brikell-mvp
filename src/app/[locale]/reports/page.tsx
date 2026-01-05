@@ -5,6 +5,7 @@ import type {
   ReportsData,
   ScheduledReport,
 } from "@/app/api/reports/route";
+import { PageAnimation } from "@/components/page-animation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -193,7 +194,8 @@ export default function Reports() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <PageAnimation>
+      <div className="space-y-6 animate-fade-in">
       {/* Recent Reports */}
       <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
         <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
@@ -303,5 +305,6 @@ export default function Reports() {
         </CardContent>
       </Card>
     </div>
+    </PageAnimation>
   );
 }

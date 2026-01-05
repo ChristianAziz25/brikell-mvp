@@ -1,5 +1,6 @@
 "use client";
 
+import { PageAnimation } from "@/components/page-animation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -296,7 +297,8 @@ export default function Page() {
       : 0;
 
   return (
-    <div className="w-full">
+    <PageAnimation>
+      <div className="w-full">
       {isLoading ? (
         <RentRollSkeleton />
       ) : (
@@ -600,5 +602,6 @@ export default function Page() {
         </div>
       )}
     </div>
+    </PageAnimation>
   );
 }

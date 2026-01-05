@@ -1,5 +1,6 @@
 "use client";
 
+import { PageAnimation } from "@/components/page-animation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ChartLineDefault } from "@/components/ui/line-chart";
@@ -301,7 +302,8 @@ export default function MyAssets() {
   }
 
   return (
-    <div className="space-y-6">
+    <PageAnimation>
+      <div className="space-y-6">
       <section className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-4">
         {cardConfig.map((card) => (
           <Card key={card.title}>
@@ -329,5 +331,6 @@ export default function MyAssets() {
         />
       </section>
     </div>
+    </PageAnimation>
   );
 }

@@ -1,3 +1,4 @@
+import { PageAnimation } from "@/components/page-animation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, Building, Database, Palette, Shield, User } from "lucide-react";
 
@@ -42,7 +43,8 @@ const settingsSections = [
 
 export default function SettingsPage() {
   return (
-    <div className="space-y-6 animate-fade-in max-w-4xl">
+    <PageAnimation>
+      <div className="space-y-6 animate-fade-in max-w-4xl">
       <div>
         <h1 className="text-2xl font-semibold text-foreground">Settings</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -81,5 +83,6 @@ export default function SettingsPage() {
         })}
       </div>
     </div>
+    </PageAnimation>
   );
 }

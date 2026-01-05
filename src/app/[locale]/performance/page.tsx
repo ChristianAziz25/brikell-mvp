@@ -1,5 +1,6 @@
 "use client";
 
+import { PageAnimation } from "@/components/page-animation";
 import { Button } from "@/components/ui/button";
 import { ChartAreaLegend } from "@/components/ui/multi-area-chart";
 import type { Asset } from "@/generated/client";
@@ -104,7 +105,8 @@ export default function Performance() {
   }, [yearBasedData]);
 
   return (
-    <div className="w-full">
+    <PageAnimation>
+      <div className="w-full">
       <div className="space-y-6">
         <div className="w-full">
           <h2 className="text-3xl font-bold tracking-tight text-foreground">
@@ -160,5 +162,6 @@ export default function Performance() {
         )}
       </div>
     </div>
+    </PageAnimation>
   );
 }

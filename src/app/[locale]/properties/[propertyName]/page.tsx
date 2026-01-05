@@ -1,5 +1,6 @@
 "use client";
 
+import { PageAnimation } from "@/components/page-animation";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -829,7 +830,8 @@ export default function PropertyPage({
   });
 
   return (
-    <div className="space-y-6">
+    <PageAnimation>
+      <div className="space-y-6">
       <div className="w-full">
         <h2 className="text-3xl font-bold tracking-tight text-foreground">
           My Assets
@@ -867,5 +869,6 @@ export default function PropertyPage({
         </>
       )}
     </div>
+    </PageAnimation>
   );
 }

@@ -5,6 +5,7 @@ import type {
   DataSource,
   RecentUpdate,
 } from "@/app/api/data-library/route";
+import { PageAnimation } from "@/components/page-animation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -187,7 +188,8 @@ export default function DataLibrary() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <PageAnimation>
+      <div className="space-y-6 animate-fade-in">
       {/* Data Sources */}
       <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
         <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
@@ -298,5 +300,6 @@ export default function DataLibrary() {
         </CardContent>
       </Card>
     </div>
+    </PageAnimation>
   );
 }

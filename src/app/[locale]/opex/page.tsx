@@ -1,5 +1,6 @@
 "use client";
 
+import { PageAnimation } from "@/components/page-animation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -404,7 +405,8 @@ export default function Opex() {
   }
 
   return (
-    <div className="space-y-6">
+    <PageAnimation>
+      <div className="space-y-6">
       {/* Filters */}
       <div className="flex gap-3">
         <Select value={period} onValueChange={setPeriod}>
@@ -708,5 +710,6 @@ export default function Opex() {
         </CardContent>
       </Card>
     </div>
+    </PageAnimation>
   );
 }
