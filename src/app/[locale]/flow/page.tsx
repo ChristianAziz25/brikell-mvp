@@ -237,7 +237,7 @@ export default function Page() {
     {
       queryKey: ["units"],
       queryFn: async () => {
-        const res = await fetch("/api/rent-roll");
+        const res = await fetch("/api/rent-rolls");
         if (!res.ok) {
           throw new Error("Failed to load rent roll data");
         }
