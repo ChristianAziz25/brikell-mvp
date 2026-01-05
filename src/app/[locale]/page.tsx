@@ -118,7 +118,7 @@ export default function Home() {
         <div className="space-y-2">
           <h2 className="text-3xl font-bold text-foreground text-center">
             Welcome{" "}
-            <span className="font-light text-muted-foreground">Søren</span>
+            <span className="font-light text-muted-foreground">Daniel</span>
           </h2>
           <div className="text-center">
             <TextShimmer duration={2} spread={3} className="text-sm font-light">
