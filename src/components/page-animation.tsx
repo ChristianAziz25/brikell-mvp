@@ -17,6 +17,7 @@ export function PageAnimation({ children }: PageAnimationProps) {
         duration: 0.4,
         ease: [0.4, 0, 0.2, 1],
       }}
+      className="overflow-y-hidden h-full"
     >
       {children}
     </motion.div>

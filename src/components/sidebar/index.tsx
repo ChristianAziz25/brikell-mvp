@@ -16,6 +16,7 @@ import {
   WorkflowIcon,
 } from "lucide-react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 type NavItem = {
@@ -181,10 +182,15 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
 }
 
 const Dashboard = ({ children }: { children: React.ReactNode }) => {
+  const pathname = usePathname();
+  const isChatPage = pathname?.includes('/diligence/');
+  
   return (
     <div className="flex flex-1 py-2 pr-2 min-h-0 min-w-0">
       <div className="p-2 md:p-10 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 min-w-0 min-h-0 overflow-y-auto no-scrollbar overscroll-y-contain">
-        <div className="w-full max-w-7xl mx-auto min-w-0">{children}</div>
+        <div className={cn("w-full max-w-7xl mx-auto min-w-0", isChatPage && "h-full")}>
+          {children}
+        </div>
       </div>
     </div>
   );

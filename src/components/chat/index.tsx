@@ -62,7 +62,7 @@ export default function Chat({
     >
       <div
         className={cn(
-          "bg-card rounded-2xl p-2.5 shadow-sm border grid grid-cols-[1fr] [grid-template-areas:'primary'_'footer'] gap-y-1.5",
+          "bg-card rounded-2xl p-2.5 border grid grid-cols-[1fr] [grid-template-areas:'primary'_'footer'] gap-y-1.5",
           className
         )}
       >
