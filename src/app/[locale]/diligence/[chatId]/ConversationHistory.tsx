@@ -50,19 +50,17 @@ export function ConversationHistory({
                   "cursor-pointer border border-transparent hover:border-border/50"
                 )}
               >
-                {/* Turn Number Badge */}
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary">
-                    <span className="text-xs font-medium">{index + 1}</span>
-                  </div>
-                  <div className="h-px flex-1 bg-border/50" />
-                </div>
 
                 {/* User Message */}
                 <div className="mb-2">
+                    <div className="flex justify-between items-center">
                   <div className="text-xs font-medium text-muted-foreground mb-1">
                     You
                   </div>
+                  <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary">
+                    <span className="text-xs font-medium">{index + 1}</span>
+                  </div>
+                    </div>
                   <p className="text-xs text-foreground line-clamp-2 leading-relaxed">
                     {turn.user}
                   </p>
