@@ -101,10 +101,13 @@ export const tableDetails = {
   - created_at: row creation timestamp
   - updated_at: last update timestamp
 
-  IMPORTANT PRISMA RULES:
-  - Only "id" is unique; "name" is NOT unique in the schema.
-  - Do NOT call prisma.asset.findUnique({ where: { name: ... } }) or prisma.asset.findUniqueOrThrow({ where: { name: ... } }).
-  - For name filters, use prisma.asset.findFirst or prisma.asset.findMany with a "where" clause on "name".
+  IMPORTANT SQL RULES:
+  - All tables are in the "public" schema, so qualify table names as public.asset, public.capex, etc.
+  - Only "id" is unique; "name" is NOT unique in the Asset table.
+  - Use ILIKE for case-insensitive text matching (e.g., WHERE name ILIKE '%gertrudehus%')
+  - Always use LIMIT clauses to prevent excessive data retrieval
+  - Use proper JOINs to relate tables via foreign keys (assetId)
+  - Column names use snake_case (created_at, asset_name, etc.)
   `.trim(),
 
   TheoreticalRentalIncome: `
@@ -122,165 +125,165 @@ export const tableDetails = {
 
 export const fewShotQueries = {
     'Show me everything about Gertrudehus - all the units, expenses, and capital expenditures': 
-      'Use Prisma\'s include to fetch related data in a single query. Since "name" is not unique on Asset, use findFirst instead of findUnique: `prisma.asset.findFirst({ where: { name: "Gertrudehus" }, include: { rentRoll: true, capex: true, opex: true } })`.',
+      'Use JOINs to fetch related data. Query: `SELECT a.*, c.*, o.*, r.* FROM public.asset a LEFT JOIN public.capex c ON a.id = c."assetId" LEFT JOIN public.opex o ON a.id = o."assetId" LEFT JOIN public."RentRollUnit" r ON a.id = r."assetId" WHERE a.name ILIKE \'%Gertrudehus%\' LIMIT 100`',
   
     'What units are currently occupied at gertrudehus?': 
-      'Filter by units_status and use the asset relation: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied", asset: { name: { equals: "gertrudehus", mode: "insensitive" } } } })`.',
+      'Filter by units_status and join with asset: `SELECT r.* FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.units_status = \'occupied\' AND a.name ILIKE \'%gertrudehus%\' LIMIT 50`',
   
     'Show me all our properties': 
-      'Get all assets: `prisma.asset.findMany({ include: { rentRoll: true } })`.',
+      'Get all assets: `SELECT * FROM public.asset LIMIT 100`',
   
     'What did we spend on capital expenditures for emmahus in 2025?': 
-      'Use nested where and include: `prisma.capex.findFirst({ where: { capex_year: 2025, asset: { name: { equals: "emmahus", mode: "insensitive" } } }, include: { asset: { select: { name: true } } } })`.',
+      'Join capex with asset and filter: `SELECT c.*, a.name FROM public.capex c JOIN public.asset a ON c."assetId" = a.id WHERE c.capex_year = 2025 AND a.name ILIKE \'%emmahus%\' LIMIT 10`',
   
     'Show me all operating expenses for 2025': 
-      'Filter by opex_year: `prisma.opex.findMany({ where: { opex_year: 2025 }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by opex_year and include asset name: `SELECT o.*, a.name FROM public.opex o JOIN public.asset a ON o."assetId" = a.id WHERE o.opex_year = 2025 LIMIT 50`',
   
     'Which units are vacant right now?': 
-      'Filter by units_status: `prisma.rentRollUnit.findMany({ where: { units_status: "vacant" }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by units_status: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.units_status = \'vacant\' LIMIT 50`',
   
     'What\'s the rent for all occupied units at Gertrudehus?': 
-      'Filter by status and asset name, then select rent fields: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied", asset: { name: "Gertrudehus" } }, select: { unit_id: true, rent_current_gri: true, unit_address: true } })`.',
+      'Filter by status and join with asset: `SELECT r.unit_id, r.rent_current_gri, r.unit_address FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.units_status = \'occupied\' AND a.name ILIKE \'%Gertrudehus%\' LIMIT 50`',
   
     'Show me all properties in Denmark': 
-      'Filter by country field: `prisma.asset.findMany({ where: { country: "Denmark" } })`.',
+      'Filter by country: `SELECT * FROM public.asset WHERE country = \'Denmark\' LIMIT 100`',
   
     'What maintenance costs did we have last year across all properties?': 
-      'Filter by capex_year: `prisma.capex.findMany({ where: { capex_year: 2025 }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by capex_year: `SELECT c.*, a.name FROM public.capex c JOIN public.asset a ON c."assetId" = a.id WHERE c.capex_year = 2025 LIMIT 50`',
   
     'Which units are generating more than 10,000 in rent?': 
-      'Use gte (greater than or equal) filter: `prisma.rentRollUnit.findMany({ where: { rent_current_gri: { gte: 10000 } }, select: { unit_id: true, rent_current_gri: true, asset: { select: { name: true } } } })`.',
+      'Use comparison operator: `SELECT r.unit_id, r.rent_current_gri, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.rent_current_gri >= 10000 LIMIT 50`',
   
     'Show me the operating expenses for Gertrudehus over the last two years': 
-      'Use in operator for multiple years: `prisma.opex.findMany({ where: { asset: { name: "Gertrudehus" }, opex_year: { in: [2024, 2025] } }, orderBy: { opex_year: "asc" } })`.',
+      'Use IN for multiple years: `SELECT o.* FROM public.opex o JOIN public.asset a ON o."assetId" = a.id WHERE a.name ILIKE \'%Gertrudehus%\' AND o.opex_year IN (2024, 2025) ORDER BY o.opex_year ASC LIMIT 10`',
   
     'What two-bedroom units do we have?': 
-      'Filter by bedrooms_amount: `prisma.rentRollUnit.findMany({ where: { bedrooms_amount: 2 }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by bedrooms_amount: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.bedrooms_amount = 2 LIMIT 50`',
   
     'Show me the theoretical rental income for all properties': 
-      'Include the tri relation: `prisma.asset.findMany({ include: { tri: true } })`.',
+      'Join asset with theoretical rental income: `SELECT a.*, t.* FROM public.asset a LEFT JOIN public."TheoreticalRentalIncome" t ON a.id = t."assetId" LIMIT 100`',
   
     'What\'s our budget for property taxes, insurance, and cleaning this year?': 
-      'Select only budget fields: `prisma.opex.findMany({ where: { opex_year: 2025 }, select: { asset_name: true, opex_year: true, budget_property_taxes: true, budget_insurance: true, budget_cleaning: true } })`.',
+      'Select specific budget columns: `SELECT asset_name, opex_year, budget_property_taxes, budget_insurance, budget_cleaning FROM public.opex WHERE opex_year = 2025 LIMIT 50`',
   
     'Which leases have been terminated?': 
-      'Filter by units_status: `prisma.rentRollUnit.findMany({ where: { units_status: "terminated" }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by units_status: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.units_status = \'terminated\' LIMIT 50`',
   
     'Did we go over budget on maintenance at Gertrudehus?': 
-      'Select both actual and budget fields: `prisma.capex.findMany({ where: { asset: { name: "Gertrudehus" } }, select: { capex_year: true, common_areas_actuals: true, common_areas_budget: true, units_renovations_actuals: true, units_renovations_budget: true } })`.',
+      'Compare actuals vs budget: `SELECT c.capex_year, c.common_areas_actuals, c.common_areas_budget, c.units_renovations_actuals, c.units_renovations_budget FROM public.capex c JOIN public.asset a ON c."assetId" = a.id WHERE a.name ILIKE \'%Gertrudehus%\' LIMIT 10`',
   
     'Show me all expenses for 2025 across all properties': 
-      'Include opex filtered by year: `prisma.asset.findMany({ include: { opex: { where: { opex_year: 2025 } } } })`.',
+      'Get all opex for the year: `SELECT a.name, o.* FROM public.asset a LEFT JOIN public.opex o ON a.id = o."assetId" WHERE o.opex_year = 2025 LIMIT 100`',
   
     'Which tenants are moving out by the end of this year?': 
-      'Filter by lease_end date: `prisma.rentRollUnit.findMany({ where: { lease_end: { lte: "2025-12-31" }, units_status: "occupied" }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by lease_end date: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.lease_end <= \'2025-12-31\' AND r.units_status = \'occupied\' LIMIT 50`',
   
     'What maintenance costs did we have for Gertrudehus and Emmahus in 2025?': 
-      'Use in operator for asset names: `prisma.capex.findMany({ where: { asset: { name: { in: ["Gertrudehus", "Emmahus"] } }, capex_year: 2025 }, include: { asset: { select: { name: true } } } })`.',
+      'Use IN for multiple asset names: `SELECT c.*, a.name FROM public.capex c JOIN public.asset a ON c."assetId" = a.id WHERE a.name IN (\'Gertrudehus\', \'Emmahus\') AND c.capex_year = 2025 LIMIT 20`',
   
     'Show me all apartment units': 
-      'Filter by unit_type: `prisma.rentRollUnit.findMany({ where: { unit_type: "apartment" }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by unit_type: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.unit_type = \'apartment\' LIMIT 100`',
   
     'What were our actual operating expenses last year?': 
-      'Select actual fields: `prisma.opex.findMany({ where: { opex_year: 2025 }, select: { asset_name: true, opex_year: true, actual_property_taxes: true, actual_insurance: true, actual_cleaning: true, actual_delinquency: true } })`.',
+      'Select actual expense columns: `SELECT asset_name, opex_year, actual_property_taxes, actual_insurance, actual_cleaning, actual_delinquency FROM public.opex WHERE opex_year = 2025 LIMIT 50`',
   
     'What\'s the theoretical rental income for 2025?': 
-      'Filter by triYear: `prisma.theoreticalRentalIncome.findMany({ where: { triYear: 2025 }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by triYear: `SELECT t.*, a.name FROM public."TheoreticalRentalIncome" t JOIN public.asset a ON t."assetId" = a.id WHERE t."triYear" = 2025 LIMIT 50`',
   
     'Show me units between 50 and 100 square meters': 
-      'Use gte and lte for range: `prisma.rentRollUnit.findMany({ where: { size_sqm: { gte: 50, lte: 100 } }, include: { asset: { select: { name: true } } } })`.',
+      'Use BETWEEN for range: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.size_sqm BETWEEN 50 AND 100 LIMIT 50`',
   
     'What maintenance work have we done over the past few years?': 
-      'Use orderBy: `prisma.capex.findMany({ orderBy: { capex_year: "desc" }, include: { asset: { select: { name: true } } } })`.',
+      'Order by year descending: `SELECT c.*, a.name FROM public.capex c JOIN public.asset a ON c."assetId" = a.id ORDER BY c.capex_year DESC LIMIT 100`',
   
     'Which properties are in Copenhagen?': 
-      'Use nested where: `prisma.opex.findMany({ where: { asset: { city: "Copenhagen" }, opex_year: 2025 }, include: { asset: { select: { name: true, city: true } } } })`.',
+      'Join and filter by city: `SELECT DISTINCT a.name, a.city, o.* FROM public.asset a JOIN public.opex o ON a.id = o."assetId" WHERE a.city = \'Copenhagen\' AND o.opex_year = 2025 LIMIT 50`',
   
     'Show me the first 10 occupied units': 
-      'Use take: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied" }, take: 10, include: { asset: { select: { name: true } } } })`.',
+      'Use LIMIT for pagination: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.units_status = \'occupied\' LIMIT 10`',
   
     'How much did we spend on renovations?': 
-      'Select specific fields: `prisma.capex.findMany({ select: { asset_name: true, capex_year: true, units_renovations_actuals: true, units_renovations_budget: true } })`.',
+      'Select renovation columns: `SELECT asset_name, capex_year, units_renovations_actuals, units_renovations_budget FROM public.capex LIMIT 50`',
   
     'Which leases started this year?': 
-      'Filter by lease_start: `prisma.rentRollUnit.findMany({ where: { lease_start: { startsWith: "2025" } }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by lease_start with LIKE: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.lease_start LIKE \'2025%\' LIMIT 50`',
   
     'Show me the most recent operating expenses for each property': 
-      'Include opex ordered by year: `prisma.asset.findMany({ include: { opex: { orderBy: { opex_year: "desc" }, take: 1 } } })`.',
+      'Use window function or subquery: `SELECT DISTINCT ON (a.id) a.*, o.* FROM public.asset a LEFT JOIN public.opex o ON a.id = o."assetId" ORDER BY a.id, o.opex_year DESC LIMIT 100`',
   
     'What units are on the 3rd floor?': 
-      'Filter by unit_floor: `prisma.rentRollUnit.findMany({ where: { unit_floor: 3 }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by unit_floor: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.unit_floor = 3 LIMIT 50`',
   
     'Show me all expenses for 2025 so I can calculate totals': 
-      'Get all opex fields: `prisma.opex.findMany({ where: { opex_year: 2025 }, include: { asset: { select: { name: true } } } })`.',
+      'Get all opex for calculations: `SELECT o.*, a.name FROM public.opex o JOIN public.asset a ON o."assetId" = a.id WHERE o.opex_year = 2025 LIMIT 100`',
   
     'Which properties had major maintenance costs over 50,000?': 
-      'Filter by capex amount: `prisma.capex.findMany({ where: { common_areas_actuals: { gte: 50000 } }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by capex amount: `SELECT c.*, a.name FROM public.capex c JOIN public.asset a ON c."assetId" = a.id WHERE c.common_areas_actuals >= 50000 LIMIT 50`',
   
     'Show me all units with their property addresses': 
-      'Include asset with address: `prisma.rentRollUnit.findMany({ include: { asset: { select: { name: true, address: true, city: true } } } })`.',
+      'Join units with asset details: `SELECT r.*, a.name, a.address, a.city FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id LIMIT 100`',
   
     'What units have 2 or more bathrooms?': 
-      'Filter by bathrooms_amount: `prisma.rentRollUnit.findMany({ where: { bathrooms_amount: { gte: 2 } }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by bathrooms_amount: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.bathrooms_amount >= 2 LIMIT 50`',
   
     'What\'s our theoretical rental income and vacancy loss?': 
-      'Select tri fields: `prisma.theoreticalRentalIncome.findMany({ select: { triYear: true, triAmount: true, vacancyLoss: true, asset: { select: { name: true } } } })`.',
+      'Select TRI columns: `SELECT t."triYear", t."triAmount", t."vacancyLoss", a.name FROM public."TheoreticalRentalIncome" t JOIN public.asset a ON t."assetId" = a.id LIMIT 50`',
   
     'Show me all expenses for our Danish properties': 
-      'Use nested where: `prisma.opex.findMany({ where: { asset: { country: "Denmark" } }, include: { asset: { select: { name: true, country: true } } } })`.',
+      'Filter by country in join: `SELECT o.*, a.name, a.country FROM public.opex o JOIN public.asset a ON o."assetId" = a.id WHERE a.country = \'Denmark\' LIMIT 100`',
   
     'Which units have the highest rent?': 
-      'Use orderBy: `prisma.rentRollUnit.findMany({ orderBy: { rent_current_gri: "desc" }, include: { asset: { select: { name: true } } } })`.',
+      'Order by rent descending: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id ORDER BY r.rent_current_gri DESC LIMIT 20`',
   
     'What maintenance did we do in 2023, 2024, and 2025?': 
-      'Use in operator: `prisma.capex.findMany({ where: { capex_year: { in: [2023, 2024, 2025] } }, include: { asset: { select: { name: true } } } })`.',
+      'Use IN for multiple years: `SELECT c.*, a.name FROM public.capex c JOIN public.asset a ON c."assetId" = a.id WHERE c.capex_year IN (2023, 2024, 2025) LIMIT 100`',
   
     'Show me all properties with their 2025 expenses and maintenance costs': 
-      'Include both relations with where: `prisma.asset.findMany({ include: { capex: { where: { capex_year: 2025 } }, opex: { where: { opex_year: 2025 } } } })`.',
+      'Multiple joins with year filter: `SELECT a.*, c.* AS capex_data, o.* AS opex_data FROM public.asset a LEFT JOIN public.capex c ON a.id = c."assetId" AND c.capex_year = 2025 LEFT JOIN public.opex o ON a.id = o."assetId" AND o.opex_year = 2025 LIMIT 50`',
   
     'Which units have high utility costs over 500?': 
-      'Filter by utilites_cost: `prisma.rentRollUnit.findMany({ where: { utilites_cost: { gte: 500 } }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by utilites_cost: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.utilites_cost >= 500 LIMIT 50`',
   
     'Show me expenses organized by property and year': 
-      'Order by year and include asset: `prisma.opex.findMany({ orderBy: { opex_year: "asc" }, include: { asset: { select: { name: true } } } })`.',
+      'Order by asset and year: `SELECT o.*, a.name FROM public.opex o JOIN public.asset a ON o."assetId" = a.id ORDER BY a.name, o.opex_year ASC LIMIT 100`',
   
     'What\'s the occupancy rate at Gertrudehus?': 
-      'Get all units to calculate: `prisma.rentRollUnit.findMany({ where: { asset: { name: "Gertrudehus" } }, select: { units_status: true } })`.',
+      'Get unit statuses for calculation: `SELECT r.units_status FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE a.name ILIKE \'%Gertrudehus%\' LIMIT 100`',
   
     'How much rent are we collecting from occupied units?': 
-      'Filter and select rent: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied" }, select: { rent_current_gri: true, asset: { select: { name: true } } } })`.',
+      'Select rent from occupied units: `SELECT r.rent_current_gri, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.units_status = \'occupied\' LIMIT 100`',
   
     'Which properties have the most units?': 
-      'Order assets by the number of related rent roll units using the relation aggregate _count on rentRoll: `prisma.asset.findMany({ orderBy: { rentRoll: { _count: "desc" } }, include: { rentRoll: true } })`.',
+      'Count units per property: `SELECT a.*, COUNT(r.unit_id) as unit_count FROM public.asset a LEFT JOIN public."RentRollUnit" r ON a.id = r."assetId" GROUP BY a.id ORDER BY unit_count DESC LIMIT 20`',
   
     'What\'s our vacancy rate across all properties?': 
-      'Get all units to calculate: `prisma.rentRollUnit.findMany({ select: { units_status: true, asset: { select: { name: true } } } })`.',
+      'Get all unit statuses: `SELECT r.units_status, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id LIMIT 500`',
   
     'Show me all properties that don\'t have any units yet': 
-      'Use none filter: `prisma.asset.findMany({ where: { rentRoll: { none: {} } } })`.',
+      'Left join to find assets without units: `SELECT a.* FROM public.asset a LEFT JOIN public."RentRollUnit" r ON a.id = r."assetId" WHERE r.unit_id IS NULL LIMIT 50`',
   
     'What tenants are in our units?': 
-      'Filter by tenant_name1 not empty: `prisma.rentRollUnit.findMany({ where: { tenant_name1: { not: "" } }, include: { asset: { select: { name: true } } } })`.',
+      'Filter for non-empty tenant names: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.tenant_name1 IS NOT NULL AND r.tenant_name1 != \'\' LIMIT 100`',
   
     'Which properties are underperforming on rent collection?': 
-      'Get units with rent data: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied" }, select: { rent_current_gri: true, rent_budget_tri: true, asset: { select: { name: true } } } })`.',
+      'Compare current vs budget rent: `SELECT r.rent_current_gri, r.rent_budget_tri, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.units_status = \'occupied\' AND r.rent_current_gri < r.rent_budget_tri LIMIT 50`',
   
     'What\'s the average rent per unit?': 
-      'Get all occupied units: `prisma.rentRollUnit.findMany({ where: { units_status: "occupied" }, select: { rent_current_gri: true } })`.',
+      'Use AVG aggregation: `SELECT AVG(rent_current_gri) as average_rent FROM public."RentRollUnit" WHERE units_status = \'occupied\'`',
   
     'Show me all the maintenance we planned vs what we actually spent': 
-      'Select both actual and budget: `prisma.capex.findMany({ select: { asset_name: true, capex_year: true, common_areas_actuals: true, common_areas_budget: true, units_renovations_actuals: true, units_renovations_budget: true } })`.',
+      'Compare actuals vs budgets: `SELECT asset_name, capex_year, common_areas_actuals, common_areas_budget, units_renovations_actuals, units_renovations_budget FROM public.capex LIMIT 100`',
   
     'Which units need attention - leases ending soon or high vacancy?': 
-      'Get units with ending leases or vacant: `prisma.rentRollUnit.findMany({ where: { OR: [{ lease_end: { lte: "2025-12-31" }, units_status: "occupied" }, { units_status: "vacant" }] }, include: { asset: { select: { name: true } } } })`.',
+      'Use OR condition for multiple criteria: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE (r.lease_end <= \'2025-12-31\' AND r.units_status = \'occupied\') OR r.units_status = \'vacant\' LIMIT 50`',
   
     'What\'s our total operating expenses this year?': 
-      'Get all opex for year: `prisma.opex.findMany({ where: { opex_year: 2025 } })`.',
+      'Sum all opex columns: `SELECT SUM(actual_property_taxes + actual_insurance + actual_cleaning + actual_delinquency + actual_property_management_fee) as total_opex FROM public.opex WHERE opex_year = 2025`',
   
     'Show me properties sorted by how many units they have': 
-      'Get all assets with rent roll: `prisma.asset.findMany({ include: { rentRoll: true } })`.',
+      'Count and sort by units: `SELECT a.*, COUNT(r.unit_id) as unit_count FROM public.asset a LEFT JOIN public."RentRollUnit" r ON a.id = r."assetId" GROUP BY a.id ORDER BY unit_count DESC LIMIT 50`',
   
     'What units are in zipcode 2100?': 
-      'Filter by unit_zipcode: `prisma.rentRollUnit.findMany({ where: { unit_zipcode: "2100" }, include: { asset: { select: { name: true } } } })`.',
+      'Filter by zipcode: `SELECT r.*, a.name FROM public."RentRollUnit" r JOIN public.asset a ON r."assetId" = a.id WHERE r.unit_zipcode = \'2100\' LIMIT 50`',
   }
   

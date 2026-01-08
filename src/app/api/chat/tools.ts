@@ -1,8 +1,8 @@
+import { prisma } from "@/lib/prisma";
 import { numericalQueryRAG } from "@/lib/rag/combinedRAG";
 import { CoreMessage, tool, UIMessage } from "ai";
 import { z } from "zod";
 import { extractTextFromMessage } from "./utils/extractLatestMesaage";
-import { prisma } from "@/lib/prisma";
 
 /**
  * SQL Query Validation - First Layer of Defense
