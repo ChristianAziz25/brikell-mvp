@@ -308,12 +308,12 @@ export default function MyAssets() {
           {cardConfig.map((card) => (
             <Card key={card.title}>
               <CardContent className="p-5 overflow-hidden">
-                <p className="text-sm text-muted-foreground">{card.title}</p>
+                <p className="kpi-label mb-2">{card.title}</p>
                 <h3 className="text-2xl font-semibold font-serif tracking-tight">
                   {dollarStringify({ value: card.data, format: "text" })}{" "}
                   {card.title === "Vacancy Rate" ? "%" : "DKK"}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-xs text-muted-foreground mt-2">
                   {card.description}
                 </p>
               </CardContent>
