@@ -196,8 +196,8 @@ export default function Page() {
     <PageAnimation>
       <div className="flex w-full h-full gap-6 overflow-hidden overflow-y-hidden">
         <ConversationHistory conversationTurns={conversationTurns} />
-        <section className="flex flex-1 flex-col min-h-0 min-w-0 bg-background relative overflow-hidden border border-border">
-          <div className="flex-1 min-h-0 overflow-hidden border-b border-border">
+        <section className="flex flex-1 flex-col min-h-0 min-w-0 bg-background relative overflow-hidden border border-border rounded-2xl">
+          <div className="flex-1 min-h-0 overflow-hidden border-b border-border rounded-t-2xl">
             <div
               ref={messageScrollRef}
               className="h-full space-y-4 overflow-y-auto overflow-x-hidden p-6 pb-4 no-scrollbar"
@@ -351,7 +351,7 @@ export default function Page() {
           </div>
 
           {/* Fixed floating chat input */}
-          <Chat className="p-4" eventHandler={handleChatEvent} />
+          <Chat className="p-4 rounded-b-2xl" eventHandler={handleChatEvent} />
         </section>
       </div>
     </PageAnimation>
