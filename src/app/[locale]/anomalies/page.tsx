@@ -229,7 +229,7 @@ export default function AnomaliesPage() {
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Anomaly Line Items Table */}
-          <Card className="lg:col-span-2 border-border/50">
+          <Card className="lg:col-span-2 border-border">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-medium tracking-tight">
                 Anomaly Line Items
@@ -239,7 +239,7 @@ export default function AnomaliesPage() {
               <div className="relative w-full overflow-auto">
                 <table className="w-full caption-bottom text-sm">
                   <thead className="[&_tr]:border-b">
-                    <tr className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-transparent border-border/50">
+                    <tr className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-transparent border-border">
                       <th className="h-12 px-4 text-left align-middle [&:has([role=checkbox])]:pr-0 text-muted-foreground font-medium">
                         Line Item
                       </th>
@@ -270,7 +270,7 @@ export default function AnomaliesPage() {
                     {anomalyData.map((row, index) => (
                       <tr
                         key={index}
-                        className="border-b data-[state=selected]:bg-muted border-border/50 cursor-pointer hover:bg-muted/30 transition-colors"
+                        className="border-b data-[state=selected]:bg-muted border-border cursor-pointer hover:bg-muted/30 transition-colors"
                       >
                         <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0 font-medium text-foreground">
                           {row.lineItem}
@@ -309,7 +309,7 @@ export default function AnomaliesPage() {
           </Card>
 
           {/* Variance Analysis Card */}
-          <Card className="border-border/50">
+          <Card className="border-border">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-medium tracking-tight">
                 Variance Analysis

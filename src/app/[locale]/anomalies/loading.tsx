@@ -15,7 +15,7 @@ export default function AnomalyDetectionLoading() {
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Anomaly Line Items Table */}
-        <Card className="lg:col-span-2 border-border/50">
+        <Card className="lg:col-span-2 border-border">
           <CardHeader className="pb-3">
             <Skeleton className="h-5 w-40" />
           </CardHeader>
@@ -23,7 +23,7 @@ export default function AnomalyDetectionLoading() {
             <div className="relative w-full overflow-auto">
               <table className="w-full caption-bottom text-sm">
                 <thead className="[&_tr]:border-b">
-                  <tr className="border-b border-border/50">
+                  <tr className="border-b border-border">
                     {Array.from({ length: 8 }).map((_, i) => (
                       <th key={i} className="h-12 px-4">
                         <Skeleton className="h-3 w-16" />
@@ -33,7 +33,7 @@ export default function AnomalyDetectionLoading() {
                 </thead>
                 <tbody className="[&_tr:last-child]:border-0">
                   {Array.from({ length: 5 }).map((_, rowIndex) => (
-                    <tr key={rowIndex} className="border-b border-border/50">
+                    <tr key={rowIndex} className="border-b border-border">
                       {Array.from({ length: 8 }).map((_, colIndex) => (
                         <td key={colIndex} className="p-4">
                           <Skeleton
@@ -52,7 +52,7 @@ export default function AnomalyDetectionLoading() {
         </Card>
 
         {/* Variance Analysis Card */}
-        <Card className="border-border/50">
+        <Card className="border-border">
           <CardHeader className="pb-3">
             <Skeleton className="h-5 w-32" />
           </CardHeader>

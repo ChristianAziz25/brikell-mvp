@@ -15,7 +15,7 @@ export function Card({
     <CardUI className={className}>
       <div className="text-card-foreground p-5">
         <div className="space-y-3">
-          <div className="w-10 h-10 rounded-xl bg-muted/50 border border-border/50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-muted/50 border border-border flex items-center justify-center">
             {children}
           </div>
           <div>

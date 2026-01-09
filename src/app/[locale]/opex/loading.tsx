@@ -14,7 +14,7 @@ export default function OpexLoading() {
       {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="rounded-lg border-border/50">
+          <Card key={i} className="rounded-lg border-border">
             <CardContent className="p-5 space-y-4">
               <div className="space-y-2">
                 <Skeleton className="h-3 w-32" />
@@ -59,7 +59,7 @@ export default function OpexLoading() {
           <div className="relative w-full overflow-auto">
             <table className="w-full caption-bottom text-sm">
               <thead className="[&_tr]:border-b">
-                <tr className="border-b border-border/50">
+                <tr className="border-b border-border">
                   {Array.from({ length: 5 }).map((_, i) => (
                     <th key={i} className="h-12 px-4">
                       <Skeleton className="h-3 w-16" />
@@ -69,7 +69,7 @@ export default function OpexLoading() {
               </thead>
               <tbody>
                 {Array.from({ length: 8 }).map((_, rowIndex) => (
-                  <tr key={rowIndex} className="border-b border-border/50">
+                  <tr key={rowIndex} className="border-b border-border">
                     {Array.from({ length: 5 }).map((_, colIndex) => (
                       <td key={colIndex} className="p-4">
                         <Skeleton className="h-4 w-20" />

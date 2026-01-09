@@ -23,7 +23,8 @@ export function ConversationHistory({
           Conversation History
         </h2>
         <p className="text-xs text-muted-foreground mt-1">
-          {conversationTurns.length} {conversationTurns.length === 1 ? 'turn' : 'turns'}
+          {conversationTurns.length}{" "}
+          {conversationTurns.length === 1 ? "turn" : "turns"}
         </p>
       </div>
 
@@ -32,9 +33,7 @@ export function ConversationHistory({
         {conversationTurns.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-full px-4 py-8 text-center">
             <MessageSquare className="h-8 w-8 text-muted-foreground/50 mb-3" />
-            <p className="text-sm text-muted-foreground">
-              No conversation yet
-            </p>
+            <p className="text-sm text-muted-foreground">No conversation yet</p>
             <p className="text-xs text-muted-foreground/70 mt-1">
               Start chatting to see history
             </p>
@@ -47,20 +46,19 @@ export function ConversationHistory({
                 className={cn(
                   "group relative rounded-lg px-3 py-3",
                   "hover:bg-muted/20 transition-colors duration-150",
-                  "cursor-pointer border border-transparent hover:border-border/50"
+                  "cursor-pointer border border-transparent hover:border-border"
                 )}
               >
-
                 {/* User Message */}
                 <div className="mb-2">
-                    <div className="flex justify-between items-center">
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    You
-                  </div>
-                  <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary">
-                    <span className="text-xs font-medium">{index + 1}</span>
-                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="text-xs font-medium text-muted-foreground mb-1">
+                      You
                     </div>
+                    <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary">
+                      <span className="text-xs font-medium">{index + 1}</span>
+                    </div>
+                  </div>
                   <p className="text-xs text-foreground line-clamp-2 leading-relaxed">
                     {turn.user}
                   </p>

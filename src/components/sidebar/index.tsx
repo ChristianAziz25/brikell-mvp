@@ -111,12 +111,12 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
+        "flex flex-col md:flex-row w-full flex-1 mx-auto overflow-hidden",
         "h-screen"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-4">
+        <SidebarBody className="justify-between gap-4 bg-white dark:bg-neutral-800 border-r border-r-sidebar-border">
           <Icon className="size-8 flex shrink-0" />
           <div className="h-px w-full bg-neutral-200 dark:bg-neutral-700 shrink-0" />
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden no-scrollbar overscroll-y-contain">
@@ -171,8 +171,8 @@ const Dashboard = ({ children }: { children: React.ReactNode }) => {
   const isChatPage = pathname?.includes("/diligence/");
 
   return (
-    <div className="flex flex-1 py-2 pr-2 min-h-0 min-w-0">
-      <div className="p-2 md:p-10 rounded-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 min-w-0 min-h-0 overflow-y-auto no-scrollbar overscroll-y-contain">
+    <div className="flex flex-1 min-h-0 min-w-0">
+      <div className="p-2 md:p-10 bg-gray-100 dark:bg-neutral-800 flex flex-col gap-2 flex-1 min-w-0 min-h-0 overflow-y-auto no-scrollbar overscroll-y-contain">
         <div
           className={cn(
             "w-full max-w-7xl mx-auto min-w-0",
