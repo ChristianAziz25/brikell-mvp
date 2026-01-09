@@ -195,6 +195,7 @@ export default function Page() {
   return (
     <PageAnimation>
       <div className="flex w-full h-full gap-6 overflow-hidden overflow-y-hidden">
+        <ConversationHistory conversationTurns={conversationTurns} />
         <section className="flex flex-1 flex-col min-h-0 min-w-0 relative overflow-hidden">
           <div className="flex-1 min-h-0 overflow-hidden">
             <div
@@ -354,7 +355,6 @@ export default function Page() {
             <Chat eventHandler={handleChatEvent} />
           </div>
         </section>
-        <ConversationHistory conversationTurns={conversationTurns} />
       </div>
     </PageAnimation>
   );

@@ -11,11 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import {
-  Info,
-  TriangleAlert,
-  TrendingUp,
-} from "lucide-react";
+import { Info, TrendingUp, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 
 type AnomalyRow = {
@@ -159,17 +155,11 @@ const getVarianceColor = (variance: string) => {
 const getVarianceIcon = (icon: VarianceAnalysisItem["icon"]) => {
   switch (icon) {
     case "alert":
-      return (
-        <TriangleAlert className="h-4 w-4 text-destructive" />
-      );
+      return <TriangleAlert className="h-4 w-4 text-destructive" />;
     case "trending":
-      return (
-        <TrendingUp className="h-4 w-4 text-amber-600" />
-      );
+      return <TrendingUp className="h-4 w-4 text-amber-600" />;
     case "info":
-      return (
-        <Info className="h-4 w-4 text-teal-600" />
-      );
+      return <Info className="h-4 w-4 text-teal-600" />;
   }
 };
 

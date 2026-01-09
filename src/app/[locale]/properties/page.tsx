@@ -304,33 +304,33 @@ export default function MyAssets() {
   return (
     <PageAnimation>
       <div className="space-y-6">
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-4">
-        {cardConfig.map((card) => (
-          <Card key={card.title}>
-            <CardContent className="p-5 overflow-hidden">
-              <p className="text-sm text-muted-foreground">{card.title}</p>
-              <h3 className="text-2xl font-bold">
-                {dollarStringify({ value: card.data, format: "text" })}{" "}
-                {card.title === "Vacancy Rate" ? "%" : "DKK"}
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {card.description}
-              </p>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
-      <section>
-        <ChartLineDefault data={chartData} title="Total NOI" />
-      </section>
-      <section className="space-y-3">
-        <Table
-          table={portfolioTable}
-          columnCount={portfolioTable.getAllLeafColumns().length}
-          isLoading={isAssetsLoading}
-        />
-      </section>
-    </div>
+        <section className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-4">
+          {cardConfig.map((card) => (
+            <Card key={card.title}>
+              <CardContent className="p-5 overflow-hidden">
+                <p className="text-sm text-muted-foreground">{card.title}</p>
+                <h3 className="text-2xl font-semibold font-serif tracking-tight">
+                  {dollarStringify({ value: card.data, format: "text" })}{" "}
+                  {card.title === "Vacancy Rate" ? "%" : "DKK"}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {card.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
+        <section>
+          <ChartLineDefault data={chartData} title="Total NOI" />
+        </section>
+        <section className="space-y-3">
+          <Table
+            table={portfolioTable}
+            columnCount={portfolioTable.getAllLeafColumns().length}
+            isLoading={isAssetsLoading}
+          />
+        </section>
+      </div>
     </PageAnimation>
   );
 }
