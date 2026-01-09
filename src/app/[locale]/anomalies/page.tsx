@@ -163,7 +163,7 @@ const getVarianceIcon = (icon: VarianceAnalysisItem["icon"]) => {
   }
 };
 
-export default function AnomalyDetectionPage() {
+export default function AnomaliesPage() {
   const [period, setPeriod] = useState("Year to Date");
   const [category, setCategory] = useState("All Categories");
   const [building, setBuilding] = useState("All Buildings");

@@ -45,7 +45,7 @@ export function FlowSkeleton() {
                 </div>
                 <div className="bg-muted/10 border border-t-0 border-border rounded-b-xl p-3 h-[500px] overflow-y-auto space-y-3">
                   {Array.from({ length: 3 }).map((_, cardIndex) => (
-                    <Card key={cardIndex} className="shadow-sm bg-white">
+                    <Card key={cardIndex} className="bg-white">
                       <CardContent className="flex flex-col space-y-2 p-4">
                         <Skeleton className="h-4 w-32" />
                         <Skeleton className="h-3 w-20" />

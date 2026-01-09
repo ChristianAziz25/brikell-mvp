@@ -64,8 +64,8 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    title: "Anomaly Detection",
-    url: "/anomaly-detection",
+    title: "Anomalies",
+    url: "/anomalies",
     icon: (
       <AlertTriangleIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),

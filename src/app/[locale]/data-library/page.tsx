@@ -191,116 +191,116 @@ export default function DataLibrary() {
   return (
     <PageAnimation>
       <div className="space-y-6 animate-fade-in">
-      {/* Data Sources */}
-      <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
-        <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="tracking-tight text-base font-medium">
-              Data Sources
-            </CardTitle>
-            <Button variant="outline" size="sm" onClick={handleSyncAll}>
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Sync All
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="divide-y divide-border">
-            {dataSourceTable.getRowModel().rows.length > 0 ? (
-              dataSourceTable.getRowModel().rows.map((row) => (
-                <div
-                  key={row.id}
-                  className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    {row
-                      .getVisibleCells()
-                      .slice(0, 2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
+        {/* Data Sources */}
+        <Card className="rounded-lg border bg-card text-card-foreground">
+          <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="tracking-tight text-base font-medium">
+                Data Sources
+              </CardTitle>
+              <Button variant="outline" size="sm" onClick={handleSyncAll}>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Sync All
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {dataSourceTable.getRowModel().rows.length > 0 ? (
+                dataSourceTable.getRowModel().rows.map((row) => (
+                  <div
+                    key={row.id}
+                    className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      {row
+                        .getVisibleCells()
+                        .slice(0, 2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                    <div>
+                      {row
+                        .getVisibleCells()
+                        .slice(2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
                   </div>
-                  <div>
-                    {row
-                      .getVisibleCells()
-                      .slice(2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
-                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-muted-foreground">
+                  No data sources found
                 </div>
-              ))
-            ) : (
-              <div className="p-8 text-center text-muted-foreground">
-                No data sources found
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Recent Updates */}
-      <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
-        <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
-          <CardTitle className="tracking-tight text-base font-medium">
-            Recent Updates
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="divide-y divide-border">
-            {recentUpdateTable.getRowModel().rows.length > 0 ? (
-              recentUpdateTable.getRowModel().rows.map((row) => (
-                <div
-                  key={row.id}
-                  className="flex items-center justify-between p-4"
-                >
-                  <div className="flex items-center gap-4">
-                    {row
-                      .getVisibleCells()
-                      .slice(0, 2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
+        {/* Recent Updates */}
+        <Card className="rounded-lg border bg-card text-card-foreground">
+          <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
+            <CardTitle className="tracking-tight text-base font-medium">
+              Recent Updates
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {recentUpdateTable.getRowModel().rows.length > 0 ? (
+                recentUpdateTable.getRowModel().rows.map((row) => (
+                  <div
+                    key={row.id}
+                    className="flex items-center justify-between p-4"
+                  >
+                    <div className="flex items-center gap-4">
+                      {row
+                        .getVisibleCells()
+                        .slice(0, 2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                    <div>
+                      {row
+                        .getVisibleCells()
+                        .slice(2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
                   </div>
-                  <div>
-                    {row
-                      .getVisibleCells()
-                      .slice(2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
-                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-muted-foreground">
+                  No recent updates found
                 </div>
-              ))
-            ) : (
-              <div className="p-8 text-center text-muted-foreground">
-                No recent updates found
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </PageAnimation>
   );
 }

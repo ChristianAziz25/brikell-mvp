@@ -408,309 +408,309 @@ export default function Opex() {
   return (
     <PageAnimation>
       <div className="space-y-6">
-      {/* Filters */}
-      <div className="flex gap-3">
-        <Select value={period} onValueChange={setPeriod}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Period" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Monthly">Monthly</SelectItem>
-            <SelectItem value="Quarterly">Quarterly</SelectItem>
-            <SelectItem value="Annual">Annual</SelectItem>
-          </SelectContent>
-        </Select>
+        {/* Filters */}
+        <div className="flex gap-3">
+          <Select value={period} onValueChange={setPeriod}>
+            <SelectTrigger className="w-[140px]">
+              <SelectValue placeholder="Period" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Monthly">Monthly</SelectItem>
+              <SelectItem value="Quarterly">Quarterly</SelectItem>
+              <SelectItem value="Annual">Annual</SelectItem>
+            </SelectContent>
+          </Select>
 
-        <Select value={category} onValueChange={setCategory}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All Categories">All Categories</SelectItem>
-            {availableCategories.map((cat) => (
-              <SelectItem key={cat} value={cat}>
-                {cat}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All Categories">All Categories</SelectItem>
+              {availableCategories.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {cat}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <Select value={building} onValueChange={setBuilding}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="Building" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All Buildings">All Buildings</SelectItem>
-            {assets.map((asset) => (
-              <SelectItem key={asset} value={asset}>
-                {asset}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+          <Select value={building} onValueChange={setBuilding}>
+            <SelectTrigger className="w-[200px]">
+              <SelectValue placeholder="Building" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All Buildings">All Buildings</SelectItem>
+              {assets.map((asset) => (
+                <SelectItem key={asset} value={asset}>
+                  {asset}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Budget vs Actual Chart */}
-        {budgetVsActualData.length > 0 ? (
-          <Dialog>
-            <DialogTrigger asChild>
-              <ChartBarMultiple
-                data={budgetVsActualData.slice(0, 3)}
-                config={chartConfig}
-                title="Budget vs Actual"
-                categoryKey="category"
-                valueKey="budget"
-                interactive={false}
-                horizontal={true}
-                className="cursor-pointer hover:bg-muted/30"
-              />
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl">
-              <ChartBarMultiple
-                data={budgetVsActualData}
-                config={chartConfig}
-                title="Budget vs Actual"
-                categoryKey="category"
-                valueKey="budget"
-              />
-            </DialogContent>
-          </Dialog>
-        ) : (
-          <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Budget vs Actual Chart */}
+          {budgetVsActualData.length > 0 ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <ChartBarMultiple
+                  data={budgetVsActualData.slice(0, 3)}
+                  config={chartConfig}
+                  title="Budget vs Actual"
+                  categoryKey="category"
+                  valueKey="budget"
+                  interactive={false}
+                  horizontal={true}
+                  className="cursor-pointer hover:bg-muted/30"
+                />
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl">
+                <ChartBarMultiple
+                  data={budgetVsActualData}
+                  config={chartConfig}
+                  title="Budget vs Actual"
+                  categoryKey="category"
+                  valueKey="budget"
+                />
+              </DialogContent>
+            </Dialog>
+          ) : (
+            <Card className="rounded-lg border bg-card text-card-foreground">
+              <CardHeader className="flex flex-col space-y-1.5 p-6 pb-2">
+                <CardTitle className="tracking-tight text-base font-medium">
+                  Budget vs Actual
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 pt-2">
+                <div className="h-64 flex items-center justify-center text-muted-foreground">
+                  No data available
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          {/* OPEX Trend Chart */}
+          <Card className="rounded-lg border bg-card text-card-foreground">
             <CardHeader className="flex flex-col space-y-1.5 p-6 pb-2">
               <CardTitle className="tracking-tight text-base font-medium">
-                Budget vs Actual
+                OPEX Trend
               </CardTitle>
             </CardHeader>
-            <CardContent className="p-6 pt-2">
-              <div className="h-64 flex items-center justify-center text-muted-foreground">
-                No data available
+            <CardContent className="p-6 pt-2 overflow-hidden">
+              <div className="h-64">
+                {opexTrendData.length > 0 ? (
+                  <ChartContainer
+                    config={{
+                      value: {
+                        label: "OPEX",
+                        color: "hsl(220, 13%, 13%)",
+                      },
+                    }}
+                  >
+                    <LineChart
+                      accessibilityLayer
+                      data={opexTrendData.map((d) => ({
+                        year: d.year,
+                        value: d.value,
+                      }))}
+                      margin={{ left: 12, right: 12 }}
+                    >
+                      <CartesianGrid vertical={false} />
+                      <XAxis
+                        dataKey="year"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        tickFormatter={(value) => String(value)}
+                      />
+                      <YAxis
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        domain={[
+                          (dataMin: number) => {
+                            if (!Number.isFinite(dataMin)) return 0;
+                            return dataMin === 0
+                              ? 0
+                              : dataMin - Math.abs(dataMin) * 0.1;
+                          },
+                          (dataMax: number) => {
+                            if (!Number.isFinite(dataMax)) return 1;
+                            return dataMax === 0
+                              ? 0
+                              : dataMax + Math.abs(dataMax) * 0.1;
+                          },
+                        ]}
+                        tickFormatter={(value) =>
+                          typeof value === "number"
+                            ? formatCurrency(value)
+                            : String(value)
+                        }
+                      />
+                      <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent hideLabel />}
+                      />
+                      <Line
+                        dataKey="value"
+                        type="natural"
+                        stroke="hsl(220, 13%, 13%)"
+                        strokeWidth={1.5}
+                        dot={false}
+                      />
+                    </LineChart>
+                  </ChartContainer>
+                ) : (
+                  <div className="h-full flex items-center justify-center text-muted-foreground">
+                    No data available
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
-        )}
-        {/* OPEX Trend Chart */}
-        <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
-          <CardHeader className="flex flex-col space-y-1.5 p-6 pb-2">
-            <CardTitle className="tracking-tight text-base font-medium">
-              OPEX Trend
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 pt-2 overflow-hidden">
-            <div className="h-64">
-              {opexTrendData.length > 0 ? (
-                <ChartContainer
-                  config={{
-                    value: {
-                      label: "OPEX",
-                      color: "hsl(220, 13%, 13%)",
-                    },
-                  }}
+        </div>
+
+        {/* Category Breakdown Table */}
+        <Card className="rounded-lg border bg-card text-card-foreground">
+          <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="tracking-tight text-base font-medium">
+                Category Breakdown
+              </CardTitle>
+              {hasActiveFilters && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="gap-2"
                 >
-                  <LineChart
-                    accessibilityLayer
-                    data={opexTrendData.map((d) => ({
-                      year: d.year,
-                      value: d.value,
-                    }))}
-                    margin={{ left: 12, right: 12 }}
-                  >
-                    <CartesianGrid vertical={false} />
-                    <XAxis
-                      dataKey="year"
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                      tickFormatter={(value) => String(value)}
-                    />
-                    <YAxis
-                      tickLine={false}
-                      axisLine={false}
-                      tickMargin={8}
-                      domain={[
-                        (dataMin: number) => {
-                          if (!Number.isFinite(dataMin)) return 0;
-                          return dataMin === 0
-                            ? 0
-                            : dataMin - Math.abs(dataMin) * 0.1;
-                        },
-                        (dataMax: number) => {
-                          if (!Number.isFinite(dataMax)) return 1;
-                          return dataMax === 0
-                            ? 0
-                            : dataMax + Math.abs(dataMax) * 0.1;
-                        },
-                      ]}
-                      tickFormatter={(value) =>
-                        typeof value === "number"
-                          ? formatCurrency(value)
-                          : String(value)
-                      }
-                    />
-                    <ChartTooltip
-                      cursor={false}
-                      content={<ChartTooltipContent hideLabel />}
-                    />
-                    <Line
-                      dataKey="value"
-                      type="natural"
-                      stroke="hsl(220, 13%, 13%)"
-                      strokeWidth={1.5}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ChartContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center text-muted-foreground">
-                  No data available
-                </div>
+                  <X className="h-4 w-4" />
+                  Clear Filters
+                </Button>
               )}
             </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Category Breakdown Table */}
-      <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
-        <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="tracking-tight text-base font-medium">
-              Category Breakdown
-            </CardTitle>
-            {hasActiveFilters && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={clearFilters}
-                className="gap-2"
-              >
-                <X className="h-4 w-4" />
-                Clear Filters
-              </Button>
-            )}
-          </div>
-          <div className="flex gap-2 pt-2">
-            <Input
-              placeholder="Search categories..."
-              value={globalFilter}
-              onChange={(e) => setGlobalFilter(e.target.value)}
-              className="max-w-sm"
-            />
-            {table.getColumn("category") && (
-              <Select
-                value={
-                  (table.getColumn("category")?.getFilterValue() as string) ||
-                  "all"
-                }
-                onValueChange={(value: string) => {
-                  table
-                    .getColumn("category")
-                    ?.setFilterValue(value === "all" ? undefined : value);
-                }}
-              >
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="All Categories" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {Array.from(
+            <div className="flex gap-2 pt-2">
+              <Input
+                placeholder="Search categories..."
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="max-w-sm"
+              />
+              {table.getColumn("category") && (
+                <Select
+                  value={
+                    (table.getColumn("category")?.getFilterValue() as string) ||
+                    "all"
+                  }
+                  onValueChange={(value: string) => {
                     table
                       .getColumn("category")
-                      ?.getFacetedUniqueValues()
-                      .keys() || []
-                  ).map((value) => (
-                    <SelectItem key={value} value={value as string}>
-                      {value as string}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="relative w-full overflow-auto">
-            <table className="w-full caption-bottom text-sm">
-              <thead className="[&_tr]:border-b">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr
-                    key={headerGroup.id}
-                    className="border-b transition-colors hover:bg-transparent border-border"
-                  >
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className="h-12 px-4 align-middle text-muted-foreground font-medium"
-                        style={{
-                          textAlign:
-                            header.id === "category"
-                              ? "left"
-                              : header.id === "variance" ||
-                                header.id === "totalYTD" ||
-                                allYears.includes(Number(header.id))
-                              ? "right"
-                              : "left",
-                        }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </th>
+                      ?.setFilterValue(value === "all" ? undefined : value);
+                  }}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="All Categories" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Categories</SelectItem>
+                    {Array.from(
+                      table
+                        .getColumn("category")
+                        ?.getFacetedUniqueValues()
+                        .keys() || []
+                    ).map((value) => (
+                      <SelectItem key={value} value={value as string}>
+                        {value as string}
+                      </SelectItem>
                     ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="[&_tr:last-child]:border-0">
-                {table.getRowModel().rows.length > 0 ? (
-                  table.getRowModel().rows.map((row) => (
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="relative w-full overflow-auto">
+              <table className="w-full caption-bottom text-sm">
+                <thead className="[&_tr]:border-b">
+                  {table.getHeaderGroups().map((headerGroup) => (
                     <tr
-                      key={row.id}
-                      className="border-b transition-colors hover:bg-muted/50 border-border"
+                      key={headerGroup.id}
+                      className="border-b transition-colors hover:bg-transparent border-border"
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <td
-                          key={cell.id}
-                          className="p-4 align-middle"
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          key={header.id}
+                          className="h-12 px-4 align-middle text-muted-foreground font-medium"
                           style={{
                             textAlign:
-                              cell.column.id === "category"
+                              header.id === "category"
                                 ? "left"
-                                : cell.column.id === "variance" ||
-                                  cell.column.id === "totalYTD" ||
-                                  allYears.includes(Number(cell.column.id))
+                                : header.id === "variance" ||
+                                  header.id === "totalYTD" ||
+                                  allYears.includes(Number(header.id))
                                 ? "right"
                                 : "left",
                           }}
                         >
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </td>
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </th>
                       ))}
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={columns.length}
-                      className="h-24 text-center text-muted-foreground"
-                    >
-                      No results found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                  ))}
+                </thead>
+                <tbody className="[&_tr:last-child]:border-0">
+                  {table.getRowModel().rows.length > 0 ? (
+                    table.getRowModel().rows.map((row) => (
+                      <tr
+                        key={row.id}
+                        className="border-b transition-colors hover:bg-muted/50 border-border"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <td
+                            key={cell.id}
+                            className="p-4 align-middle"
+                            style={{
+                              textAlign:
+                                cell.column.id === "category"
+                                  ? "left"
+                                  : cell.column.id === "variance" ||
+                                    cell.column.id === "totalYTD" ||
+                                    allYears.includes(Number(cell.column.id))
+                                  ? "right"
+                                  : "left",
+                            }}
+                          >
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={columns.length}
+                        className="h-24 text-center text-muted-foreground"
+                      >
+                        No results found
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </PageAnimation>
   );
 }

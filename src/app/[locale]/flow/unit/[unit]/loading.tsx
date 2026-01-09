@@ -1,6 +1,6 @@
 import { PageAnimation } from "@/components/page-animation";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UnitLoading() {
   return (
@@ -12,7 +12,7 @@ export default function UnitLoading() {
         <div className="w-full flex flex-col md:flex-row gap-6 min-w-0">
           {/* Property card */}
           <div className="md:pl-6 md:w-80 md:shrink-0 space-y-6">
-            <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl space-y-4">
+            <div className="border bg-card text-card-foreground p-6 rounded-2xl space-y-4">
               <div className="space-y-2">
                 <Skeleton className="h-8 w-48" />
                 <Skeleton className="h-4 w-24" />
@@ -41,7 +41,7 @@ export default function UnitLoading() {
             </div>
 
             {/* Additional details card */}
-            <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl space-y-4">
+            <div className="border bg-card text-card-foreground p-6 rounded-2xl space-y-4">
               <Skeleton className="h-5 w-40" />
               <div className="space-y-3">
                 {Array.from({ length: 4 }).map((_, i) => (
@@ -57,7 +57,7 @@ export default function UnitLoading() {
           {/* Main content area */}
           <div className="flex-1 min-w-0 md:pr-6 space-y-6">
             {/* Lease Information */}
-            <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl space-y-4">
+            <div className="border bg-card text-card-foreground p-6 rounded-2xl space-y-4">
               <Skeleton className="h-6 w-40" />
               <div className="space-y-4">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -70,7 +70,7 @@ export default function UnitLoading() {
             </div>
 
             {/* Tenant Information */}
-            <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl space-y-4">
+            <div className="border bg-card text-card-foreground p-6 rounded-2xl space-y-4">
               <div className="flex items-center justify-between">
                 <Skeleton className="h-6 w-48" />
                 <div className="flex gap-2">
@@ -100,7 +100,7 @@ export default function UnitLoading() {
             </div>
 
             {/* Activity Timeline */}
-            <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl space-y-4">
+            <div className="border bg-card text-card-foreground p-6 rounded-2xl space-y-4">
               <Skeleton className="h-6 w-40" />
               <div className="space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (
@@ -121,4 +121,3 @@ export default function UnitLoading() {
     </PageAnimation>
   );
 }
-

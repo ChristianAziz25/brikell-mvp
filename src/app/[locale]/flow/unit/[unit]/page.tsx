@@ -114,7 +114,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
         <div className="w-full flex flex-col md:flex-row gap-6 min-w-0">
           {/* Property card */}
           <div className="md:pl-6 md:w-80 md:shrink-0 space-y-6">
-            <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl space-y-4">
+            <div className="border bg-card text-card-foreground p-6 rounded-2xl space-y-4">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">
                   {unit.unit_address}
@@ -199,7 +199,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
               </div>
             </div>
             {/* Relevant documents */}
-            <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl">
+            <div className="border bg-card text-card-foreground p-6 rounded-2xl">
               <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -229,7 +229,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
           </div>
 
           {/* Middle column: activity */}
-          <div className="border bg-card text-card-foreground shadow-sm h-full rounded-2xl flex flex-col md:flex-1 md:min-w-0">
+          <div className="border bg-card text-card-foreground h-full rounded-2xl flex flex-col md:flex-1 md:min-w-0">
             <div className="p-6 border-b">
               <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
                 <svg
@@ -526,7 +526,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
           </div>
 
           {/* Right column: current tenant */}
-          <div className="border bg-card text-card-foreground shadow-sm p-6 rounded-2xl h-fit md:w-100 md:shrink-0">
+          <div className="border bg-card text-card-foreground p-6 rounded-2xl h-fit md:w-100 md:shrink-0">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-foreground flex items-center gap-2">
                 <svg

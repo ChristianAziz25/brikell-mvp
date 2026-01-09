@@ -7,7 +7,7 @@ export default function CapexLoading() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="rounded-lg shadow-sm border-border">
+          <Card key={i} className="rounded-lg border-border">
             <CardContent className="p-5 space-y-3">
               <Skeleton className="h-3 w-24" />
               <Skeleton className="h-8 w-32" />
@@ -21,7 +21,7 @@ export default function CapexLoading() {
       {/* Charts and Timeline */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Budget vs Actuals Chart */}
-        <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
+        <Card className="rounded-lg border bg-card text-card-foreground">
           <CardHeader className="flex flex-col space-y-1.5 p-6 pb-2">
             <Skeleton className="h-5 w-40" />
           </CardHeader>
@@ -31,7 +31,7 @@ export default function CapexLoading() {
         </Card>
 
         {/* Replacement Timeline */}
-        <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
+        <Card className="rounded-lg border bg-card text-card-foreground">
           <CardHeader className="flex flex-col space-y-1.5 p-6 pb-2">
             <Skeleton className="h-5 w-40" />
           </CardHeader>
@@ -54,4 +54,3 @@ export default function CapexLoading() {
     </div>
   );
 }
-

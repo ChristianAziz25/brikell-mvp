@@ -95,7 +95,7 @@ function SortableCard({ card }: { card: LeaseCard }) {
       {...attributes}
       {...listeners}
       className={cn(
-        "cursor-grab active:cursor-grabbing shadow-sm hover:shadow-md transition-all bg-white",
+        "cursor-grab active:cursor-grabbing transition-all bg-white",
         isDragging && "ring-2 ring-ring z-50"
       )}
       role="button"

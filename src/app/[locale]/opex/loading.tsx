@@ -14,7 +14,7 @@ export default function OpexLoading() {
       {/* Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Card key={i} className="rounded-lg shadow-sm shadow-card border-border/50">
+          <Card key={i} className="rounded-lg border-border/50">
             <CardContent className="p-5 space-y-4">
               <div className="space-y-2">
                 <Skeleton className="h-3 w-32" />
@@ -34,7 +34,7 @@ export default function OpexLoading() {
         {Array.from({ length: 2 }).map((_, i) => (
           <Card
             key={i}
-            className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card"
+            className="rounded-lg border bg-card text-card-foreground"
           >
             <CardHeader className="flex flex-col space-y-1.5 p-6 pb-2">
               <Skeleton className="h-5 w-40" />
@@ -47,7 +47,7 @@ export default function OpexLoading() {
       </div>
 
       {/* Category Breakdown Table */}
-      <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
+      <Card className="rounded-lg border bg-card text-card-foreground">
         <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
           <Skeleton className="h-5 w-40" />
           <div className="flex gap-2 pt-2">
@@ -85,4 +85,3 @@ export default function OpexLoading() {
     </div>
   );
 }
-

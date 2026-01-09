@@ -197,115 +197,115 @@ export default function Reports() {
   return (
     <PageAnimation>
       <div className="space-y-6 animate-fade-in">
-      {/* Recent Reports */}
-      <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
-        <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="tracking-tight text-base font-medium">
-              Recent Reports
-            </CardTitle>
-            <Button variant="outline" size="sm">
-              Generate New Report
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="divide-y divide-border">
-            {recentTable.getRowModel().rows.length > 0 ? (
-              recentTable.getRowModel().rows.map((row) => (
-                <div
-                  key={row.id}
-                  className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    {row
-                      .getVisibleCells()
-                      .slice(0, 2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
+        {/* Recent Reports */}
+        <Card className="rounded-lg border bg-card text-card-foreground">
+          <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="tracking-tight text-base font-medium">
+                Recent Reports
+              </CardTitle>
+              <Button variant="outline" size="sm">
+                Generate New Report
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {recentTable.getRowModel().rows.length > 0 ? (
+                recentTable.getRowModel().rows.map((row) => (
+                  <div
+                    key={row.id}
+                    className="flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      {row
+                        .getVisibleCells()
+                        .slice(0, 2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {row
+                        .getVisibleCells()
+                        .slice(2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    {row
-                      .getVisibleCells()
-                      .slice(2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
-                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-muted-foreground">
+                  No reports found
                 </div>
-              ))
-            ) : (
-              <div className="p-8 text-center text-muted-foreground">
-                No reports found
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Scheduled Reports */}
-      <Card className="rounded-lg border bg-card text-card-foreground shadow-sm shadow-card">
-        <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
-          <CardTitle className="tracking-tight text-base font-medium">
-            Scheduled Reports
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="divide-y divide-border">
-            {scheduledTable.getRowModel().rows.length > 0 ? (
-              scheduledTable.getRowModel().rows.map((row) => (
-                <div
-                  key={row.id}
-                  className="flex items-center justify-between p-4"
-                >
-                  <div className="flex items-center gap-4">
-                    {row
-                      .getVisibleCells()
-                      .slice(0, 2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
+        {/* Scheduled Reports */}
+        <Card className="rounded-lg border bg-card text-card-foreground">
+          <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
+            <CardTitle className="tracking-tight text-base font-medium">
+              Scheduled Reports
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              {scheduledTable.getRowModel().rows.length > 0 ? (
+                scheduledTable.getRowModel().rows.map((row) => (
+                  <div
+                    key={row.id}
+                    className="flex items-center justify-between p-4"
+                  >
+                    <div className="flex items-center gap-4">
+                      {row
+                        .getVisibleCells()
+                        .slice(0, 2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
+                    <div>
+                      {row
+                        .getVisibleCells()
+                        .slice(2)
+                        .map((cell) => (
+                          <div key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </div>
+                        ))}
+                    </div>
                   </div>
-                  <div>
-                    {row
-                      .getVisibleCells()
-                      .slice(2)
-                      .map((cell) => (
-                        <div key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
-                      ))}
-                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center text-muted-foreground">
+                  No scheduled reports found
                 </div>
-              ))
-            ) : (
-              <div className="p-8 text-center text-muted-foreground">
-                No scheduled reports found
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </PageAnimation>
   );
 }

@@ -24,10 +24,7 @@ export function HomeSkeleton() {
         <Skeleton className="h-4 w-40 uppercase" />
         <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-3">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Card
-              key={i}
-              className="mt-2 border border-border/40 bg-card shadow-sm"
-            >
+            <Card key={i} className="mt-2 border border-border/40 bg-card">
               <CardHeader className="p-4 pb-2">
                 <Skeleton className="h-4 w-32" />
               </CardHeader>
