@@ -1,8 +1,7 @@
 "use client";
 
-import { Chat } from "@/components";
+import { Search } from "@/components";
 import { PageAnimation } from "@/components/page-animation";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -132,33 +131,7 @@ export default function Home() {
               </TextShimmer>
             </div>
           </div>
-          <Chat />
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-            <Button
-              variant="outline"
-              className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl cursor-pointer"
-            >
-              Show me all vacant units
-            </Button>
-            <Button
-              variant="outline"
-              className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl cursor-pointer"
-            >
-              Generate rent roll report
-            </Button>
-            <Button
-              variant="outline"
-              className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl cursor-pointer"
-            >
-              Calculate portfolio ROI
-            </Button>
-            <Button
-              variant="outline"
-              className="h-auto py-2 px-2.5 text-[11px] font-normal text-muted-foreground hover:text-foreground hover:bg-accent border border-border/50 rounded-xl cursor-pointer"
-            >
-              Find expiring leases
-            </Button>
-          </div>
+          <Search />
         </section>
         <div className="space-y-4">
           <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">

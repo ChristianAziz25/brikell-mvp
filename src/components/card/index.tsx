@@ -1,6 +1,6 @@
 import { Card as CardUI } from "../ui/card";
 
-export default function Card({
+export function Card({
   title,
   content,
   children,

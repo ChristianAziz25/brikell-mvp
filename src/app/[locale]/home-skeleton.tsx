@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -14,20 +13,6 @@ export function HomeSkeleton() {
 
         {/* Chat placeholder */}
         <Card className="h-64 w-full" />
-
-        {/* Quick actions */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Button
-              key={i}
-              variant="outline"
-              disabled
-              className="h-auto py-2 px-2.5 border border-border/50 rounded-xl"
-            >
-              <Skeleton className="h-3 w-24" />
-            </Button>
-          ))}
-        </div>
       </section>
 
       {/* Dashboards header + cards */}
