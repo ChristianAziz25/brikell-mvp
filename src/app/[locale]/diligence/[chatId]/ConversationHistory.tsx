@@ -16,7 +16,7 @@ export function ConversationHistory({
   conversationTurns,
 }: ConversationHistoryProps) {
   return (
-    <aside className="flex flex-col w-64 shrink-0 rounded-md border-l border-border bg-muted/10 h-full">
+    <aside className="flex flex-col w-64 shrink-0 rounded-md border-l border-border bg-background h-full">
       {/* Header */}
       <div className="shrink-0 px-4 py-4 border-b border-border">
         <h2 className="text-sm font-semibold text-foreground">
