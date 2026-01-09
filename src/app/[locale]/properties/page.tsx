@@ -292,7 +292,21 @@ export default function MyAssets() {
   ];
 
   if (isAssetsLoading) {
-    return <MyAssetsSkeleton />;
+    return (
+      <PageAnimation>
+        <div className="space-y-6">
+          <div className="w-full">
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+              My Assets
+            </h2>
+            <p className="text-muted-foreground text-sm mt-1">
+              Portfolio overview of all owned properties
+            </p>
+          </div>
+          <MyAssetsSkeleton />
+        </div>
+      </PageAnimation>
+    );
   }
 
   if (!assets || assets.length === 0) {

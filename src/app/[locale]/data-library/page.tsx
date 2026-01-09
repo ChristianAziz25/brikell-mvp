@@ -20,6 +20,7 @@ import {
 } from "@tanstack/react-table";
 import { Calendar, Database, RefreshCw, Table } from "lucide-react";
 import { useMemo, useState } from "react";
+import DataLibraryLoading from "./loading";
 
 export default function DataLibrary() {
   const [dataSourceColumnFilters, setDataSourceColumnFilters] =
@@ -168,9 +169,9 @@ export default function DataLibrary() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
+      <PageAnimation>
+        <DataLibraryLoading />
+      </PageAnimation>
     );
   }
 

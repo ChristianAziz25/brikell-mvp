@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeftIcon, ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
+import UnitLoading from "./loading";
 
 type RouteParams = {
   unit: string;
@@ -84,13 +85,7 @@ export default function Page({ params }: { params: Promise<RouteParams> }) {
           phone: unit?.tenant_number2,
         };
   if (isLoading) {
-    return (
-      <PageAnimation>
-        <div className="h-full flex items-center justify-center">
-          <div className="text-muted-foreground">Loading unit data...</div>
-        </div>
-      </PageAnimation>
-    );
+    return <UnitLoading />;
   }
 
   if (!unit) {

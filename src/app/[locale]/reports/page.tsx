@@ -20,6 +20,7 @@ import {
 } from "@tanstack/react-table";
 import { Clock, Download, FileText } from "lucide-react";
 import { useMemo, useState } from "react";
+import ReportsLoading from "./loading";
 
 export default function Reports() {
   const [recentColumnFilters, setRecentColumnFilters] =
@@ -176,9 +177,9 @@ export default function Reports() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
+      <PageAnimation>
+        <ReportsLoading />
+      </PageAnimation>
     );
   }
 

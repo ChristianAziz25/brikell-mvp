@@ -9,6 +9,7 @@ import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
 import { TrendingDown } from "lucide-react";
 import { useMemo } from "react";
+import CapexLoading from "./loading";
 
 const CURRENT_YEAR = new Date().getFullYear();
 
@@ -135,7 +136,11 @@ export default function Capex() {
   ];
 
   if (isLoading) {
-    return <div className="space-y-6 animate-fade-in">Loading...</div>;
+    return (
+      <PageAnimation>
+        <CapexLoading />
+      </PageAnimation>
+    );
   }
 
   return (

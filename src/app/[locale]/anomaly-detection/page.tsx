@@ -320,11 +320,13 @@ export default function AnomalyDetectionPage() {
                 <div key={index} className="space-y-2">
                   <div className="flex items-start gap-2">
                     {getVarianceIcon(item.icon)}
-                    <div className="space-y-1.5 flex-1">
-                      <span className="text-sm font-medium text-foreground">
+                    <div className="space-y-1.5 flex-1 leading-none">
+                      <span className="text-sm font-medium text-foreground leading-none">
                         {item.title}
                       </span>
-                      <div>{getSeverityBadge(item.severity)}</div>
+                      <div className="mt-1">
+                        {getSeverityBadge(item.severity)}
+                      </div>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed pl-6">

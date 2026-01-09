@@ -34,6 +34,7 @@ import {
 import { X } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import OpexLoading from "./loading";
 
 interface OpexWithAssetName extends Opex {
   assetName: string;
@@ -387,9 +388,9 @@ export default function Opex() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground">Loading...</div>
-      </div>
+      <PageAnimation>
+        <OpexLoading />
+      </PageAnimation>
     );
   }
 
