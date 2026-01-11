@@ -14,7 +14,6 @@ type RouteParams = {
   unit: string;
 };
 
-// Helper function to format currency
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("da-DK", {
     style: "currency",
@@ -23,7 +22,6 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-// Helper function to format date
 function formatDate(dateString: string | null | undefined): string {
   if (!dateString) return "N/A";
   try {
@@ -38,7 +36,6 @@ function formatDate(dateString: string | null | undefined): string {
   }
 }
 
-// Helper function to get status badge text
 function getStatusText(status: RentRollUnit["units_status"]): string {
   switch (status) {
     case "vacant":

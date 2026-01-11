@@ -30,7 +30,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FlowSkeleton } from "./components/skeleton";
 
-// Kanban stages shown in the UI
 type Stage =
   | "Vacant"
   | "Terminated"
@@ -59,7 +58,6 @@ const stages: Stage[] = [
   "Contract Signed",
 ];
 
-// Map DB enum RentStatus -> UI Stage
 function mapStatusToStage(status: RentRollUnit["units_status"]): Stage {
   switch (status) {
     case "vacant":
@@ -310,7 +308,6 @@ export default function Page() {
     if (overId.startsWith("column-")) {
       const targetStage = overId.replace("column-", "") as Stage;
       if (targetStage && targetStage !== activeCardCurrent.stage) {
-        // Optimistic cache update: move to target column
         queryClient.setQueryData<LeaseCard[]>(["units"], (items = []) =>
           items.map((item) =>
             item.id === active.id
@@ -322,14 +319,12 @@ export default function Page() {
       return;
     }
 
-    // Optimistic cache update for card-on-card drops
     queryClient.setQueryData<LeaseCard[]>(["units"], (items = []) => {
       const activeCard = items.find(
         (card) => card.id === (active.id as string)
       );
       if (!activeCard) return items;
 
-      // Dropped onto a column header: move card to that stage
       if (overId.startsWith("column-")) {
         const targetStage = overId.replace("column-", "") as Stage;
         if (!targetStage || targetStage === activeCard.stage) {
@@ -342,12 +337,10 @@ export default function Page() {
         );
       }
 
-      // Dropped onto another card
       const overCard = items.find((card) => card.id === overId);
       if (!overCard) return items;
 
       if (activeCard.stage === overCard.stage) {
-        // Reorder within the same stage
         const stage = activeCard.stage;
         const stageCards = items.filter((card) => card.stage === stage);
         const oldIndex = stageCards.findIndex(
@@ -362,7 +355,6 @@ export default function Page() {
         return [...otherCards, ...newStageCards];
       }
 
-      // Move card to a different stage (dropping on another card)
       return items.map((item) =>
         item.id === active.id
           ? { ...item, stage: overCard.stage, daysInStage: 0 }
@@ -405,8 +397,6 @@ export default function Page() {
                       className={cn(
                         "flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-border whitespace-nowrap shrink-0 cursor-pointer transition-colors",
                         selectedStage === stage && "bg-muted/50"
-                        // index === 0 && "ml-6",
-                        // index === stages.length && "mr-4"
                       )}
                     >
                       <span className="text-sm font-medium text-foreground">
@@ -438,11 +428,7 @@ export default function Page() {
                         key={stage}
                         stage={stage}
                         cards={getCardsByStage(stage)}
-                        className={
-                          cn()
-                          // index === 0 && "md:ml-6",
-                          // index === filteredStages.length - 1 && "md:mr-6"
-                        }
+                        className={cn()}
                       />
                     ))}
                   </div>

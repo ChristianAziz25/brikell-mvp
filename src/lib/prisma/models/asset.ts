@@ -11,7 +11,6 @@ interface BulkAssetResult {
 export async function upsertAsset(
   data: Prisma.AssetCreateInput & { id?: string }
 ) {
-  // Prefer explicit id when provided, otherwise use unique name
   if (data.id) {
     return prisma.asset.upsert({
       where: { id: data.id },

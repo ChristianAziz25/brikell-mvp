@@ -23,7 +23,6 @@ export interface ReportsData {
   scheduled: ScheduledReport[];
 }
 
-// Fake data generator
 function generateFakeReports(): ReportsData {
   const recentReports: RecentReport[] = [
     {
@@ -99,7 +98,6 @@ function generateFakeReports(): ReportsData {
 
 export async function GET() {
   try {
-    // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     const data = generateFakeReports();

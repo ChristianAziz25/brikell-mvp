@@ -119,7 +119,6 @@ export function Chat({
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-72 p-0" align="start">
-                {/* Header */}
                 <div className="p-4 border-b border-border">
                   <h4 className="font-medium text-sm">Connect Data Sources</h4>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -127,7 +126,6 @@ export function Chat({
                   </p>
                 </div>
 
-                {/* Menu Items */}
                 <div className="p-2">
                   <DropdownMenuItem className="p-0 focus:bg-transparent">
                     <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted/20 transition-colors text-left">

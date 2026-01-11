@@ -14,17 +14,14 @@ export async function GET() {
     const assets = await getAllAssets();
     const timeSeries = buildAssetTimeSeries(assets);
     
-    // Aggregate NOI by year across all assets
     const noiByYear = new Map<number, number>();
     
     for (const series of timeSeries) {
-      // Build OPEX map by year for this asset
       const opexByYear = new Map<number, number>();
       series.opex.forEach((opex) => {
         opexByYear.set(opex.year, opex.totalOpexActual);
       });
       
-      // Calculate NOI for each GRI year
       series.gri.forEach((gri) => {
         const opexForYear = opexByYear.get(gri.year) ?? 0;
         const noi = gri.gri - opexForYear;

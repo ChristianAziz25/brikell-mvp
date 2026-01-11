@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
     const assets = await getAllAssets();
     const timeSeries = buildAssetTimeSeries(assets);
     
-    // Find the asset by name
     const assetSeries = timeSeries.find((s) => s.assetName === assetName);
     
     if (!assetSeries) {
@@ -34,7 +33,6 @@ export async function GET(request: NextRequest) {
       );
     }
     
-    // Build year-based map to combine all metrics
     const yearMap = new Map<number, {
       year: number;
       capex: number;
@@ -43,7 +41,6 @@ export async function GET(request: NextRequest) {
       occupancy: number;
     }>();
     
-    // Add CAPEX data
     assetSeries.capex.forEach((capex) => {
       if (!yearMap.has(capex.year)) {
         yearMap.set(capex.year, {
@@ -58,7 +55,6 @@ export async function GET(request: NextRequest) {
       entry.capex = capex.totalCapexActual;
     });
     
-    // Add OPEX data
     assetSeries.opex.forEach((opex) => {
       if (!yearMap.has(opex.year)) {
         yearMap.set(opex.year, {
@@ -73,7 +69,6 @@ export async function GET(request: NextRequest) {
       entry.opex = opex.totalOpexActual;
     });
     
-    // Add GRI (TRI) data
     assetSeries.gri.forEach((gri) => {
       if (!yearMap.has(gri.year)) {
         yearMap.set(gri.year, {
@@ -88,7 +83,6 @@ export async function GET(request: NextRequest) {
       entry.tri = gri.gri;
     });
     
-    // Add occupancy data
     assetSeries.occupancy.forEach((occupancy) => {
       if (!yearMap.has(occupancy.year)) {
         yearMap.set(occupancy.year, {
@@ -103,7 +97,6 @@ export async function GET(request: NextRequest) {
       entry.occupancy = occupancy.occupancyRate;
     });
     
-    // Convert to array and sort by year
     const yearBasedData = Array.from(yearMap.values())
       .sort((a, b) => a.year - b.year);
     

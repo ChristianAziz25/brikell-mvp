@@ -16,7 +16,6 @@ export async function GET() {
     const assets = await getAllAssets();
     const timeSeries = buildAssetTimeSeries(assets);
     
-    // Aggregate current year metrics across all assets
     let capexTotal = 0;
     let opexTotal = 0;
     let griTotal = 0;

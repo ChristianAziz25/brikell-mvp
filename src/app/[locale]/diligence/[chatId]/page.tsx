@@ -28,7 +28,6 @@ function extractMessageContent(message: UIMessage): string {
     const textPart = msg.content.find((part) => part.type === "text");
     return textPart?.text || "";
   }
-  // Handle message.parts if content is not directly available
   if (Array.isArray(msg.parts)) {
     const textPart = msg.parts.find((part) => part.type === "text");
     return textPart?.text || "";
@@ -254,7 +253,6 @@ export default function Page() {
                               </p>
                             </div>
                           ) : (
-                            // Show message content with markdown rendering (streaming or completed)
                             <div className="text-sm overflow-hidden max-w-full">
                               {extractMessageContent(message) ? (
                                 <MarkdownRenderer
@@ -291,7 +289,6 @@ export default function Page() {
                   </div>
                 ))}
 
-                {/* Show loading indicator for the current streaming message */}
                 {isLoading &&
                   messages[messages.length - 1]?.role !== "assistant" && (
                     <div className="flex justify-start w-full max-w-full overflow-hidden">
@@ -313,44 +310,8 @@ export default function Page() {
                   )}
               </div>
             </div>
-
-            {/* <div className="pointer-events-none absolute w-full inset-x-0 bottom-0 flex justify-between p-4">
-            <div className="hidden md:flex items-center gap-2 pointer-events-auto">
-              {agents.map((agent) => (
-                <button
-                  className={cn("cursor-pointer")}
-                  key={agent}
-                  onClick={() => setContext(agent as "capex" | "opex" | "all")}
-                >
-                  <Badge
-                    variant={context === agent ? "default" : "secondary"}
-                    className="hover:bg-muted/30"
-                  >
-                    {agent}
-                  </Badge>
-                </button>
-              ))}
-            </div>
-            {queue.length > 0 && (
-              <Card className="bg-muted/30">
-                <CardHeader className="p-3 pb-0">
-                  <CardTitle>
-                    <p className="text-sm">Queue</p>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-3">
-                  {queue.map((message) => (
-                    <p className="text-xs" key={message}>
-                      <span>you:</span> {message}
-                    </p>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
-          </div> */}
           </div>
 
-          {/* Fixed floating chat input */}
           <Chat className="p-4 rounded-b-2xl" eventHandler={handleChatEvent} />
         </section>
       </div>

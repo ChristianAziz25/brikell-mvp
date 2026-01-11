@@ -7,7 +7,6 @@ import prisma from "@/lib/prisma/client";
  *   prisma.asset.findMany({ where: { ... } })
  */
 export function cleanPrismaCodeBlock(raw: string): string {
-  // 1) Strip common markdown fences
   let cleaned = raw
     .replace(/```typescript/gi, "")
     .replace(/```ts/gi, "")
@@ -16,7 +15,6 @@ export function cleanPrismaCodeBlock(raw: string): string {
     .replace(/```/g, "")
     .trim();
 
-  // 2) Remove common wrapper patterns (functions, consts, returns, awaits)
   cleaned = cleaned
     .replace(
       /^export\s+(const|async\s+function|function)\s+\w+\s*=\s*/i,
@@ -31,7 +29,6 @@ export function cleanPrismaCodeBlock(raw: string): string {
     .replace(/\}\s*$/, "")
     .trim();
 
-  // 3) Extract the first prisma.<model>.<method>(...) call if present
   const queryMatch = cleaned.match(/prisma\.\w+\.\w+\([\s\S]*\)/);
   if (queryMatch) {
     return queryMatch[0];
@@ -52,7 +49,6 @@ export async function executePrismaQueryFromText(
     const performanceStart = performance.now();
     const cleaned = cleanPrismaCodeBlock(prismaQuery);
 
-    // Parse the query to extract model and method
     const match = cleaned.match(/^prisma\.(\w+)\.(\w+)\(([\s\S]*)\)$/);
     if (!match) {
       throw new Error(`Invalid Prisma query format: ${cleaned}`);
@@ -60,7 +56,6 @@ export async function executePrismaQueryFromText(
 
     const [, modelName, method, argsStr] = match;
 
-    // Restrict to read-only methods for safety
     const allowedMethods = new Set([
       "findUnique",
       "findUniqueOrThrow",
@@ -78,8 +73,6 @@ export async function executePrismaQueryFromText(
       );
     }
 
-    // Get the model from Prisma client
-    // Use unknown first for safe type conversion
     const model = (prisma as unknown as Record<string, unknown>)[
       modelName
     ] as Record<string, unknown>;
@@ -87,7 +80,6 @@ export async function executePrismaQueryFromText(
       throw new Error(`Model "${modelName}" not found in Prisma client`);
     }
 
-    // Get the method from the model delegate
     const queryMethod = model[method] as
       | ((args: unknown) => Promise<unknown>)
       | undefined;
@@ -97,12 +89,8 @@ export async function executePrismaQueryFromText(
       );
     }
 
-    // Parse arguments.
-    // NOTE: This still uses eval under the hood; the LLM is constrained to emit
-    // read-only Prisma calls, and we additionally restrict allowed methods.
     const args: unknown = eval(`(${argsStr})`);
 
-    // Execute the query
     const result = await queryMethod(args);
     const performanceEnd = performance.now();
     console.log(

@@ -34,7 +34,6 @@ export async function loadChatHistory(
     try {
       result.push(JSON.parse(row.message) as MyUIMessage);
     } catch {
-      // Skip malformed rows instead of breaking the entire history.
     }
   }
 
@@ -57,9 +56,6 @@ export async function saveChatHistory(
   chatId: string,
   messages: MyUIMessage[],
 ): Promise<{ success: boolean }> {
-  // Upsert one ChatMessage row per UI message, keyed by the UI message id.
-  // This allows multiple ChatMessage rows per Chat over time without
-  // deleting existing history.
   await prisma.$transaction(
     messages.map((msg) =>
       prisma.chatMessage.upsert({

@@ -177,13 +177,10 @@ export async function POST(req: Request) {
       stopWhen: stepCountIs(5),
     });
 
-    // Return a plain text streaming Response compatible with TextStreamChatTransport
     return result.toUIMessageStreamResponse({
-      // Attach a numeric timestamp (ms since epoch) to each assistant message
       messageMetadata: () => ({
         createdAt: Date.now(),
       }),
-      // Persist full chat history when the assistant finishes responding
       async onFinish({ messages: finishedMessages }) {
         if (!id) return;
         await saveChatHistory(id, finishedMessages as MyUIMessage[]);

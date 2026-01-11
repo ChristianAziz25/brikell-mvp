@@ -16,13 +16,11 @@ export async function GET() {
     const assets = await getAllAssets();
     const timeSeries = buildAssetTimeSeries(assets);
     
-    // Map assetId -> unit count for OPEX/Unit calculations
     const unitsByAssetId = new Map<string, number>();
     assets.forEach((asset) => {
       unitsByAssetId.set(asset.id, asset.rentRoll.length);
     });
     
-    // Build portfolio rows for current year
     const portfolioRows = timeSeries.map((series) => {
       const currentOpex =
         series.opex.find((o) => o.year === CURRENT_YEAR)?.totalOpexActual ?? 0;

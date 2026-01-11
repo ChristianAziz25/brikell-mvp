@@ -45,7 +45,6 @@ export default function DataLibrary() {
     refetchOnWindowFocus: false,
   });
 
-  // Data Sources columns
   const dataSourceColumns = useMemo<ColumnDef<DataSource>[]>(
     () => [
       {
@@ -87,7 +86,6 @@ export default function DataLibrary() {
     []
   );
 
-  // Recent Updates columns
   const recentUpdateColumns = useMemo<ColumnDef<RecentUpdate>[]>(
     () => [
       {
@@ -132,7 +130,6 @@ export default function DataLibrary() {
     []
   );
 
-  // Data Sources table
   const dataSourceTable = useReactTable({
     data: data?.dataSources || [],
     columns: dataSourceColumns,
@@ -147,7 +144,6 @@ export default function DataLibrary() {
     globalFilterFn: "includesString",
   });
 
-  // Recent Updates table
   const recentUpdateTable = useReactTable({
     data: data?.recentUpdates || [],
     columns: recentUpdateColumns,
@@ -163,7 +159,6 @@ export default function DataLibrary() {
   });
 
   const handleSyncAll = () => {
-    // Handle sync all action
     console.log("Syncing all data sources...");
   };
 

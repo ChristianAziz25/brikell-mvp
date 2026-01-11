@@ -67,14 +67,12 @@ function applyHybridRanking<T extends { id: string }>(
   const semanticScores = new Map<string, number>();
   const lexicalScores = new Map<string, number>();
 
-  // Compute raw scores
   for (const item of items) {
     const emb = getEmbedding(item);
     semanticScores.set(item.id, cosineSimilarity(queryEmbedding, emb));
     lexicalScores.set(item.id, lexicalScore(query, getLexicalText(item)));
   }
 
-  // Compute ranks (higher score -> better rank, i.e., rank 1 is best)
   const semanticRanks = new Map<string, number>();
   const lexicalRanks = new Map<string, number>();
 
@@ -94,7 +92,6 @@ function applyHybridRanking<T extends { id: string }>(
     lexicalRanks.set(item.id, idx + 1);
   });
 
-  // Apply Reciprocal Rank Fusion-style combination
   const scored: Array<{ item: T; score: number }> = [];
   for (const item of items) {
     const sRank = semanticRanks.get(item.id);

@@ -45,7 +45,6 @@ export default function Reports() {
     refetchOnWindowFocus: false,
   });
 
-  // Recent Reports columns
   const recentColumns = useMemo<ColumnDef<RecentReport>[]>(
     () => [
       {
@@ -90,7 +89,6 @@ export default function Reports() {
             variant="ghost"
             size="icon"
             onClick={() => {
-              // Handle download
               console.log("Downloading report:", row.original.id);
             }}
           >
@@ -104,7 +102,6 @@ export default function Reports() {
     []
   );
 
-  // Scheduled Reports columns
   const scheduledColumns = useMemo<ColumnDef<ScheduledReport>[]>(
     () => [
       {
@@ -145,7 +142,6 @@ export default function Reports() {
     []
   );
 
-  // Recent Reports table
   const recentTable = useReactTable({
     data: data?.recent || [],
     columns: recentColumns,
@@ -160,7 +156,6 @@ export default function Reports() {
     globalFilterFn: "includesString",
   });
 
-  // Scheduled Reports table
   const scheduledTable = useReactTable({
     data: data?.scheduled || [],
     columns: scheduledColumns,
@@ -197,7 +192,6 @@ export default function Reports() {
   return (
     <PageAnimation>
       <div className="space-y-6 animate-fade-in">
-        {/* Recent Reports */}
         <Card className="rounded-lg border bg-card text-card-foreground">
           <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
             <div className="flex items-center justify-between">
@@ -254,7 +248,6 @@ export default function Reports() {
           </CardContent>
         </Card>
 
-        {/* Scheduled Reports */}
         <Card className="rounded-lg border bg-card text-card-foreground">
           <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
             <CardTitle className="tracking-tight text-base font-medium">

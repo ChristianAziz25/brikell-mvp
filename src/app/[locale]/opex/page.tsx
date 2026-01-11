@@ -46,9 +46,7 @@ type CategoryBreakdownRow = {
   variance: string;
 } & Record<string, string | number>;
 
-// Helper function to extract category name from field name
 const getCategoryName = (fieldName: string): string => {
-  // Remove 'actual_' or 'budget_' prefix and convert snake_case to Title Case
   const name = fieldName.replace(/^(actual_|budget_)/, "");
   return name
     .split("_")
@@ -56,7 +54,6 @@ const getCategoryName = (fieldName: string): string => {
     .join(" ");
 };
 
-// Function to dynamically extract actual/budget field pairs from OPEX data
 const extractFieldPairs = (
   opexData: OpexWithAssetName[]
 ): Map<
@@ -71,21 +68,17 @@ const extractFieldPairs = (
   >();
   const firstOpex = opexData[0];
 
-  // Get all keys from the first Opex object
   const allKeys = Object.keys(firstOpex) as (keyof Opex)[];
 
-  // Find all actual_* fields
   const actualFields = allKeys.filter(
     (key) => typeof key === "string" && key.startsWith("actual_")
   );
 
-  // For each actual field, try to find its corresponding budget field
   actualFields.forEach((actualKey) => {
     const actualKeyStr = actualKey as string;
     const fieldName = actualKeyStr.replace("actual_", "");
     const budgetKey = `budget_${fieldName}` as keyof Opex;
 
-    // Check if both actual and budget fields exist
     if (allKeys.includes(budgetKey)) {
       const categoryName = getCategoryName(actualKeyStr);
       fieldPairs.set(categoryName, {
@@ -126,19 +119,16 @@ export default function Opex() {
     refetchOnWindowFocus: false,
   });
 
-  // Get unique assets for building filter
   const assets = useMemo(
     () => Array.from(new Set(opexData.map((opex) => opex.assetName))),
     [opexData]
   );
 
-  // Filter data based on selected building
   const filteredData = useMemo(() => {
     if (building === "All Buildings") return opexData;
     return opexData.filter((opex) => opex.assetName === building);
   }, [opexData, building]);
 
-  // Get the latest year's data for Budget vs Actual chart
   const latestYear = useMemo(() => {
     if (filteredData.length === 0) return null;
     return Math.max(...filteredData.map((opex) => opex.opex_year));
@@ -149,18 +139,15 @@ export default function Opex() {
     return filteredData.filter((opex) => opex.opex_year === latestYear);
   }, [filteredData, latestYear]);
 
-  // Extract field pairs dynamically
   const fieldPairs = useMemo(
     () => extractFieldPairs(filteredData),
     [filteredData]
   );
 
-  // Get available categories for the filter
   const availableCategories = useMemo(() => {
     return Array.from(fieldPairs.keys()).sort();
   }, [fieldPairs]);
 
-  // Aggregate by category for the latest year
   const budgetVsActualData = useMemo(() => {
     if (latestYearData.length === 0 || fieldPairs.size === 0) return [];
 
@@ -186,7 +173,6 @@ export default function Opex() {
       });
     });
 
-    // Filter by selected category if not "All Categories"
     let result = Object.values(categoryTotals);
     if (category !== "All Categories") {
       result = result.filter((item) => item.category === category);
@@ -195,12 +181,10 @@ export default function Opex() {
     return result.sort((a, b) => b.budget - a.budget);
   }, [latestYearData, category, fieldPairs]);
 
-  // OPEX Trend data - aggregate total OPEX by year
   const opexTrendData = useMemo(() => {
     const yearTotals = new Map<number, number>();
 
     filteredData.forEach((opex) => {
-      // Dynamically sum all actual_* fields using fieldPairs
       let total = 0;
       fieldPairs.forEach((pair) => {
         const actual = (opex[pair.actualKey] as number) || 0;
@@ -218,19 +202,15 @@ export default function Opex() {
       .sort((a, b) => a.year - b.year);
   }, [filteredData, fieldPairs]);
 
-  // Get all unique years from filtered data
   const allYears = useMemo(() => {
     const years = new Set(filteredData.map((opex) => opex.opex_year));
     return Array.from(years).sort((a, b) => a - b);
   }, [filteredData]);
 
-  // Category breakdown table data - time series by year
   const categoryBreakdownData = useMemo(() => {
     if (filteredData.length === 0 || fieldPairs.size === 0) return [];
 
-    // Build time series data for each category across all years
     const categoryData = Array.from(fieldPairs.values()).map((pair) => {
-      // Aggregate by year for this category
       const yearData = new Map<number, { actual: number; budget: number }>();
 
       filteredData.forEach((opex) => {
@@ -296,7 +276,6 @@ export default function Opex() {
     return value.toString();
   };
 
-  // Define columns for TanStack Table
   const columns = useMemo<ColumnDef<CategoryBreakdownRow>[]>(() => {
     const yearColumns: ColumnDef<CategoryBreakdownRow>[] = allYears.map(
       (year) => ({
@@ -362,7 +341,6 @@ export default function Opex() {
     ];
   }, [allYears]);
 
-  // Create table instance
   const table = useReactTable({
     data: categoryBreakdownData,
     columns,
@@ -408,7 +386,6 @@ export default function Opex() {
   return (
     <PageAnimation>
       <div className="space-y-6">
-        {/* Filters */}
         <div className="flex gap-3">
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger className="w-[140px]">
@@ -450,9 +427,7 @@ export default function Opex() {
           </Select>
         </div>
 
-        {/* Charts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Budget vs Actual Chart */}
           {budgetVsActualData.length > 0 ? (
             <Dialog>
               <DialogTrigger asChild>
@@ -491,7 +466,6 @@ export default function Opex() {
               </CardContent>
             </Card>
           )}
-          {/* OPEX Trend Chart */}
           <Card className="rounded-lg border bg-card text-card-foreground">
             <CardHeader className="flex flex-col space-y-1.5 p-6 pb-2">
               <CardTitle className="tracking-tight text-base font-medium">
@@ -572,7 +546,6 @@ export default function Opex() {
           </Card>
         </div>
 
-        {/* Category Breakdown Table */}
         <Card className="rounded-lg border bg-card text-card-foreground">
           <CardHeader className="flex flex-col space-y-1.5 p-6 pb-3">
             <div className="flex items-center justify-between">

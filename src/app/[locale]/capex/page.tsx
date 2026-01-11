@@ -28,23 +28,19 @@ export default function Capex() {
 
   const timeSeries = useMemo(() => buildAssetTimeSeries(assets), [assets]);
 
-  // Calculate KPIs
   const kpis = useMemo(() => {
     let capexYtd = 0;
     let fiveYearForecast = 0;
     let reserveFund = 0;
 
-    // Aggregate CAPEX data
     const capexByYear = new Map<number, { actual: number; budget: number }>();
 
     for (const series of timeSeries) {
-      // Current year CAPEX
       const currentCapex = series.capex.find((c) => c.year === CURRENT_YEAR);
       if (currentCapex) {
         capexYtd += currentCapex.totalCapexActual;
       }
 
-      // 5-year forecast (next 5 years budget)
       for (let year = CURRENT_YEAR + 1; year <= CURRENT_YEAR + 5; year++) {
         const yearCapex = series.capex.find((c) => c.year === year);
         if (yearCapex) {
@@ -52,14 +48,12 @@ export default function Capex() {
         }
       }
 
-      // Reserve fund (simplified: sum of all future budgets)
       series.capex.forEach((c) => {
         if (c.year > CURRENT_YEAR) {
           reserveFund += c.totalCapexBudget;
         }
       });
 
-      // Aggregate by year for chart
       series.capex.forEach((c) => {
         const existing = capexByYear.get(c.year) || { actual: 0, budget: 0 };
         capexByYear.set(c.year, {
@@ -69,7 +63,6 @@ export default function Capex() {
       });
     }
 
-    // Calculate budget percentage for YTD
     const currentYearData = capexByYear.get(CURRENT_YEAR);
     const currentYearBudget = currentYearData?.budget ?? 0;
     const budgetPercentage =
@@ -88,7 +81,6 @@ export default function Capex() {
     };
   }, [timeSeries]);
 
-  // Chart data for Budget vs Actuals
   const chartData = kpis.capexByYear.map((d) => ({
     year: d.year.toString(),
     budget: d.budget,

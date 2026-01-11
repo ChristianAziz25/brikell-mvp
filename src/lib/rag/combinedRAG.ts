@@ -69,7 +69,6 @@ export async function numericalQueryRAG(
       })),
     });
 
-    // Format retrieved context
     const tableDetailsText = tableResults
       .map((t) => {
         const firstLine = t.description.split("\n")[0];
@@ -77,7 +76,6 @@ export async function numericalQueryRAG(
       })
       .join("\n");
 
-    // Keep few-shot context compact: only include the raw Prisma call if present
     const extractPrismaCall = (text: string): string => {
       const match = text.match(/`([^`]+)`/);
       return match ? match[1] : text;
@@ -112,7 +110,6 @@ export async function numericalQueryRAG(
     const errorStack = error instanceof Error ? error.stack : undefined;
     const totalTime = performance.now() - startTime;
     
-    // Log the full error for debugging
     console.error("❌ [RAG] Error in numericalQueryRAG:", {
       error: errorMessage,
       stack: errorStack,

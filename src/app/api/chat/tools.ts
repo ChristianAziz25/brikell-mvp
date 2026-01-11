@@ -11,12 +11,10 @@ import { extractTextFromMessage } from "./utils/extractLatestMesaage";
 function validateSQLQuery(sql: string): { valid: boolean; error?: string } {
   const trimmedSQL = sql.trim().toLowerCase();
   
-  // Check 1: Must start with SELECT
   if (!trimmedSQL.startsWith('select')) {
     return { valid: false, error: 'Query must be a SELECT statement' };
   }
   
-  // Check 2: Block dangerous keywords (case-insensitive)
   const dangerousKeywords = [
     'drop', 'delete', 'insert', 'update', 'alter', 'create',
     'truncate', 'exec', 'execute', 'grant', 'revoke', 'merge',
@@ -25,19 +23,16 @@ function validateSQLQuery(sql: string): { valid: boolean; error?: string } {
   ];
   
   for (const keyword of dangerousKeywords) {
-    // Use word boundaries to avoid false positives (e.g., "selected" contains "select")
     const regex = new RegExp(`\\b${keyword}\\b`, 'i');
     if (regex.test(trimmedSQL)) {
       return { valid: false, error: `Forbidden keyword detected: ${keyword.toUpperCase()}` };
     }
   }
   
-  // Check 3: Block semicolons (prevents query chaining)
   if (trimmedSQL.includes(';')) {
     return { valid: false, error: 'Multiple statements not allowed (semicolon detected)' };
   }
   
-  // Check 4: Block comments that could hide malicious SQL
   if (trimmedSQL.includes('--') || trimmedSQL.includes('/*')) {
     return { valid: false, error: 'SQL comments not allowed' };
   }
@@ -57,7 +52,6 @@ function validateSQLQuery(sql: string): { valid: boolean; error?: string } {
  * - Never generate INSERT, UPDATE, DELETE, DROP or any other modification queries
  */
 export const createSQLQueryGenTool = (messages: UIMessage[]) => {
-  // Derive a small conversation history window (everything except the latest user message)
   let latestUserMessage: UIMessage | undefined;
   for (let i = messages.length - 1; i >= 0; i--) {
     if (messages[i]?.role === "user") {
@@ -150,7 +144,6 @@ export const createSQLExecutionTool = () =>
         ),
     }),
     execute: async ({ sqlQuery }) => {
-      // VALIDATION LAYER 2: Server-side SQL validation
       const validation = validateSQLQuery(sqlQuery);
       
       if (!validation.valid) {
@@ -162,12 +155,8 @@ export const createSQLExecutionTool = () =>
       }
       
       try {
-        // Execute the validated SQL query using Prisma's raw query
-        // $queryRawUnsafe is used because we've already validated the query
-        // and need the flexibility of dynamic SQL
         const result = await prisma.$queryRawUnsafe(sqlQuery);
         
-        // Convert BigInt values to strings for JSON serialization
         const serializedResult = JSON.parse(
           JSON.stringify(result, (_, value) =>
             typeof value === 'bigint' ? value.toString() : value

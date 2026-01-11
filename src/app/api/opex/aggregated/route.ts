@@ -46,16 +46,13 @@ export async function GET(request: NextRequest) {
   try {
     const assets = await getAllAssets();
     
-    // Build aggregated data: assetName -> year -> totalActual
     const opexByAssetAndYear = new Map<string, Map<number, number>>();
     const allYearsSet = new Set<number>();
     
-    // Filter by building if specified
     const filteredAssets = building && building !== "All Buildings"
       ? assets.filter(asset => asset.name === building)
       : assets;
     
-    // Aggregate OPEX data
     for (const asset of filteredAssets) {
       if (!asset.opex || asset.opex.length === 0) continue;
       
@@ -72,7 +69,6 @@ export async function GET(request: NextRequest) {
       opexByAssetAndYear.set(asset.name, assetMap);
     }
     
-    // Convert to array format
     const opexData: Array<{ assetName: string; year: number; totalActual: number }> = [];
     for (const [assetName, yearMap] of opexByAssetAndYear.entries()) {
       for (const [year, totalActual] of yearMap.entries()) {
@@ -80,16 +76,13 @@ export async function GET(request: NextRequest) {
       }
     }
     
-    // Get latest year
     const allYears = Array.from(allYearsSet).sort((a, b) => b - a);
     const latestYear = allYears.length > 0 ? allYears[0] : null;
     
-    // Get latest year data
     const latestYearData = latestYear
       ? opexData.filter(d => d.year === latestYear)
       : [];
     
-    // Aggregate by year for trend
     const yearTotals = new Map<number, number>();
     for (const d of opexData) {
       yearTotals.set(d.year, (yearTotals.get(d.year) ?? 0) + d.totalActual);

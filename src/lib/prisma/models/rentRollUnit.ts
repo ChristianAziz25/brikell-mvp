@@ -19,7 +19,6 @@ async function resolveAssetIdFromRentRoll(
     "assetId" | "property_name" | "unit_address" | "unit_zipcode"
   >
 ): Promise<string> {
-  // 1) If caller explicitly provided an assetId, prefer that
   if (unit.assetId) {
     const existingById = await prisma.asset.findUnique({
       where: { id: unit.assetId },
@@ -38,7 +37,6 @@ async function resolveAssetIdFromRentRoll(
     return created.id;
   }
 
-  // 2) Fallback: look up or create asset by property_name
   if (unit.property_name) {
     const existingByName = await prisma.asset.findFirst({
       where: { name: unit.property_name },
@@ -56,7 +54,6 @@ async function resolveAssetIdFromRentRoll(
     return created.id;
   }
 
-  // 3) Final fallback: a shared "Unknown Asset"
   const fallbackName = "Unknown Asset";
   const existingFallback = await prisma.asset.findFirst({
     where: { name: fallbackName },

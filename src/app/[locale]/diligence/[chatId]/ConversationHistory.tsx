@@ -17,7 +17,6 @@ export function ConversationHistory({
 }: ConversationHistoryProps) {
   return (
     <aside className="flex flex-col w-64 shrink-0 rounded-2xl border border-border bg-background h-full">
-      {/* Header */}
       <div className="shrink-0 px-4 py-4 border-b border-border">
         <h2 className="text-sm font-semibold text-foreground">
           Conversation History
@@ -28,7 +27,6 @@ export function ConversationHistory({
         </p>
       </div>
 
-      {/* Conversation List */}
       <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
         {conversationTurns.length === 0 ? (
           <div className="flex flex-col items-center justify-center min-h-full px-4 py-8 text-center">
