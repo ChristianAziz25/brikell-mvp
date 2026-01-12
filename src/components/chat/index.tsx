@@ -107,6 +107,8 @@ export function Chat({
 
       const decoder = new TextDecoder();
       let fullContent = "";
+      let anomalies: any[] = [];
+      let riskFlags: any[] = [];
 
       while (true) {
         const { done, value } = await reader.read();
@@ -121,6 +123,9 @@ export function Chat({
               const data = JSON.parse(line.slice(6));
               if (data.type === "content") {
                 fullContent += data.content;
+              } else if (data.type === "anomalies") {
+                anomalies = data.anomalies || [];
+                riskFlags = data.riskFlags || [];
               }
             } catch {
               // Ignore parse errors for incomplete chunks
@@ -129,12 +134,39 @@ export function Chat({
         }
       }
 
-      // Clear file first, then send message
+      // Clear file first
       setAttachedFile(null);
+      
+      // Build message with anomalies if any
+      let message = `📄 **${fileName}**\n\n${fullContent}`;
+      
+      if (anomalies.length > 0 || riskFlags.length > 0) {
+        message += "\n\n---\n\n";
+        message += "**⚠️ Anomaly Detection Results**\n\n";
+        
+        if (riskFlags.length > 0) {
+          message += "**Risk Flags:**\n";
+          riskFlags.forEach((flag) => {
+            message += `- ${flag.level.toUpperCase()}: ${flag.message}\n`;
+          });
+          message += "\n";
+        }
+        
+        if (anomalies.length > 0) {
+          message += "**Detected Anomalies:**\n";
+          anomalies.forEach((anomaly) => {
+            message += `- ${anomaly.severity.toUpperCase()}: ${anomaly.description}`;
+            if (anomaly.expectedValue && anomaly.actualValue) {
+              message += ` (Expected: ${anomaly.expectedValue}, Actual: ${anomaly.actualValue})`;
+            }
+            message += ` [Source: ${anomaly.source}]\n`;
+          });
+        }
+      }
       
       // Send the final content as a message
       if (eventHandler && fullContent) {
-        eventHandler(`📄 **${fileName}**\n\n${fullContent}`);
+        eventHandler(message);
       }
     } catch (error) {
       setParseError(error instanceof Error ? error.message : "Failed to parse PDF");

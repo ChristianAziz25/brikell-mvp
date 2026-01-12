@@ -20,6 +20,9 @@ model Asset {
   opex       Opex[]
   rentRoll   RentRollUnit[]
   tri        TheoreticalRentalIncome[]
+  bbrData    BBRData[]
+  oisData    OISData[]
+  ejfData    EJFData[]
 
   @@map("asset")
   @@schema("public")
@@ -164,5 +167,109 @@ enum RentStatus {
   vacant
   terminated
 
+  @@schema("public")
+}
+
+model BBRData {
+  id              String   @id @default(cuid())
+  propertyId      String?
+  address         String
+  zipCode         String
+  city            String
+  buildingYear    Int?
+  totalArea       Float?
+  residentialArea Float?
+  commercialArea  Float?
+  energyLabel     String?
+  propertyValue   Float?
+  landValue       Float?
+  bbrNumber       String   @unique
+  lastUpdated     DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  asset           Asset?   @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  @@index([address, zipCode])
+  @@index([bbrNumber])
+  @@map("bbr_data")
+  @@schema("public")
+}
+
+model OISData {
+  id              String   @id @default(cuid())
+  propertyId      String?
+  address         String
+  zipCode         String
+  city            String
+  ownerName       String?
+  ownerType       String?
+  propertyType    String?
+  registrationDate DateTime?
+  lastUpdated     DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  asset           Asset?   @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  @@index([address, zipCode])
+  @@map("ois_data")
+  @@schema("public")
+}
+
+model EJFData {
+  id              String   @id @default(cuid())
+  propertyId      String?
+  address         String
+  zipCode         String
+  city            String
+  assessedValue   Float?
+  taxBase         Float?
+  propertyTax     Float?
+  year            Int
+  lastUpdated     DateTime
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  asset           Asset?   @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+
+  @@unique([address, zipCode, year], name: "ejf_address_zip_year")
+  @@index([address, zipCode, year])
+  @@map("ejf_data")
+  @@schema("public")
+}
+
+model DocumentAnalysis {
+  id              String   @id @default(cuid())
+  chatId          String?
+  fileName        String
+  documentType    String
+  extractedData   Json
+  propertyAddress String?
+  propertyZipCode String?
+  anomalies       Json?
+  riskFlags       Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  anomaliesList   Anomaly[]
+
+  @@index([propertyAddress, propertyZipCode])
+  @@map("document_analysis")
+  @@schema("public")
+}
+
+model Anomaly {
+  id              String   @id @default(cuid())
+  documentId      String
+  type            String
+  severity        String
+  field           String
+  expectedValue   String?
+  actualValue     String?
+  source          String
+  description     String
+  createdAt       DateTime @default(now())
+  document        DocumentAnalysis @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([severity])
+  @@map("anomaly")
   @@schema("public")
 }
