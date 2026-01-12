@@ -28,20 +28,24 @@ export function ChartLineDefault({
   data,
   title,
   description,
+  xKey = "year",
+  height = "h-[120px]",
 }: {
-  data: { year: number; value: number }[];
+  data: { year?: number; month?: string; value: number }[];
   title: string;
   description?: string;
+  xKey?: "year" | "month";
+  height?: string;
 }) {
   const chartData = data
     .map((item) => ({
-      year: item.year,
+      [xKey]: xKey === "year" ? item.year : item.month,
       value: item.value,
     }))
     // Guard against NaN / non-finite values which can break Recharts' tick calculations
     .filter(
       (d) =>
-        Number.isFinite(d.year) &&
+        d[xKey] !== undefined &&
         typeof d.value === "number" &&
         Number.isFinite(d.value)
     );
@@ -49,8 +53,8 @@ export function ChartLineDefault({
   if (chartData.length === 0) {
     return (
       <Card>
-        <CardHeader>
-          <CardTitle>Line Chart</CardTitle>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-medium">{title}</CardTitle>
           <CardDescription>No data available</CardDescription>
         </CardHeader>
         <CardContent />
@@ -60,23 +64,25 @@ export function ChartLineDefault({
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base font-medium">{title}</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig}>
+      <CardContent className="pb-4">
+        <ChartContainer config={chartConfig} className={height}>
           <LineChart
             accessibilityLayer
             data={chartData}
             margin={{
               left: 12,
               right: 12,
+              top: 5,
+              bottom: 5,
             }}
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="year"
+              dataKey={xKey}
               tickLine={false}
               axisLine={false}
               tickMargin={8}

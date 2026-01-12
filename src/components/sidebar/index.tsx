@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import {
   AlertTriangleIcon,
   Building2Icon,
-  DatabaseIcon,
   HouseIcon,
   LayoutDashboardIcon,
   MessageCircleQuestionMarkIcon,
@@ -35,7 +34,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    title: "Properties",
+    title: "Portfolio",
     url: "/properties",
     icon: (
       <LayoutDashboardIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
@@ -57,7 +56,7 @@ const navItems: NavItem[] = [
     ),
   },
   {
-    title: "Anomalies",
+    title: "Leakage Detection",
     url: "/anomalies",
     icon: (
       <AlertTriangleIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
@@ -71,14 +70,6 @@ const navItems: NavItem[] = [
       <MessageSquareIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
     divider: true,
-  },
-  {
-    title: "Data Library",
-    url: "/data-library",
-    icon: (
-      <DatabaseIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
-    ),
-    beta: true,
   },
 ];
 

@@ -75,13 +75,18 @@ export function ChartLineMultiple({
   }, {} as ChartConfig);
 
   const chartBody = (
-    <ChartContainer config={chartConfig}>
+    <ChartContainer
+      config={chartConfig}
+      className={fullscreen ? "aspect-video" : "aspect-none h-full w-full"}
+    >
       <LineChart
         accessibilityLayer
         data={chartData}
         margin={{
-          left: 0,
-          right: 0,
+          left: 6,
+          right: 6,
+          top: 6,
+          bottom: 6,
         }}
       >
         <CartesianGrid vertical={false} />
@@ -138,7 +143,7 @@ export function ChartLineMultiple({
 
   return (
     <Card className={className} {...cardProps}>
-      <CardContent className="p-4">{chartBody}</CardContent>
+      <CardContent className="p-2 h-full">{chartBody}</CardContent>
     </Card>
   );
 }
