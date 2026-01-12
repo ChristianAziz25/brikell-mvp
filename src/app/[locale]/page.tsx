@@ -2,6 +2,8 @@
 
 import { Search } from "@/components";
 import { PageAnimation } from "@/components/page-animation";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -11,13 +13,11 @@ import {
 } from "@/components/ui/dialog";
 import { ChartLineMultiple } from "@/components/ui/multi-line-chart";
 import { TextShimmer } from "@/components/ui/text-shimmer";
-import { Building2, Home as HomeIcon, Plus, TrendingUp } from "lucide-react";
 import type { YearByAssetRow } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
-import { HomeSkeleton } from "./home-skeleton";
+import { Building2, Home as HomeIcon, Plus, TrendingUp } from "lucide-react";
 import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "@/components/ui/button";
+import { HomeSkeleton } from "./home-skeleton";
 
 export default function Home() {
   type AssetSummary = { id: string; name: string };

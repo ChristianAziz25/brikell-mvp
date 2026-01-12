@@ -10,7 +10,6 @@ import {
   MessageCircleQuestionMarkIcon,
   MessageSquareIcon,
   SettingsIcon,
-  TrendingDownIcon,
   UserIcon,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -47,13 +46,6 @@ const navItems: NavItem[] = [
       <Building2Icon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
     ),
     divider: true,
-  },
-  {
-    title: "OPEX",
-    url: "/opex",
-    icon: (
-      <TrendingDownIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
-    ),
   },
   {
     title: "Leakage Detection",

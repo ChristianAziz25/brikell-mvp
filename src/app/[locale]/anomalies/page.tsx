@@ -2,6 +2,7 @@
 
 import { PageAnimation } from "@/components/page-animation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ExportButton } from "@/components/ui/export-button";
 import { GlowingLineChart } from "@/components/ui/glowing-line-chart";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,18 +12,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { YearByAssetRow } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
-import { Info, Search, TrendingUp, TriangleAlert } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState, useMemo } from "react";
 
 type VarianceAnalysisItem = {
   title: string;
-  severity: "high" | "moderate" | "benchmark";
-  description: string;
-  icon: "alert" | "trending" | "info";
+  assetName: string;
+  variance: string;
 };
 
 // Alert data will be generated dynamically based on assets
@@ -32,72 +31,39 @@ const generateAlerts = (assetNames: string[]): VarianceAnalysisItem[] => {
   const alerts: VarianceAnalysisItem[] = [
     {
       title: "HVAC Maintenance",
-      severity: "high",
-      description: `${assetNames[0] || "Building"} +31%`,
-      icon: "alert",
+      assetName: assetNames[0] || "Building",
+    variance: "+31%",
     },
     {
       title: "Elevator Repairs",
-      severity: "high",
-      description: `${assetNames[1] || assetNames[0] || "Building"} +27%`,
-      icon: "alert",
+      assetName: assetNames[1] || assetNames[0] || "Building",
+    variance: "+27%",
     },
     {
       title: "Water Usage",
-      severity: "moderate",
-      description: `${assetNames[2] || assetNames[0] || "Building"} +19%`,
-      icon: "trending",
+      assetName: assetNames[2] || assetNames[0] || "Building",
+    variance: "+19%",
     },
     {
       title: "Security Costs",
-      severity: "benchmark",
-      description: `${assetNames[0] || "Building"} -15%`,
-      icon: "info",
+      assetName: assetNames[0] || "Building",
+    variance: "-15%",
     },
     {
       title: "Insurance Premium",
-      severity: "moderate",
-      description: `${assetNames[3] || assetNames[0] || "Building"} +12%`,
-      icon: "trending",
+      assetName: assetNames[3] || assetNames[0] || "Building",
+      variance: "+12%",
     },
     {
       title: "Energy Efficiency",
-      severity: "benchmark",
-      description: `${assetNames[4] || assetNames[0] || "Building"} -8%`,
-      icon: "info",
+      assetName: assetNames[4] || assetNames[0] || "Building",
+      variance: "-8%",
     },
   ];
   
   return alerts;
 };
 
-const getSeverityBadge = (severity: VarianceAnalysisItem["severity"]) => {
-  switch (severity) {
-    case "high":
-      return (
-        <span className="text-xs text-destructive">High</span>
-      );
-    case "moderate":
-      return (
-        <span className="text-xs text-amber-600">Moderate</span>
-      );
-    case "benchmark":
-      return (
-        <span className="text-xs text-teal-600">Benchmark</span>
-      );
-  }
-};
-
-const getVarianceIcon = (icon: VarianceAnalysisItem["icon"]) => {
-  switch (icon) {
-    case "alert":
-      return <TriangleAlert className="h-4 w-4 text-destructive" />;
-    case "trending":
-      return <TrendingUp className="h-4 w-4 text-amber-600" />;
-    case "info":
-      return <Info className="h-4 w-4 text-teal-600" />;
-  }
-};
 
 // Category breakdown data type
 type CategoryRow = {
@@ -317,6 +283,31 @@ export default function AnomaliesPage() {
     });
   }, [categoryBreakdown, categorySearch, categoryFilter]);
 
+  // Export data for metrics chart
+  const metricsExportData = useMemo(() => {
+    return chartData.map((item) => ({
+      Month: item.month,
+      CAPEX: item.CAPEX,
+      OPEX: item.OPEX,
+      GRI: item.GRI,
+    }));
+  }, [chartData]);
+
+  // Export data for category breakdown
+  const categoryExportData = useMemo(() => {
+    return filteredCategories.map((row) => {
+      const exportRow: Record<string, string | number> = {
+        Category: row.category,
+      };
+      tableMonths.forEach((month) => {
+        exportRow[month] = row[month] as number;
+      });
+      exportRow["Total YTD"] = row.totalYTD;
+      exportRow["Variance"] = row.variance;
+      return exportRow;
+    });
+  }, [filteredCategories, tableMonths]);
+
   return (
     <PageAnimation>
       <div className="space-y-6 animate-fade-in">
@@ -338,19 +329,27 @@ export default function AnomaliesPage() {
                 </Card>
               </div>
             ) : (
-              <GlowingLineChart
-                title="Portfolio Metrics"
-                subtitle={
-                  selectedAssetName
-                    ? `Monthly CAPEX, OPEX & GRI for ${selectedAssetName}`
-                    : "Monthly CAPEX, OPEX & GRI across all assets"
-                }
-                percentageChange={percentageChange}
-                data={chartData}
-                assets={assets}
-                selectedAsset={selectedAssetId}
-                onAssetChange={setSelectedAssetId}
-              />
+              <div className="relative">
+                <div className="absolute top-0 right-0 z-10">
+                  <ExportButton 
+                    data={metricsExportData} 
+                    filename={`portfolio-metrics-${selectedAssetName || 'all-assets'}`}
+                  />
+                </div>
+                <GlowingLineChart
+                  title="Portfolio Metrics"
+                  subtitle={
+                    selectedAssetName
+                      ? `Monthly CAPEX, OPEX & GRI for ${selectedAssetName}`
+                      : "Monthly CAPEX, OPEX & GRI across all assets"
+                  }
+                  percentageChange={percentageChange}
+                  data={chartData}
+                  assets={assets}
+                  selectedAsset={selectedAssetId}
+                  onAssetChange={setSelectedAssetId}
+                />
+              </div>
             )}
           </div>
 
@@ -368,18 +367,17 @@ export default function AnomaliesPage() {
                 <div className="divide-y divide-border">
                   {alertsData.map((item, index) => (
                     <div key={index} className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
-                      <div className="shrink-0">
-                        {getVarianceIcon(item.icon)}
-                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-sm font-medium text-foreground truncate">
                             {item.title}
                           </span>
-                          {getSeverityBadge(item.severity)}
+                          <span className={`text-sm font-medium ${item.variance.startsWith('+') ? 'text-destructive' : 'text-teal-600'}`}>
+                            {item.variance}
+                          </span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                          {item.description}
+                          {item.assetName}
                         </p>
                       </div>
                     </div>
@@ -393,9 +391,12 @@ export default function AnomaliesPage() {
         {/* Category Breakdown Table */}
         <Card className="border-border">
           <CardHeader className="pb-4">
-            <CardTitle className="text-base font-medium tracking-tight">
-              Category Breakdown
-            </CardTitle>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base font-medium tracking-tight">
+                Category Breakdown
+              </CardTitle>
+              <ExportButton data={categoryExportData} filename="category-breakdown" />
+            </div>
             <div className="flex gap-3 pt-3">
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -407,28 +408,28 @@ export default function AnomaliesPage() {
                 />
               </div>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All Categories">All Categories</SelectItem>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="All Categories">All Categories</SelectItem>
                   {OPEX_CATEGORIES.map((cat) => (
                     <SelectItem key={cat} value={cat}>
                       {cat}
-                    </SelectItem>
+              </SelectItem>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0">
-            <div className="relative w-full overflow-auto">
-              <table className="w-full caption-bottom text-sm">
-                <thead className="[&_tr]:border-b">
+            </SelectContent>
+          </Select>
+        </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="relative w-full overflow-auto">
+                <table className="w-full caption-bottom text-sm">
+                  <thead className="[&_tr]:border-b">
                   <tr className="border-b transition-colors border-border">
                     <th className="h-12 px-4 text-left align-middle text-muted-foreground font-medium">
-                      Category
-                    </th>
+                        Category
+                      </th>
                     {tableMonths.map((month) => (
                       <th
                         key={month}
@@ -439,13 +440,13 @@ export default function AnomaliesPage() {
                     ))}
                     <th className="h-12 px-4 text-right align-middle text-muted-foreground font-medium">
                       Total YTD
-                    </th>
+                      </th>
                     <th className="h-12 px-4 text-right align-middle text-muted-foreground font-medium">
-                      Variance
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="[&_tr:last-child]:border-0">
+                        Variance
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="[&_tr:last-child]:border-0">
                   {isLoading ? (
                     <tr>
                       <td colSpan={tableMonths.length + 3} className="p-4">
@@ -467,7 +468,7 @@ export default function AnomaliesPage() {
                             className="p-4 align-middle text-right text-muted-foreground"
                           >
                             {formatCompact(row[month] as number)}
-                          </td>
+                        </td>
                         ))}
                         <td className="p-4 align-middle text-right font-medium text-foreground">
                           {formatCompact(row.totalYTD)}
@@ -478,11 +479,11 @@ export default function AnomaliesPage() {
                       </tr>
                     ))
                   )}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
       </div>
     </PageAnimation>
   );

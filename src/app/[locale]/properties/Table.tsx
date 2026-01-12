@@ -19,21 +19,18 @@ export function Table<TData extends RowData>({
 }: TableProp<TData>) {
   const rows = table.getRowModel().rows;
   return (
-    <div className="rounded-lg border bg-card overflow-hidden">
+    <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
       <div className="relative w-full overflow-auto no-scrollbar overscroll-x-contain">
-        <table className="w-full caption-bottom text-sm">
-          <thead className="[&_tr]:border-b">
+        <table className="w-full caption-bottom text-sm table-fixed">
+          <thead className="bg-muted/20">
             {!noHeader &&
               table.getHeaderGroups().map((headerGroup) => (
                 <tr
                   key={headerGroup.id}
-                  className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-muted/20"
+                  className="border-b border-border/40"
                 >
                   {headerGroup.headers.map((header) => {
                     if (header.isPlaceholder) {
-                      // Skip rendering placeholder headers so parent headers
-                      // visually span multiple rows instead of creating
-                      // empty cells on the subheader row.
                       return null;
                     }
 
@@ -54,8 +51,9 @@ export function Table<TData extends RowData>({
                       <th
                         key={header.id}
                         colSpan={header.colSpan}
-                        className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${
-                          isYearGroupFirst ? "border-l-medium" : ""
+                        style={{ width: header.column.getSize() }}
+                        className={`h-12 px-5 align-middle text-xs font-medium text-muted-foreground uppercase tracking-wider [&:has([role=checkbox])]:pr-0 ${
+                          isYearGroupFirst ? "border-l border-border/30" : ""
                         }`}
                       >
                         {flexRender(
@@ -91,7 +89,7 @@ export function Table<TData extends RowData>({
               rows.map((row) => (
                 <tr
                   key={row.id}
-                  className="border-b transition-colors data-[state=selected]:bg-muted hover:bg-muted/20"
+                  className="border-b border-border/30 transition-colors hover:bg-muted/10"
                 >
                   {row.getVisibleCells().map((cell) => {
                     const columnMeta = cell.column.columnDef.meta as
@@ -110,8 +108,9 @@ export function Table<TData extends RowData>({
                     return (
                       <td
                         key={cell.id}
-                        className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${
-                          isYearGroupFirst ? "border-l-medium" : ""
+                        style={{ width: cell.column.getSize() }}
+                        className={`py-4 px-5 align-middle text-sm [&:has([role=checkbox])]:pr-0 ${
+                          isYearGroupFirst ? "border-l border-border/30" : ""
                         }`}
                       >
                         {flexRender(
@@ -125,7 +124,7 @@ export function Table<TData extends RowData>({
               ))
             )}
           </tbody>
-          <tfoot>
+          <tfoot className="bg-muted/10">
             {(() => {
               const footerGroups = table.getFooterGroups();
               const leafGroup = footerGroups[footerGroups.length - 1];
@@ -141,7 +140,7 @@ export function Table<TData extends RowData>({
               return (
                 <tr
                   key={leafGroup.id}
-                  className="border-t transition-colors data-[state=selected]:bg-muted hover:bg-muted/20"
+                  className="border-t border-border/40"
                 >
                   {leafGroup.headers.map((footer) => {
                     if (footer.isPlaceholder) {
@@ -180,8 +179,8 @@ export function Table<TData extends RowData>({
                       <td
                         key={footer.id}
                         colSpan={footer.colSpan}
-                        className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${
-                          isYearGroupFirst ? "border-l-medium" : ""
+                        className={`h-12 px-5 align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${
+                          isYearGroupFirst ? "border-l border-border/30" : ""
                         }`}
                       >
                         {flexRender(

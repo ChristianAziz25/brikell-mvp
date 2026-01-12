@@ -1,78 +1,105 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { MessageSquare } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { MessageSquare, Plus } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 
-interface ConversationTurn {
-  user: string;
-  assistant: string;
+interface ChatPreview {
+  id: string;
+  createdAt: string;
+  title: string;
+  preview: string;
+  messageCount: number;
 }
 
-interface ConversationHistoryProps {
-  conversationTurns: ConversationTurn[];
-}
+export function ConversationHistory() {
+  const router = useRouter();
+  const { chatId } = useParams<{ chatId: string }>();
 
-export function ConversationHistory({
-  conversationTurns,
-}: ConversationHistoryProps) {
+  const { data: chats = [], isLoading } = useQuery<ChatPreview[]>({
+    queryKey: ["all-chats"],
+    queryFn: async () => {
+      const res = await fetch("/api/chats");
+      if (!res.ok) throw new Error("Failed to fetch chats");
+      return res.json();
+    },
+  });
+
+  const handleNewChat = () => {
+    router.push("/diligence");
+  };
+
+  const handleSelectChat = (id: string) => {
+    router.push(`/diligence/${id}`);
+  };
+
   return (
-    <aside className="flex flex-col w-64 shrink-0 rounded-2xl border border-border bg-background h-full">
-      <div className="shrink-0 px-4 py-4 border-b border-border">
-        <h2 className="text-sm font-semibold text-foreground">
-          Conversation History
+    <aside className="flex flex-col w-96 shrink-0 bg-white rounded-2xl border border-zinc-100 shadow-sm h-full">
+      {/* Header with New Chat button */}
+      <div className="shrink-0 px-5 py-4 flex items-center justify-between border-b border-zinc-100">
+        <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wider">
+          Chats
         </h2>
-        <p className="text-xs text-muted-foreground mt-1">
-          {conversationTurns.length}{" "}
-          {conversationTurns.length === 1 ? "turn" : "turns"}
-        </p>
+        <button
+          onClick={handleNewChat}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 rounded-lg transition-colors"
+        >
+          <Plus className="h-3.5 w-3.5" />
+          New
+        </button>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar">
-        {conversationTurns.length === 0 ? (
-          <div className="flex flex-col items-center justify-center min-h-full px-4 py-8 text-center">
-            <MessageSquare className="h-8 w-8 text-muted-foreground/50 mb-3" />
-            <p className="text-sm text-muted-foreground">No conversation yet</p>
-            <p className="text-xs text-muted-foreground/70 mt-1">
-              Start chatting to see history
+      <div className="flex-1 min-h-0 overflow-y-auto no-scrollbar px-3 py-3">
+        {isLoading ? (
+          <div className="flex flex-col gap-2">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="rounded-xl p-4 bg-zinc-50 animate-pulse h-24" />
+            ))}
+          </div>
+        ) : chats.length === 0 ? (
+          <div className="flex flex-col items-center justify-center min-h-full px-4 py-12 text-center">
+            <MessageSquare className="h-6 w-6 text-zinc-300 mb-3" />
+            <p className="text-sm text-zinc-400">No conversations yet</p>
+            <p className="text-xs text-zinc-300 mt-1">
+              Start a new chat to begin
             </p>
           </div>
         ) : (
-          <div className="flex flex-col gap-1 p-2">
-            {conversationTurns.map((turn, index) => (
-              <div
-                key={index}
-                className={cn(
-                  "group relative rounded-lg px-3 py-3",
-                  "hover:bg-muted/20 transition-colors duration-150",
-                  "cursor-pointer border border-transparent hover:border-border"
-                )}
-              >
-                {/* User Message */}
-                <div className="mb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="text-xs font-medium text-muted-foreground mb-1">
-                      You
-                    </div>
-                    <div className="flex items-center justify-center h-5 w-5 rounded-full bg-primary/10 text-primary">
-                      <span className="text-xs font-medium">{index + 1}</span>
-                    </div>
-                  </div>
-                  <p className="text-xs text-foreground line-clamp-2 leading-relaxed">
-                    {turn.user}
+          <div className="flex flex-col gap-2">
+            {chats.map((chat) => {
+              const isActive = chat.id === chatId;
+              return (
+                <button
+                  key={chat.id}
+                  onClick={() => handleSelectChat(chat.id)}
+                  className={cn(
+                    "group relative rounded-xl p-4 text-left w-full",
+                    "border transition-all duration-200",
+                    isActive
+                      ? "bg-zinc-100 border-zinc-200"
+                      : "bg-zinc-50/50 border-zinc-100 hover:bg-zinc-100/70 hover:border-zinc-200"
+                  )}
+                >
+                  {/* Title */}
+                  <p className="text-sm font-medium line-clamp-2 leading-relaxed mb-2 text-zinc-800">
+                    {chat.title}
                   </p>
-                </div>
 
-                {/* Assistant Response */}
-                <div>
-                  <div className="text-xs font-medium text-muted-foreground mb-1">
-                    Assistant
-                  </div>
-                  <p className="text-xs text-foreground/80 line-clamp-3 leading-relaxed">
-                    {turn.assistant}
+                  {/* Preview */}
+                  {chat.preview && (
+                    <p className="text-xs line-clamp-2 leading-relaxed text-zinc-500">
+                      {chat.preview}
+                    </p>
+                  )}
+
+                  {/* Time */}
+                  <p className="text-[10px] mt-2 text-zinc-400">
+                    {new Date(chat.createdAt).toLocaleDateString()}
                   </p>
-                </div>
-              </div>
-            ))}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

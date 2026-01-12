@@ -15,6 +15,20 @@ export async function getChat(id: string) {
   });
 }
 
+export async function getAllChats() {
+  const chats = await prisma.chat.findMany({
+    orderBy: { createdAt: "desc" },
+    include: {
+      chatMessages: {
+        orderBy: { createdAt: "asc" },
+        take: 2, // Get first 2 messages for preview (user + assistant)
+      },
+    },
+    take: 20, // Limit to 20 most recent chats
+  });
+  return chats;
+}
+
 /**
  * Load full chat history for a given chat from the database.
  * Each ChatMessage row stores a single UIMessage JSON string for this chat.

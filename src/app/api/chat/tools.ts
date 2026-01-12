@@ -99,8 +99,8 @@ export const createSQLQueryGenTool = (messages: UIMessage[]) => {
     execute: async ({ userQuery }) => {
       const { tableDetailsText, fewShotExamplesText, schema } =
         await numericalQueryRAG(userQuery, {
-          tableLimit: 2,
-          fewShotLimit: 2,
+          tableLimit: 1,  // Reduced from 2 for faster search
+          fewShotLimit: 1, // Reduced from 2 for faster search
           conversationHistory,
         });
 
@@ -125,6 +125,21 @@ export const createSQLQueryGenTool = (messages: UIMessage[]) => {
  * - The tool will validate the query for safety before execution
  * - Then read the `result` and explain it to the user in natural language.
  */
+// Query timeout helper
+const QUERY_TIMEOUT_MS = 8000; // 8 seconds max
+
+async function executeWithTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`Query timeout after ${timeoutMs}ms`)), timeoutMs)
+    ),
+  ]);
+}
+
 export const createSQLExecutionTool = () =>
   tool({
     description:
@@ -155,7 +170,11 @@ export const createSQLExecutionTool = () =>
       }
       
       try {
-        const result = await prisma.$queryRawUnsafe(sqlQuery);
+        // Execute with timeout to prevent slow queries from blocking
+        const result = await executeWithTimeout(
+          prisma.$queryRawUnsafe(sqlQuery),
+          QUERY_TIMEOUT_MS
+        );
         
         const serializedResult = JSON.parse(
           JSON.stringify(result, (_, value) =>
@@ -170,9 +189,13 @@ export const createSQLExecutionTool = () =>
         };
       } catch (error) {
         console.error('SQL Execution Error:', error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const isTimeout = errorMessage.includes('timeout');
         return {
           sqlQuery,
-          error: `Database error: ${error instanceof Error ? error.message : String(error)}`,
+          error: isTimeout 
+            ? `⏱️ Query took too long. Try adding more filters or LIMIT clause.`
+            : `Database error: ${errorMessage}`,
           result: null,
         };
       }

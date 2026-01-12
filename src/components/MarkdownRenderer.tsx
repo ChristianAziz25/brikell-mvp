@@ -138,9 +138,9 @@ export function MarkdownRenderer({
             </a>
           ),
 
-          // Strong/Bold
+          // Strong/Bold - Extra prominent for section headers
           strong: ({ children }) => (
-            <strong className="font-semibold text-foreground">
+            <strong className="font-bold text-foreground block mt-4 mb-2 first:mt-0">
               {children}
             </strong>
           ),

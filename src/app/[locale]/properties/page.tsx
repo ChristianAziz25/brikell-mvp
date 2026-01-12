@@ -7,6 +7,7 @@ import {
   type BudgetVsActualData,
 } from "@/components/ui/budget-vs-actual-chart";
 import { Card, CardContent } from "@/components/ui/card";
+import { ExportButton } from "@/components/ui/export-button";
 import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -159,84 +160,90 @@ export default function MyAssets() {
     () => [
       {
         accessorKey: "property",
-        header: "Property",
+        header: () => <div className="text-left">Property</div>,
         cell: ({ row }) => (
           <div
-            className="text-left font-medium cursor-pointer"
+            className="text-left font-medium cursor-pointer hover:text-primary transition-colors"
             title={row.original.property}
             onClick={() => router.push(`/properties/${row.original.property}`)}
           >
             {row.original.property}
           </div>
         ),
+        size: 180,
       },
       {
         accessorKey: "vacancy",
-        header: "Vacancy",
+        header: () => <div className="text-center">Vacancy</div>,
         cell: ({ row }) => {
           const value = row.original.vacancy;
           return (
-            <div className="text-right">
-              <Badge variant="secondary">
+            <div className="text-center">
+              <Badge variant="secondary" className="tabular-nums">
                 {Number.isFinite(value) ? `${value.toFixed(2)}%` : "-"}
               </Badge>
             </div>
           );
         },
+        size: 120,
       },
       {
         accessorKey: "opex",
-        header: "OPEX",
+        header: () => <div className="text-right">OPEX</div>,
         cell: ({ row }) => {
           const value = row.original.opex;
           return (
-            <div className="text-right">
+            <div className="text-right tabular-nums">
               {Number.isFinite(value)
                 ? `${dollarStringify({ value, format: "text" })} DKK`
                 : "-"}
             </div>
           );
         },
+        size: 140,
       },
       {
         accessorKey: "opexPerUnit",
-        header: "OPEX/Unit",
+        header: () => <div className="text-right">OPEX/Unit</div>,
         cell: ({ row }) => {
           const value = row.original.opexPerUnit;
           return (
-            <div className="text-right">
+            <div className="text-right tabular-nums">
               {Number.isFinite(value)
                 ? `${dollarStringify({ value, format: "text" })} DKK`
                 : "-"}
             </div>
           );
         },
+        size: 140,
       },
       {
         accessorKey: "noi",
-        header: "NOI",
+        header: () => <div className="text-right">NOI</div>,
         cell: ({ row }) => {
           const value = row.original.noi;
           return (
-            <div className="text-right">
+            <div className="text-right tabular-nums">
               {Number.isFinite(value)
                 ? `${dollarStringify({ value, format: "text" })} DKK`
                 : "-"}
             </div>
           );
         },
+        size: 140,
       },
       {
         accessorKey: "noiMargin",
-        header: "NOI Margin",
+        header: () => <div className="text-right">NOI Margin</div>,
         cell: ({ row }) => {
           const value = row.original.noiMargin;
           return (
-            <div className="text-right">
+            <div className="text-right tabular-nums">
               {Number.isFinite(value) ? `${value.toFixed(2)}%` : "-"}
             </div>
           );
         },
+        size: 120,
       },
     ],
     [router]
@@ -354,29 +361,59 @@ export default function MyAssets() {
     );
   }
 
+  // Export data for Budget vs Actual
+  const budgetVsActualExportData = budgetVsActualData.map((item) => ({
+    Category: item.category,
+    Actual: item.actual,
+    Budget: item.budget,
+    Variance: item.actual - item.budget,
+    "Variance %": item.budget !== 0 ? ((item.actual - item.budget) / item.budget * 100).toFixed(2) + "%" : "N/A",
+  }));
+
+  // Export data for Portfolio Table
+  const portfolioExportData = portfolioRows.map((row) => ({
+    Property: row.property,
+    "Vacancy (%)": row.vacancy.toFixed(2),
+    "OPEX (DKK)": row.opex,
+    "OPEX/Unit (DKK)": row.opexPerUnit,
+    "NOI (DKK)": row.noi,
+    "NOI Margin (%)": row.noiMargin.toFixed(2),
+  }));
+
   return (
     <PageAnimation>
       <div className="space-y-6">
-        <section className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-4">
-          {cardConfig.map((card) => (
-            <Card key={card.title}>
-              <CardContent className="p-5 overflow-hidden">
-                <p className="kpi-label mb-2">{card.title}</p>
-                <h3 className="text-2xl font-semibold font-serif tracking-tight">
-                  {dollarStringify({ value: card.data, format: "text" })}{" "}
-                  {card.suffix}
-                </h3>
-                <p className="text-xs text-muted-foreground mt-2">
-                  {card.description}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+        <section>
+          <h3 className="text-sm font-medium text-muted-foreground mb-4">Key Metrics</h3>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(100px,1fr))] gap-4">
+            {cardConfig.map((card) => (
+              <Card key={card.title}>
+                <CardContent className="p-5 overflow-hidden">
+                  <p className="kpi-label mb-2">{card.title}</p>
+                  <h3 className="text-2xl font-semibold tracking-tight">
+                    {dollarStringify({ value: card.data, format: "text" })}{" "}
+                    {card.suffix}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {card.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </section>
         <section>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-medium text-muted-foreground">Budget vs Actual</h3>
+            <ExportButton data={budgetVsActualExportData} filename="budget-vs-actual" />
+          </div>
           <BudgetVsActualChart data={budgetVsActualData} />
         </section>
         <section className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-muted-foreground">Portfolio Overview</h3>
+            <ExportButton data={portfolioExportData} filename="portfolio-overview" />
+          </div>
           <Table
             table={portfolioTable}
             columnCount={portfolioTable.getAllLeafColumns().length}

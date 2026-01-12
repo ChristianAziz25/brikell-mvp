@@ -13,7 +13,6 @@ import { Brain, Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useMemo, useRef } from "react";
 import { ConversationHistory } from "./ConversationHistory";
-import { getConversationTurns } from "./utils/convertTurns";
 
 function extractMessageContent(message: UIMessage): string {
   const msg = message as {
@@ -119,11 +118,6 @@ export default function Page() {
       .filter((m): m is MyUIMessage => m !== null);
   }, [chatData]);
 
-  const conversationTurns = useMemo(
-    () => getConversationTurns(initialMessages),
-    [initialMessages]
-  );
-
   const queueRef = useRef<string[]>([]);
   const messageScrollRef = useRef<HTMLDivElement>(null);
   const isUserScrolling = useRef(false);
@@ -194,7 +188,9 @@ export default function Page() {
   return (
     <PageAnimation>
       <div className="flex w-full h-full gap-6 overflow-hidden overflow-y-hidden">
-        <ConversationHistory conversationTurns={conversationTurns} />
+        <ConversationHistory />
+        
+        {/* Main Chat Section */}
         <section className="flex flex-1 flex-col min-h-0 min-w-0 bg-background relative overflow-hidden border border-border rounded-2xl">
           <div className="flex-1 min-h-0 overflow-hidden border-b border-border rounded-t-2xl">
             <div
@@ -208,86 +204,90 @@ export default function Page() {
                       className="flex max-w-3xl items-start gap-3 min-w-0 overflow-hidden"
                       style={{ maxWidth: "100%" }}
                     >
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30">
-                        <Brain className="h-4 w-4 text-muted-foreground" />
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100">
+                        <Brain className="h-4 w-4 text-zinc-500" />
                       </div>
-                      <div className="rounded-2xl rounded-tl-sm bg-muted/20 px-4 py-3 overflow-hidden flex-1 min-w-0">
-                        <p className="text-sm text-foreground">
-                          Hello! I&apos;m your AI analyst. Ask me anything about
-                          your data. I can help you analyze trends and answer
-                          questions about your information.
-                        </p>
+                      <div className="bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 overflow-hidden flex-1 min-w-0">
+                        <div className="px-5 py-4">
+                          <p className="text-sm text-zinc-600">
+                            Hello! I&apos;m your AI analyst. Ask me anything about
+                            your data. I can help you analyze trends and answer
+                            questions about your information.
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {messages.map((message, index) => (
-                  <div
-                    key={`${message.id}-${index}`}
-                    className={`flex w-full max-w-full overflow-hidden ${
-                      message.role === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
+                {messages.map((message, index) => {
+                  const content = extractMessageContent(message);
+                  
+                  return (
                     <div
-                      className="flex max-w-3xl items-start gap-3 min-w-0 overflow-hidden"
-                      style={{ maxWidth: "100%" }}
+                      key={`${message.id}-${index}`}
+                      className={`flex w-full max-w-full overflow-hidden ${
+                        message.role === "user" ? "justify-end" : "justify-start"
+                      }`}
                     >
-                      {message.role === "assistant" && (
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30">
-                          <Brain className="h-4 w-4 text-muted-foreground" />
-                        </div>
-                      )}
-                      <div className="flex flex-col gap-2 min-w-0 flex-1 max-w-full overflow-hidden">
-                        <div
-                          className={`rounded-2xl px-4 py-3 overflow-hidden max-w-full ${
-                            message.role === "user"
-                              ? "rounded-tr-sm bg-primary text-primary-foreground"
-                              : "rounded-tl-sm bg-muted/30"
-                          }`}
-                        >
-                          {message.role === "user" ? (
-                            <div className="text-sm text-foreground whitespace-pre-wrap break-words">
-                              <p className="text-primary-foreground">
-                                {extractMessageContent(message)}
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="text-sm overflow-hidden max-w-full">
-                              {extractMessageContent(message) ? (
-                                <MarkdownRenderer
-                                  content={extractMessageContent(message)}
-                                  className="text-chat-machine-color"
-                                />
+                      <div
+                        className="flex max-w-3xl items-start gap-3 min-w-0 overflow-hidden"
+                        style={{ maxWidth: "100%" }}
+                      >
+                        {message.role === "assistant" && (
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100">
+                            <Brain className="h-4 w-4 text-zinc-500" />
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-2 min-w-0 flex-1 max-w-full overflow-hidden">
+                          {/* Unified clean card style for all messages */}
+                          <div className="bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 overflow-hidden max-w-full">
+                            <div className="px-5 py-4">
+                              {message.role === "user" ? (
+                                <div className="text-sm text-zinc-700 whitespace-pre-wrap break-words">
+                                  <MarkdownRenderer
+                                    content={content}
+                                    className="text-zinc-700 [&_strong]:text-zinc-900 [&_strong]:font-bold [&_p]:text-zinc-600 [&_li]:text-zinc-600"
+                                  />
+                                </div>
                               ) : (
-                                <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin inline-block" />
+                                <div className="text-sm overflow-hidden max-w-full">
+                                  {content ? (
+                                    <MarkdownRenderer
+                                      content={content}
+                                      className="text-zinc-700 [&_strong]:text-zinc-900 [&_strong]:font-bold [&_p]:text-zinc-600 [&_li]:text-zinc-600"
+                                    />
+                                  ) : (
+                                    <Loader2 className="h-4 w-4 text-zinc-400 animate-spin inline-block" />
+                                  )}
+                                </div>
                               )}
                             </div>
-                          )}
+                          </div>
+                          <p
+                            className={cn(
+                              "text-xs text-zinc-400",
+                              message.role === "user" ? "text-right" : "text-left"
+                            )}
+                          >
+                            {message.metadata?.createdAt
+                              ? new Date(
+                                  message.metadata.createdAt
+                                ).toLocaleTimeString()
+                              : ""}
+                          </p>
                         </div>
-                        <p
-                          className={cn(
-                            "text-xs text-muted-foreground",
-                            message.role === "user" ? "text-right" : "text-left"
-                          )}
-                        >
-                          {message.metadata?.createdAt
-                            ? new Date(
-                                message.metadata.createdAt
-                              ).toLocaleTimeString()
-                            : ""}
-                        </p>
+                        {message.role === "user" && (
+                          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-200">
+                            <span className="text-xs font-medium text-zinc-600">
+                              U
+                            </span>
+                          </div>
+                        )}
                       </div>
-                      {message.role === "user" && (
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
-                          <span className="text-xs font-medium text-primary-foreground">
-                            U
-                          </span>
-                        </div>
-                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 {isLoading &&
                   messages[messages.length - 1]?.role !== "assistant" && (
@@ -296,14 +296,14 @@ export default function Page() {
                         className="flex max-w-3xl items-start gap-3 min-w-0 overflow-hidden"
                         style={{ maxWidth: "100%" }}
                       >
-                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted/30">
-                          <Brain className="h-4 w-4 text-muted-foreground" />
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100">
+                          <Brain className="h-4 w-4 text-zinc-500" />
                         </div>
-                        <div className="rounded-2xl rounded-tl-sm bg-muted/30 px-4 py-3 overflow-hidden flex-1 min-w-0">
-                          <Loader2 className="h-4 w-4 text-chat-machine-color animate-spin" />
-                        </div>
-                        <div className="text-sm text-muted animate-pulse self-center">
-                          thinking...
+                        <div className="bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 overflow-hidden flex-1 min-w-0">
+                          <div className="px-5 py-4 flex items-center gap-3">
+                            <Loader2 className="h-4 w-4 text-zinc-400 animate-spin" />
+                            <span className="text-sm text-zinc-400">thinking...</span>
+                          </div>
                         </div>
                       </div>
                     </div>
