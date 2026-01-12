@@ -2,8 +2,11 @@
 
 import { PageAnimation } from "@/components/page-animation";
 import { Badge } from "@/components/ui/badge";
+import {
+  BudgetVsActualChart,
+  type BudgetVsActualData,
+} from "@/components/ui/budget-vs-actual-chart";
 import { Card, CardContent } from "@/components/ui/card";
-import { ChartLineDefault } from "@/components/ui/line-chart";
 import { buildAssetTimeSeries } from "@/lib/timeSeriesData";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -94,29 +97,6 @@ export default function MyAssets() {
   }, [timeSeries]);
 
   const noiTotal = griTotal - opexTotal;
-
-  // For all years, aggregate NOI (GRI - OPEX) per year across assets
-  const chartData = useMemo(() => {
-    const noiByYear = new Map<number, number>();
-
-    timeSeries.forEach((asset) => {
-      const opexByYear = new Map<number, number>();
-      asset.opex.forEach((opex) => {
-        opexByYear.set(opex.year, opex.totalOpexActual);
-      });
-
-      asset.gri.forEach((gri) => {
-        const opexForYear = opexByYear.get(gri.year) ?? 0;
-        const noi = gri.gri - opexForYear;
-        const current = noiByYear.get(gri.year) ?? 0;
-        noiByYear.set(gri.year, current + noi);
-      });
-    });
-
-    return Array.from(noiByYear.entries())
-      .map(([year, noi]) => ({ year, value: noi }))
-      .sort((a, b) => a.year - b.year);
-  }, [timeSeries]);
 
   // Map assetId -> unit count for OPEX/Unit calculations
   const unitsByAssetId = useMemo(() => {
@@ -268,28 +248,87 @@ export default function MyAssets() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const noiMarginTotal = griTotal !== 0 ? (noiTotal / griTotal) * 100 : 0;
+
   const cardConfig = [
     {
-      title: "Total NOI",
-      description: "Total NOI across all assets",
-      data: noiTotal,
+      title: "GRI",
+      description: "Gross Rental Income across all assets",
+      data: griTotal,
+      suffix: "DKK",
     },
     {
       title: "Vacancy Rate",
       description: "Vacancy rate across all assets",
       data: vacancyRateTotal,
+      suffix: "%",
     },
     {
       title: "OPEX / Unit",
       description: "OPEX per unit across all assets",
       data: opexTotal / totalUnits,
+      suffix: "DKK",
     },
     {
-      title: "CAPEX YTD",
-      description: "CAPEX per unit across all assets",
-      data: capexTotal,
+      title: "NOI %",
+      description: "NOI margin across all assets",
+      data: noiMarginTotal,
+      suffix: "%",
     },
   ];
+
+  // Budget vs Actual data for OPEX categories
+  const budgetVsActualData: BudgetVsActualData[] = useMemo(() => {
+    const categories = [
+      {
+        key: "property_taxes",
+        label: "Property Taxes",
+      },
+      {
+        key: "property_management_fee",
+        label: "Management Fee",
+      },
+      {
+        key: "common_consumption",
+        label: "Common Consumption",
+      },
+      {
+        key: "insurance",
+        label: "Insurance",
+      },
+      {
+        key: "cleaning",
+        label: "Cleaning",
+      },
+      {
+        key: "facility_management",
+        label: "Facility Management",
+      },
+    ];
+
+    return categories.map((cat) => {
+      let totalActual = 0;
+      let totalBudget = 0;
+
+      assets.forEach((asset) => {
+        const currentYearOpex = asset.opex.find(
+          (o) => o.opex_year === CURRENT_YEAR
+        );
+        if (currentYearOpex) {
+          const actualKey = `actual_${cat.key}` as keyof Opex;
+          const budgetKey = `budget_${cat.key}` as keyof Opex;
+          totalActual += (currentYearOpex[actualKey] as number) || 0;
+          totalBudget += (currentYearOpex[budgetKey] as number) || 0;
+        }
+      });
+
+      return {
+        category: cat.label,
+        actual: totalActual,
+        budget: totalBudget,
+      };
+    });
+  }, [assets]);
 
   if (isAssetsLoading) {
     return (
@@ -325,7 +364,7 @@ export default function MyAssets() {
                 <p className="kpi-label mb-2">{card.title}</p>
                 <h3 className="text-2xl font-semibold font-serif tracking-tight">
                   {dollarStringify({ value: card.data, format: "text" })}{" "}
-                  {card.title === "Vacancy Rate" ? "%" : "DKK"}
+                  {card.suffix}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-2">
                   {card.description}
@@ -335,7 +374,7 @@ export default function MyAssets() {
           ))}
         </section>
         <section>
-          <ChartLineDefault data={chartData} title="Total NOI" />
+          <BudgetVsActualChart data={budgetVsActualData} />
         </section>
         <section className="space-y-3">
           <Table

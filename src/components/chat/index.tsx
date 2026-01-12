@@ -1,20 +1,10 @@
 "use client";
 
 import {
-  Database,
-  FileText,
-  Link,
   PlusIcon,
   Send,
-  SlidersHorizontal,
 } from "lucide-react";
 import { useRef, useState } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
 
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
@@ -55,7 +45,6 @@ export function Chat({
     const text = value.trim();
     if (!text) return;
 
-    // TODO: wire this up to useChat sendMessage
     if (eventHandler) {
       eventHandler(text);
     }
@@ -105,80 +94,12 @@ export function Chat({
           </div>
         </div>
 
-        <div className="-m-1 max-w-full overflow-x-auto p-1 [grid-area:footer] flex items-center justify-between gap-2">
+        <div className="max-w-full overflow-x-auto p-1 [grid-area:footer] flex items-center justify-between gap-2">
           <div className="flex min-w-fit items-center gap-1.5">
             <label htmlFor="file-upload" className={TW_BUTTON_CLASSNAME}>
               <PlusIcon className="h-4 w-4" />
             </label>
             <input id="file-upload" type="file" className="hidden" />
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button type="button" className={TW_BUTTON_CLASSNAME}>
-                  <SlidersHorizontal className="h-4 w-4" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-72 p-0" align="start">
-                <div className="p-4 border-b border-border">
-                  <h4 className="font-medium text-sm">Connect Data Sources</h4>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Link your data platforms
-                  </p>
-                </div>
-
-                <div className="p-2">
-                  <DropdownMenuItem className="p-0 focus:bg-transparent">
-                    <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted/20 transition-colors text-left">
-                      <div className="w-8 h-8 rounded-md bg-orange-500/10 flex items-center justify-center shrink-0">
-                        <Database className="w-4 h-4 text-orange-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">Databricks</p>
-                        <p className="text-xs text-muted-foreground">
-                          Connect lakehouse
-                        </p>
-                      </div>
-                      <Link className="w-4 h-4 ml-auto text-muted-foreground shrink-0" />
-                    </button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem className="p-0 focus:bg-transparent">
-                    <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted/20 transition-colors text-left">
-                      <div className="w-8 h-8 rounded-md bg-blue-500/10 flex items-center justify-center shrink-0">
-                        <Database className="w-4 h-4 text-blue-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">Snowflake</p>
-                        <p className="text-xs text-muted-foreground">
-                          Connect warehouse
-                        </p>
-                      </div>
-                      <Link className="w-4 h-4 ml-auto text-muted-foreground shrink-0" />
-                    </button>
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem className="p-0 focus:bg-transparent">
-                    <button className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted/20 transition-colors text-left">
-                      <div className="w-8 h-8 rounded-md bg-cyan-500/10 flex items-center justify-center shrink-0">
-                        <FileText className="w-4 h-4 text-cyan-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">SharePoint</p>
-                        <p className="text-xs text-muted-foreground">
-                          Connect documents
-                        </p>
-                      </div>
-                      <Link className="w-4 h-4 ml-auto text-muted-foreground shrink-0" />
-                    </button>
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            <label htmlFor="text-upload" className={TW_BUTTON_CLASSNAME}>
-              <FileText className="h-4 w-4" />
-            </label>
-            <input id="text-upload" type="file" className="hidden" />
           </div>
 
           <div className="flex items-center gap-2 [grid-area:footer]">

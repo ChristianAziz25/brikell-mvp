@@ -17,8 +17,8 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.0.0",
-  "engineVersion": "0c19ccc313cf9911a90d99d2ac2eb0280c76c513",
+  "clientVersion": "7.2.0",
+  "engineVersion": "0c8ef2ce45c83248ab3df073180d5eda9e8be7a3",
   "activeProvider": "postgresql",
   "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  output   = \"../src/generated\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  schemas  = [\"public\"]\n}\n\nmodel Asset {\n  id         String                    @id @default(cuid())\n  name       String\n  address    String?\n  city       String?\n  country    String?\n  created_at DateTime                  @default(now())\n  updated_at DateTime                  @updatedAt\n  capex      Capex[]\n  opex       Opex[]\n  rentRoll   RentRollUnit[]\n  tri        TheoreticalRentalIncome[]\n\n  @@map(\"asset\")\n  @@schema(\"public\")\n}\n\nmodel TheoreticalRentalIncome {\n  id          String   @id @default(cuid())\n  assetId     String\n  triYear     Int\n  triAmount   Int\n  vacancyLoss Int\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n  asset       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)\n\n  @@map(\"theoretical_rental_income\")\n  @@schema(\"public\")\n}\n\nmodel Capex {\n  id                          String   @id @unique @default(cuid())\n  asset_name                  String\n  capex_year                  Int\n  common_areas_actuals        Int\n  units_renovations_actuals   Int\n  elevator_maintnance_actuals Int\n  roof_maintnance_actuals     Int\n  fire_safety_actuals         Int\n  outdoor_area_actuals        Int\n  common_areas_budget         Int\n  units_renovations_budget    Int\n  elevator_maintnance_budget  Int\n  roof_maintnance_budget      Int\n  fire_safety_budget          Int\n  outdoor_area_budget         Int\n  created_at                  DateTime @default(now())\n  updated_at                  DateTime @updatedAt\n  assetId                     String\n  asset                       Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)\n\n  @@unique([assetId, capex_year])\n  @@map(\"capex\")\n  @@schema(\"public\")\n}\n\nmodel Opex {\n  id                             String   @id @unique @default(cuid())\n  asset_name                     String\n  opex_year                      Int\n  actual_delinquency             Int\n  actual_property_management_fee Int\n  actual_leasing_fee             Int\n  actual_property_taxes          Int\n  actual_refuse_collection       Int\n  actual_insurance               Int\n  actual_cleaning                Int\n  actual_facility_management     Int\n  actual_service_subscriptions   Int\n  actual_common_consumption      Int\n  actual_home_owner_association  Int\n  budget_delinquency             Int\n  budget_property_management_fee Int\n  budget_leasing_fee             Int\n  budget_property_taxes          Int\n  budget_refuse_collection       Int\n  budget_insurance               Int\n  budget_cleaning                Int\n  budget_facility_management     Int\n  budget_service_subscriptions   Int\n  budget_common_consumption      Int\n  budget_home_owner_association  Int\n  created_at                     DateTime @default(now())\n  updated_at                     DateTime @updatedAt\n  assetId                        String\n  asset                          Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)\n\n  @@unique([assetId, opex_year])\n  @@map(\"opex\")\n  @@schema(\"public\")\n}\n\nmodel RentRollUnit {\n  assetId             String\n  property_build_year Int\n  property_name       String\n  unit_address        String\n  unit_zipcode        String\n  utilites_cost       Int\n  unit_type           String\n  size_sqm            Int\n  rooms_amount        Int\n  bedrooms_amount     Int\n  bathrooms_amount    Int\n  rent_current_gri    Int\n  rent_budget_tri     Int\n  lease_start         String\n  lease_end           String?\n  tenant_name1        String\n  tenant_name2        String\n  unit_id             Int        @id @unique\n  unit_door           Int\n  unit_floor          Int\n  tenant_number1      Int\n  tenant_number2      Int\n  units_status        RentStatus\n  tenant_mail1        String\n  tenant_mail2        String\n  created_at          DateTime   @default(now())\n  updated_at          DateTime   @updatedAt\n  asset               Asset      @relation(fields: [assetId], references: [id], onDelete: Cascade)\n\n  @@map(\"rent_roll_unit\")\n  @@schema(\"public\")\n}\n\nmodel Chat {\n  id        String   @id @default(cuid())\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  chatMessages ChatMessage[]\n\n  @@map(\"chat\")\n  @@schema(\"public\")\n}\n\nmodel ChatMessage {\n  id        String   @id @default(cuid())\n  message   String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  chatId String\n  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade)\n\n  @@map(\"chat_message\")\n  @@schema(\"public\")\n}\n\nenum RentStatus {\n  occupied\n  vacant\n  terminated\n\n  @@schema(\"public\")\n}\n",
   "runtimeDataModel": {
@@ -62,7 +62,7 @@ export interface PrismaClientConstructor {
    * const assets = await prisma.asset.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -84,7 +84,7 @@ export interface PrismaClientConstructor {
  * const assets = await prisma.asset.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
@@ -113,7 +113,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -125,7 +125,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -136,7 +136,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -148,7 +148,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 
