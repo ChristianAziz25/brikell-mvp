@@ -9,33 +9,68 @@ interface QueryParams {
     rrf_k?: number;
 }
 
+// Emphasize keyword precision (good for exact term searches)
+export const keywordSearch = async (params: QueryParams) => {
+    try {
+        const { data, error } = await supabaseAdmin.rpc("hybrid_search_documents", {
+            query_text: params.query,
+            query_embedding: params.embedding,
+            match_count: params.match_count ?? 5,
+            full_text_weight: params.full_text_weight ?? 3.0,
+            semantic_weight: params.semantic_weight ?? 1.0,
+            rrf_k: params.rrf_k ?? 50,
+        });
+        if (error) {
+            console.error('[Supabase RPC] keywordSearch error:', error.message);
+            return null;
+        }
+        return data;
+    } catch (err) {
+        console.error('[Supabase RPC] keywordSearch unexpected error:', err);
+        return null;
+    }
+};
 
-// Example 1: Emphasize keyword precision (good for exact term searches)
-export const keywordSearch = async (params: QueryParams) => await supabaseAdmin.rpc("hybrid_search_documents", {
-    query_text: params.query,
-    query_embedding: params.embedding,
-    match_count: params.match_count ?? 5,
-    full_text_weight: params.full_text_weight ?? 3.0, // Triple weight for exact keyword matches
-    semantic_weight: params.semantic_weight ?? 1.0, // Normal semantic weight
-    rrf_k: params.rrf_k ?? 50,
-  });
-   
-  // Example 2: Emphasize semantic understanding (good for conceptual searches)
-  export const semanticSearch = async (params: QueryParams) => await supabaseAdmin.rpc("hybrid_search_documents", {
-    query_text: "managing component state",
-    query_embedding: params.embedding,
-    match_count: params.match_count ?? 5,
-    full_text_weight: params.full_text_weight ?? 1.0, // Normal keyword weight
-    semantic_weight: params.semantic_weight ?? 2.5, // 2.5x weight for semantic understanding
-    rrf_k: params.rrf_k ?? 50,
-  });
-   
-  // Example 3: Balanced approach (recommended starting point)
-  export const balancedSearch = async (params: QueryParams) => await supabaseAdmin.rpc("hybrid_search_documents", {
-    query_text: "React hooks tutorial",
-    query_embedding: params.embedding,
-    match_count: params.match_count ?? 5,
-    full_text_weight: params.full_text_weight ?? 1.0, // Equal weights
-    semantic_weight: params.semantic_weight ?? 1.0,
-    rrf_k: params.rrf_k ?? 50,
-  });
+// Emphasize semantic understanding (good for conceptual searches)
+export const semanticSearch = async (params: QueryParams) => {
+    try {
+        const { data, error } = await supabaseAdmin.rpc("hybrid_search_documents", {
+            query_text: params.query,
+            query_embedding: params.embedding,
+            match_count: params.match_count ?? 5,
+            full_text_weight: params.full_text_weight ?? 1.0,
+            semantic_weight: params.semantic_weight ?? 2.5,
+            rrf_k: params.rrf_k ?? 50,
+        });
+        if (error) {
+            console.error('[Supabase RPC] semanticSearch error:', error.message);
+            return null;
+        }
+        return data;
+    } catch (err) {
+        console.error('[Supabase RPC] semanticSearch unexpected error:', err);
+        return null;
+    }
+};
+
+// Balanced approach (recommended starting point)
+export const balancedSearch = async (params: QueryParams) => {
+    try {
+        const { data, error } = await supabaseAdmin.rpc("hybrid_search_documents", {
+            query_text: params.query,
+            query_embedding: params.embedding,
+            match_count: params.match_count ?? 5,
+            full_text_weight: params.full_text_weight ?? 1.0,
+            semantic_weight: params.semantic_weight ?? 1.0,
+            rrf_k: params.rrf_k ?? 50,
+        });
+        if (error) {
+            console.error('[Supabase RPC] balancedSearch error:', error.message);
+            return null;
+        }
+        return data;
+    } catch (err) {
+        console.error('[Supabase RPC] balancedSearch unexpected error:', err);
+        return null;
+    }
+};

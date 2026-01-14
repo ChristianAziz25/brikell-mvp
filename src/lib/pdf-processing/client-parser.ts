@@ -85,12 +85,13 @@ export async function parseClientPdf(
   file: File,
   onProgress?: (progress: number, status: string) => void
 ): Promise<ClientParseResult> {
-  const startTime = Date.now();
+  try {
+    const startTime = Date.now();
 
-  onProgress?.(5, "Reading file...");
+    onProgress?.(5, "Reading file...");
 
-  // Convert File to ArrayBuffer
-  const arrayBuffer = await file.arrayBuffer();
+    // Convert File to ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer();
 
   onProgress?.(10, "Loading PDF structure...");
 
@@ -189,15 +190,21 @@ export async function parseClientPdf(
   const extractionTime = Date.now() - startTime;
   console.log(`[PDF Parser] Extracted ${pageCount} pages in ${extractionTime}ms`);
 
-  return {
-    pages,
-    fullText: fullText.trim(),
-    metadata: {
-      pageCount,
-      extractedAt: new Date().toISOString(),
-      hasRentRollIndicators,
-    },
-  };
+    return {
+      pages,
+      fullText: fullText.trim(),
+      metadata: {
+        pageCount,
+        extractedAt: new Date().toISOString(),
+        hasRentRollIndicators,
+      },
+    };
+  } catch (error) {
+    console.error("[PDF Parser] Error parsing PDF:", error);
+    throw new Error(
+      `Failed to parse PDF: ${error instanceof Error ? error.message : "Unknown error"}`
+    );
+  }
 }
 
 /**

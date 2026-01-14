@@ -148,7 +148,7 @@ export async function POST(req: Request) {
       },
     ];
 
-    const CHAT_HISTORY_WINDOW_SIZE = 2;
+    const CHAT_HISTORY_WINDOW_SIZE = 6;
     const chatHistoryWindow = messages.slice(-CHAT_HISTORY_WINDOW_SIZE);
 
     for (const msg of chatHistoryWindow) {
@@ -162,7 +162,7 @@ export async function POST(req: Request) {
     }
 
     const result = streamText({
-      model: openai("gpt-5-nano"),
+      model: openai("gpt-4o-mini"),
       messages: coreMessages as ModelMessage[],
       tools: {
         sqlQueryGenTool,

@@ -83,9 +83,9 @@ IMPORTANT: Use the exact field names above.
 If a field is missing or unclear, omit it (don't use null).`;
 
   const { object } = await generateObject({
-    model: openai('gpt-5-nano'),
+    model: openai('gpt-4o-mini'),
     schema: LLMExtractionSchema,
-    prompt: `Extract all rent roll data from this ${fileType}:\n\n${fileContent.substring(0, 10000)}`,
+    prompt: `Extract all rent roll data from this ${fileType}:\n\n${fileContent.substring(0, 20000)}`,
     system: systemPrompt,
   });
 

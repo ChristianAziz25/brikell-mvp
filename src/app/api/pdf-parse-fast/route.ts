@@ -169,14 +169,39 @@ async function generateDDSummary(text: string): Promise<DDSummary> {
     throw new Error("No content in OpenAI response");
   }
 
-  const parsed = JSON.parse(content);
-  
+  // Parse JSON with error handling for malformed LLM output
+  let parsed: Record<string, unknown>;
+  try {
+    parsed = JSON.parse(content);
+  } catch (parseError) {
+    console.error("[DD Parse] Failed to parse LLM JSON response:", parseError);
+    console.error("[DD Parse] Raw content:", content.substring(0, 500));
+    // Return fallback summary when JSON parsing fails
+    return {
+      propertyOverview: "Unable to parse document structure. Please try uploading again.",
+      keyFinancials: "Financial information extraction failed.",
+      rentRollHighlights: "Rent roll information extraction failed.",
+      risksAndRedFlags: "Risk analysis unavailable due to processing error.",
+      missingInformation: "Document parsing encountered an error. Please retry.",
+    };
+  }
+
   // Validate and return structured summary
   return {
-    propertyOverview: parsed.propertyOverview || "Property overview information not available in document.",
-    keyFinancials: parsed.keyFinancials || "Key financial information not available in document.",
-    rentRollHighlights: parsed.rentRollHighlights || "Rent roll information not available in document.",
-    risksAndRedFlags: parsed.risksAndRedFlags || "No specific risks or red flags identified.",
-    missingInformation: parsed.missingInformation || "All key information appears to be present.",
+    propertyOverview: typeof parsed.propertyOverview === 'string'
+      ? parsed.propertyOverview
+      : "Property overview information not available in document.",
+    keyFinancials: typeof parsed.keyFinancials === 'string'
+      ? parsed.keyFinancials
+      : "Key financial information not available in document.",
+    rentRollHighlights: typeof parsed.rentRollHighlights === 'string'
+      ? parsed.rentRollHighlights
+      : "Rent roll information not available in document.",
+    risksAndRedFlags: typeof parsed.risksAndRedFlags === 'string'
+      ? parsed.risksAndRedFlags
+      : "No specific risks or red flags identified.",
+    missingInformation: typeof parsed.missingInformation === 'string'
+      ? parsed.missingInformation
+      : "All key information appears to be present.",
   };
 }
