@@ -16,3 +16,25 @@ export const RentStatus = {
 } as const
 
 export type RentStatus = (typeof RentStatus)[keyof typeof RentStatus]
+
+
+export const PdfJobStatus = {
+  pending: 'pending',
+  processing: 'processing',
+  extracting: 'extracting',
+  matching: 'matching',
+  completed: 'completed',
+  failed: 'failed'
+} as const
+
+export type PdfJobStatus = (typeof PdfJobStatus)[keyof typeof PdfJobStatus]
+
+
+export const MatchStatus = {
+  pending: 'pending',
+  matched: 'matched',
+  missing: 'missing',
+  mismatched: 'mismatched'
+} as const
+
+export type MatchStatus = (typeof MatchStatus)[keyof typeof MatchStatus]

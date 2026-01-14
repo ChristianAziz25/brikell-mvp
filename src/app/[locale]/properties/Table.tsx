@@ -19,7 +19,7 @@ export function Table<TData extends RowData>({
 }: TableProp<TData>) {
   const rows = table.getRowModel().rows;
   return (
-    <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+    <div className="rounded-2xl border border-border/50 bg-card overflow-hidden">
       <div className="relative w-full overflow-auto no-scrollbar overscroll-x-contain">
         <table className="w-full caption-bottom text-sm table-fixed">
           <thead className="bg-muted/20">

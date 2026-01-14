@@ -23,6 +23,7 @@ model Asset {
   bbrData    BBRData[]
   oisData    OISData[]
   ejfData    EJFData[]
+  pdfJobs    PdfJob[]
 
   @@map("asset")
   @@schema("public")
@@ -133,6 +134,7 @@ model RentRollUnit {
   created_at          DateTime   @default(now())
   updated_at          DateTime   @updatedAt
   asset               Asset      @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  pdfMatches          PdfParsedUnits[]
 
   @@map("rent_roll_unit")
   @@schema("public")
@@ -167,6 +169,83 @@ enum RentStatus {
   vacant
   terminated
 
+  @@schema("public")
+}
+
+enum PdfJobStatus {
+  pending
+  processing
+  extracting
+  matching
+  completed
+  failed
+
+  @@schema("public")
+}
+
+enum MatchStatus {
+  pending
+  matched
+  missing
+  mismatched
+
+  @@schema("public")
+}
+
+model PdfJob {
+  id            String       @id @default(uuid()) @db.Uuid
+  fileName      String       @map("file_name")
+  filePath      String       @map("file_path")
+  fileSizeBytes Int          @map("file_size_bytes")
+  status        PdfJobStatus @default(pending)
+  progress      Int          @default(0)
+  errorMessage  String?      @map("error_message")
+  retryCount    Int          @default(0) @map("retry_count")
+  maxRetries    Int          @default(3) @map("max_retries")
+  nextRetryAt   DateTime?    @map("next_retry_at")
+  startedAt     DateTime?    @map("started_at")
+  completedAt   DateTime?    @map("completed_at")
+  matchingResult Json?       @map("matching_result")
+  assetId       String?      @map("asset_id")
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @updatedAt @map("updated_at")
+
+  asset        Asset?           @relation(fields: [assetId], references: [id], onDelete: SetNull)
+  parsedUnits  PdfParsedUnits[]
+
+  @@index([status])
+  @@index([createdAt(sort: Desc)])
+  @@index([assetId])
+  @@map("pdf_job")
+  @@schema("public")
+}
+
+model PdfParsedUnits {
+  id                String      @id @default(uuid()) @db.Uuid
+  jobId             String      @map("job_id") @db.Uuid
+  unitAddress       String?     @map("unit_address")
+  unitZipcode       String?     @map("unit_zipcode")
+  unitDoor          Int?        @map("unit_door")
+  unitFloor         Int?        @map("unit_floor")
+  sizeSqm           Decimal?    @map("size_sqm") @db.Decimal(10, 2)
+  rentCurrent       Decimal?    @map("rent_current") @db.Decimal(12, 2)
+  tenantName        String?     @map("tenant_name")
+  leaseStart        DateTime?   @map("lease_start") @db.Date
+  leaseEnd          DateTime?   @map("lease_end") @db.Date
+  normalizedAddress String?     @map("normalized_address")
+  matchedUnitId     Int?        @map("matched_unit_id")
+  matchStatus       MatchStatus @default(pending) @map("match_status")
+  matchConfidence   Decimal?    @map("match_confidence") @db.Decimal(5, 4)
+  matchMethod       String?     @map("match_method")
+  createdAt         DateTime    @default(now()) @map("created_at")
+
+  job         PdfJob        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  matchedUnit RentRollUnit? @relation(fields: [matchedUnitId], references: [unit_id], onDelete: SetNull)
+
+  @@index([jobId])
+  @@index([matchedUnitId])
+  @@index([normalizedAddress])
+  @@map("pdf_parsed_units")
   @@schema("public")
 }
 

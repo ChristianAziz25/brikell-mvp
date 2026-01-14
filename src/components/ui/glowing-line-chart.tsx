@@ -31,7 +31,7 @@ const CustomTooltip = ({ active, payload, label }: {
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-card border border-border rounded-lg shadow-lg p-3 min-w-[140px]">
+      <div className="bg-card border border-border/50 rounded-xl shadow-lg p-3 min-w-[140px]">
         <p className="text-sm font-medium text-foreground mb-2">{label}</p>
         <div className="space-y-1.5">
           {payload.map((entry, index) => (

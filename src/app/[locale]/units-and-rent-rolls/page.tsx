@@ -315,7 +315,7 @@ export default function Page() {
             </div>
             <div className="relative flex flex-col md:flex-row gap-4">
               {/* Filter sidebar (always visible) */}
-              <div className="sticky top-0 left-0 w-full md:w-72 md:shrink-0 border border-border rounded-lg">
+              <div className="sticky top-0 left-0 w-full md:w-72 md:shrink-0 border border-border/50 rounded-2xl bg-card">
                 <div className="p-6 space-y-4">
                   {table.getColumn("property_name") && (
                     <div className="flex flex-col gap-2">
@@ -507,7 +507,7 @@ export default function Page() {
                 </div>
               </div>
               <div className="flex-1 overflow-x-auto no-scrollbar overscroll-x-contain">
-                <div className="overflow-hidden rounded-lg border bg-card">
+                <div className="overflow-hidden rounded-2xl border border-border/50 bg-card">
                   <div className="border-b p-4">
                     <div className="flex flex-row items-center justify-between w-full">
                       <p className="font-medium text-muted-foreground">

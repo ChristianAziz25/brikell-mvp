@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.js'
-export type * from './prismaNamespace.js'
+export type * from '../models.ts'
+export type * from './prismaNamespace.ts'
 
 export const Decimal = runtime.Decimal
 
@@ -57,7 +57,14 @@ export const ModelName = {
   Opex: 'Opex',
   RentRollUnit: 'RentRollUnit',
   Chat: 'Chat',
-  ChatMessage: 'ChatMessage'
+  ChatMessage: 'ChatMessage',
+  PdfJob: 'PdfJob',
+  PdfParsedUnits: 'PdfParsedUnits',
+  BBRData: 'BBRData',
+  OISData: 'OISData',
+  EJFData: 'EJFData',
+  DocumentAnalysis: 'DocumentAnalysis',
+  Anomaly: 'Anomaly'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -213,12 +220,163 @@ export const ChatMessageScalarFieldEnum = {
 export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
 
 
+export const PdfJobScalarFieldEnum = {
+  id: 'id',
+  fileName: 'fileName',
+  filePath: 'filePath',
+  fileSizeBytes: 'fileSizeBytes',
+  status: 'status',
+  progress: 'progress',
+  errorMessage: 'errorMessage',
+  retryCount: 'retryCount',
+  maxRetries: 'maxRetries',
+  nextRetryAt: 'nextRetryAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  matchingResult: 'matchingResult',
+  assetId: 'assetId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PdfJobScalarFieldEnum = (typeof PdfJobScalarFieldEnum)[keyof typeof PdfJobScalarFieldEnum]
+
+
+export const PdfParsedUnitsScalarFieldEnum = {
+  id: 'id',
+  jobId: 'jobId',
+  unitAddress: 'unitAddress',
+  unitZipcode: 'unitZipcode',
+  unitDoor: 'unitDoor',
+  unitFloor: 'unitFloor',
+  sizeSqm: 'sizeSqm',
+  rentCurrent: 'rentCurrent',
+  tenantName: 'tenantName',
+  leaseStart: 'leaseStart',
+  leaseEnd: 'leaseEnd',
+  normalizedAddress: 'normalizedAddress',
+  matchedUnitId: 'matchedUnitId',
+  matchStatus: 'matchStatus',
+  matchConfidence: 'matchConfidence',
+  matchMethod: 'matchMethod',
+  createdAt: 'createdAt'
+} as const
+
+export type PdfParsedUnitsScalarFieldEnum = (typeof PdfParsedUnitsScalarFieldEnum)[keyof typeof PdfParsedUnitsScalarFieldEnum]
+
+
+export const BBRDataScalarFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  address: 'address',
+  zipCode: 'zipCode',
+  city: 'city',
+  buildingYear: 'buildingYear',
+  totalArea: 'totalArea',
+  residentialArea: 'residentialArea',
+  commercialArea: 'commercialArea',
+  energyLabel: 'energyLabel',
+  propertyValue: 'propertyValue',
+  landValue: 'landValue',
+  bbrNumber: 'bbrNumber',
+  lastUpdated: 'lastUpdated',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BBRDataScalarFieldEnum = (typeof BBRDataScalarFieldEnum)[keyof typeof BBRDataScalarFieldEnum]
+
+
+export const OISDataScalarFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  address: 'address',
+  zipCode: 'zipCode',
+  city: 'city',
+  ownerName: 'ownerName',
+  ownerType: 'ownerType',
+  propertyType: 'propertyType',
+  registrationDate: 'registrationDate',
+  lastUpdated: 'lastUpdated',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OISDataScalarFieldEnum = (typeof OISDataScalarFieldEnum)[keyof typeof OISDataScalarFieldEnum]
+
+
+export const EJFDataScalarFieldEnum = {
+  id: 'id',
+  propertyId: 'propertyId',
+  address: 'address',
+  zipCode: 'zipCode',
+  city: 'city',
+  assessedValue: 'assessedValue',
+  taxBase: 'taxBase',
+  propertyTax: 'propertyTax',
+  year: 'year',
+  lastUpdated: 'lastUpdated',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EJFDataScalarFieldEnum = (typeof EJFDataScalarFieldEnum)[keyof typeof EJFDataScalarFieldEnum]
+
+
+export const DocumentAnalysisScalarFieldEnum = {
+  id: 'id',
+  chatId: 'chatId',
+  fileName: 'fileName',
+  documentType: 'documentType',
+  extractedData: 'extractedData',
+  propertyAddress: 'propertyAddress',
+  propertyZipCode: 'propertyZipCode',
+  anomalies: 'anomalies',
+  riskFlags: 'riskFlags',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DocumentAnalysisScalarFieldEnum = (typeof DocumentAnalysisScalarFieldEnum)[keyof typeof DocumentAnalysisScalarFieldEnum]
+
+
+export const AnomalyScalarFieldEnum = {
+  id: 'id',
+  documentId: 'documentId',
+  type: 'type',
+  severity: 'severity',
+  field: 'field',
+  expectedValue: 'expectedValue',
+  actualValue: 'actualValue',
+  source: 'source',
+  description: 'description',
+  createdAt: 'createdAt'
+} as const
+
+export type AnomalyScalarFieldEnum = (typeof AnomalyScalarFieldEnum)[keyof typeof AnomalyScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: 'JsonNull'
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -235,4 +393,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

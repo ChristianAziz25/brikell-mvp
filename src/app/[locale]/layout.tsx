@@ -4,14 +4,15 @@ import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import { Lora } from "next/font/google";
+import { Ubuntu } from "next/font/google";
 import { notFound } from "next/navigation";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const lora = Lora({
+const ubuntu = Ubuntu({
+  weight: "400",
   subsets: ["latin"],
-  variable: "--font-lora",
+  variable: "--font-ubuntu",
   display: "swap",
 });
 
@@ -37,7 +38,7 @@ export default async function RootLayout({
 
   const messages = await getMessages();
   return (
-    <html lang={locale} className={lora.variable}>
+    <html lang={locale} className={ubuntu.variable}>
       <head>
         <link rel="icon" href="/brikell.ico" sizes="any" />
       </head>

@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums.js"
-import type * as Prisma from "../internal/prismaNamespace.js"
+import type * as $Enums from '../enums.ts'
+import type * as Prisma from '../internal/prismaNamespace.ts'
 
 /**
  * Model Asset
@@ -202,6 +202,10 @@ export type AssetWhereInput = {
   opex?: Prisma.OpexListRelationFilter
   rentRoll?: Prisma.RentRollUnitListRelationFilter
   tri?: Prisma.TheoreticalRentalIncomeListRelationFilter
+  bbrData?: Prisma.BBRDataListRelationFilter
+  oisData?: Prisma.OISDataListRelationFilter
+  ejfData?: Prisma.EJFDataListRelationFilter
+  pdfJobs?: Prisma.PdfJobListRelationFilter
 }
 
 export type AssetOrderByWithRelationInput = {
@@ -216,6 +220,10 @@ export type AssetOrderByWithRelationInput = {
   opex?: Prisma.OpexOrderByRelationAggregateInput
   rentRoll?: Prisma.RentRollUnitOrderByRelationAggregateInput
   tri?: Prisma.TheoreticalRentalIncomeOrderByRelationAggregateInput
+  bbrData?: Prisma.BBRDataOrderByRelationAggregateInput
+  oisData?: Prisma.OISDataOrderByRelationAggregateInput
+  ejfData?: Prisma.EJFDataOrderByRelationAggregateInput
+  pdfJobs?: Prisma.PdfJobOrderByRelationAggregateInput
 }
 
 export type AssetWhereUniqueInput = Prisma.AtLeast<{
@@ -233,6 +241,10 @@ export type AssetWhereUniqueInput = Prisma.AtLeast<{
   opex?: Prisma.OpexListRelationFilter
   rentRoll?: Prisma.RentRollUnitListRelationFilter
   tri?: Prisma.TheoreticalRentalIncomeListRelationFilter
+  bbrData?: Prisma.BBRDataListRelationFilter
+  oisData?: Prisma.OISDataListRelationFilter
+  ejfData?: Prisma.EJFDataListRelationFilter
+  pdfJobs?: Prisma.PdfJobListRelationFilter
 }, "id">
 
 export type AssetOrderByWithAggregationInput = {
@@ -273,6 +285,10 @@ export type AssetCreateInput = {
   opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateInput = {
@@ -287,6 +303,10 @@ export type AssetUncheckedCreateInput = {
   opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUpdateInput = {
@@ -301,6 +321,10 @@ export type AssetUpdateInput = {
   opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateInput = {
@@ -315,6 +339,10 @@ export type AssetUncheckedUpdateInput = {
   opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateManyInput = {
@@ -380,6 +408,11 @@ export type AssetMinOrderByAggregateInput = {
 export type AssetScalarRelationFilter = {
   is?: Prisma.AssetWhereInput
   isNot?: Prisma.AssetWhereInput
+}
+
+export type AssetNullableScalarRelationFilter = {
+  is?: Prisma.AssetWhereInput | null
+  isNot?: Prisma.AssetWhereInput | null
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -450,6 +483,70 @@ export type AssetUpdateOneRequiredWithoutRentRollNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutRentRollInput, Prisma.AssetUpdateWithoutRentRollInput>, Prisma.AssetUncheckedUpdateWithoutRentRollInput>
 }
 
+export type AssetCreateNestedOneWithoutPdfJobsInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutPdfJobsInput, Prisma.AssetUncheckedCreateWithoutPdfJobsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutPdfJobsInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneWithoutPdfJobsNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutPdfJobsInput, Prisma.AssetUncheckedCreateWithoutPdfJobsInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutPdfJobsInput
+  upsert?: Prisma.AssetUpsertWithoutPdfJobsInput
+  disconnect?: Prisma.AssetWhereInput | boolean
+  delete?: Prisma.AssetWhereInput | boolean
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutPdfJobsInput, Prisma.AssetUpdateWithoutPdfJobsInput>, Prisma.AssetUncheckedUpdateWithoutPdfJobsInput>
+}
+
+export type AssetCreateNestedOneWithoutBbrDataInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutBbrDataInput, Prisma.AssetUncheckedCreateWithoutBbrDataInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutBbrDataInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneWithoutBbrDataNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutBbrDataInput, Prisma.AssetUncheckedCreateWithoutBbrDataInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutBbrDataInput
+  upsert?: Prisma.AssetUpsertWithoutBbrDataInput
+  disconnect?: Prisma.AssetWhereInput | boolean
+  delete?: Prisma.AssetWhereInput | boolean
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutBbrDataInput, Prisma.AssetUpdateWithoutBbrDataInput>, Prisma.AssetUncheckedUpdateWithoutBbrDataInput>
+}
+
+export type AssetCreateNestedOneWithoutOisDataInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutOisDataInput, Prisma.AssetUncheckedCreateWithoutOisDataInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutOisDataInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneWithoutOisDataNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutOisDataInput, Prisma.AssetUncheckedCreateWithoutOisDataInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutOisDataInput
+  upsert?: Prisma.AssetUpsertWithoutOisDataInput
+  disconnect?: Prisma.AssetWhereInput | boolean
+  delete?: Prisma.AssetWhereInput | boolean
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutOisDataInput, Prisma.AssetUpdateWithoutOisDataInput>, Prisma.AssetUncheckedUpdateWithoutOisDataInput>
+}
+
+export type AssetCreateNestedOneWithoutEjfDataInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutEjfDataInput, Prisma.AssetUncheckedCreateWithoutEjfDataInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutEjfDataInput
+  connect?: Prisma.AssetWhereUniqueInput
+}
+
+export type AssetUpdateOneWithoutEjfDataNestedInput = {
+  create?: Prisma.XOR<Prisma.AssetCreateWithoutEjfDataInput, Prisma.AssetUncheckedCreateWithoutEjfDataInput>
+  connectOrCreate?: Prisma.AssetCreateOrConnectWithoutEjfDataInput
+  upsert?: Prisma.AssetUpsertWithoutEjfDataInput
+  disconnect?: Prisma.AssetWhereInput | boolean
+  delete?: Prisma.AssetWhereInput | boolean
+  connect?: Prisma.AssetWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AssetUpdateToOneWithWhereWithoutEjfDataInput, Prisma.AssetUpdateWithoutEjfDataInput>, Prisma.AssetUncheckedUpdateWithoutEjfDataInput>
+}
+
 export type AssetCreateWithoutTriInput = {
   id?: string
   name: string
@@ -461,6 +558,10 @@ export type AssetCreateWithoutTriInput = {
   capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutTriInput = {
@@ -474,6 +575,10 @@ export type AssetUncheckedCreateWithoutTriInput = {
   capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutTriInput = {
@@ -503,6 +608,10 @@ export type AssetUpdateWithoutTriInput = {
   capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutTriInput = {
@@ -516,6 +625,10 @@ export type AssetUncheckedUpdateWithoutTriInput = {
   capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutCapexInput = {
@@ -529,6 +642,10 @@ export type AssetCreateWithoutCapexInput = {
   opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutCapexInput = {
@@ -542,6 +659,10 @@ export type AssetUncheckedCreateWithoutCapexInput = {
   opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutCapexInput = {
@@ -571,6 +692,10 @@ export type AssetUpdateWithoutCapexInput = {
   opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutCapexInput = {
@@ -584,6 +709,10 @@ export type AssetUncheckedUpdateWithoutCapexInput = {
   opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutOpexInput = {
@@ -597,6 +726,10 @@ export type AssetCreateWithoutOpexInput = {
   capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutOpexInput = {
@@ -610,6 +743,10 @@ export type AssetUncheckedCreateWithoutOpexInput = {
   capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
   rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutOpexInput = {
@@ -639,6 +776,10 @@ export type AssetUpdateWithoutOpexInput = {
   capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutOpexInput = {
@@ -652,6 +793,10 @@ export type AssetUncheckedUpdateWithoutOpexInput = {
   capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
   rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetCreateWithoutRentRollInput = {
@@ -665,6 +810,10 @@ export type AssetCreateWithoutRentRollInput = {
   capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
 }
 
 export type AssetUncheckedCreateWithoutRentRollInput = {
@@ -678,6 +827,10 @@ export type AssetUncheckedCreateWithoutRentRollInput = {
   capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
   opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
 }
 
 export type AssetCreateOrConnectWithoutRentRollInput = {
@@ -707,6 +860,10 @@ export type AssetUpdateWithoutRentRollInput = {
   capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
 }
 
 export type AssetUncheckedUpdateWithoutRentRollInput = {
@@ -720,6 +877,346 @@ export type AssetUncheckedUpdateWithoutRentRollInput = {
   capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
   opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
   tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetCreateWithoutPdfJobsInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutPdfJobsInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutPdfJobsInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutPdfJobsInput, Prisma.AssetUncheckedCreateWithoutPdfJobsInput>
+}
+
+export type AssetUpsertWithoutPdfJobsInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutPdfJobsInput, Prisma.AssetUncheckedUpdateWithoutPdfJobsInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutPdfJobsInput, Prisma.AssetUncheckedCreateWithoutPdfJobsInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutPdfJobsInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutPdfJobsInput, Prisma.AssetUncheckedUpdateWithoutPdfJobsInput>
+}
+
+export type AssetUpdateWithoutPdfJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutPdfJobsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetCreateWithoutBbrDataInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutBbrDataInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutBbrDataInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutBbrDataInput, Prisma.AssetUncheckedCreateWithoutBbrDataInput>
+}
+
+export type AssetUpsertWithoutBbrDataInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutBbrDataInput, Prisma.AssetUncheckedUpdateWithoutBbrDataInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutBbrDataInput, Prisma.AssetUncheckedCreateWithoutBbrDataInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutBbrDataInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutBbrDataInput, Prisma.AssetUncheckedUpdateWithoutBbrDataInput>
+}
+
+export type AssetUpdateWithoutBbrDataInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutBbrDataInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetCreateWithoutOisDataInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutOisDataInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  ejfData?: Prisma.EJFDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutOisDataInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutOisDataInput, Prisma.AssetUncheckedCreateWithoutOisDataInput>
+}
+
+export type AssetUpsertWithoutOisDataInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutOisDataInput, Prisma.AssetUncheckedUpdateWithoutOisDataInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutOisDataInput, Prisma.AssetUncheckedCreateWithoutOisDataInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutOisDataInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutOisDataInput, Prisma.AssetUncheckedUpdateWithoutOisDataInput>
+}
+
+export type AssetUpdateWithoutOisDataInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutOisDataInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  ejfData?: Prisma.EJFDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetCreateWithoutEjfDataInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobCreateNestedManyWithoutAssetInput
+}
+
+export type AssetUncheckedCreateWithoutEjfDataInput = {
+  id?: string
+  name: string
+  address?: string | null
+  city?: string | null
+  country?: string | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  capex?: Prisma.CapexUncheckedCreateNestedManyWithoutAssetInput
+  opex?: Prisma.OpexUncheckedCreateNestedManyWithoutAssetInput
+  rentRoll?: Prisma.RentRollUnitUncheckedCreateNestedManyWithoutAssetInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedCreateNestedManyWithoutAssetInput
+  bbrData?: Prisma.BBRDataUncheckedCreateNestedManyWithoutAssetInput
+  oisData?: Prisma.OISDataUncheckedCreateNestedManyWithoutAssetInput
+  pdfJobs?: Prisma.PdfJobUncheckedCreateNestedManyWithoutAssetInput
+}
+
+export type AssetCreateOrConnectWithoutEjfDataInput = {
+  where: Prisma.AssetWhereUniqueInput
+  create: Prisma.XOR<Prisma.AssetCreateWithoutEjfDataInput, Prisma.AssetUncheckedCreateWithoutEjfDataInput>
+}
+
+export type AssetUpsertWithoutEjfDataInput = {
+  update: Prisma.XOR<Prisma.AssetUpdateWithoutEjfDataInput, Prisma.AssetUncheckedUpdateWithoutEjfDataInput>
+  create: Prisma.XOR<Prisma.AssetCreateWithoutEjfDataInput, Prisma.AssetUncheckedCreateWithoutEjfDataInput>
+  where?: Prisma.AssetWhereInput
+}
+
+export type AssetUpdateToOneWithWhereWithoutEjfDataInput = {
+  where?: Prisma.AssetWhereInput
+  data: Prisma.XOR<Prisma.AssetUpdateWithoutEjfDataInput, Prisma.AssetUncheckedUpdateWithoutEjfDataInput>
+}
+
+export type AssetUpdateWithoutEjfDataInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUpdateManyWithoutAssetNestedInput
+}
+
+export type AssetUncheckedUpdateWithoutEjfDataInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  city?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  country?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  capex?: Prisma.CapexUncheckedUpdateManyWithoutAssetNestedInput
+  opex?: Prisma.OpexUncheckedUpdateManyWithoutAssetNestedInput
+  rentRoll?: Prisma.RentRollUnitUncheckedUpdateManyWithoutAssetNestedInput
+  tri?: Prisma.TheoreticalRentalIncomeUncheckedUpdateManyWithoutAssetNestedInput
+  bbrData?: Prisma.BBRDataUncheckedUpdateManyWithoutAssetNestedInput
+  oisData?: Prisma.OISDataUncheckedUpdateManyWithoutAssetNestedInput
+  pdfJobs?: Prisma.PdfJobUncheckedUpdateManyWithoutAssetNestedInput
 }
 
 
@@ -732,6 +1229,10 @@ export type AssetCountOutputType = {
   opex: number
   rentRoll: number
   tri: number
+  bbrData: number
+  oisData: number
+  ejfData: number
+  pdfJobs: number
 }
 
 export type AssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -739,6 +1240,10 @@ export type AssetCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   opex?: boolean | AssetCountOutputTypeCountOpexArgs
   rentRoll?: boolean | AssetCountOutputTypeCountRentRollArgs
   tri?: boolean | AssetCountOutputTypeCountTriArgs
+  bbrData?: boolean | AssetCountOutputTypeCountBbrDataArgs
+  oisData?: boolean | AssetCountOutputTypeCountOisDataArgs
+  ejfData?: boolean | AssetCountOutputTypeCountEjfDataArgs
+  pdfJobs?: boolean | AssetCountOutputTypeCountPdfJobsArgs
 }
 
 /**
@@ -779,6 +1284,34 @@ export type AssetCountOutputTypeCountTriArgs<ExtArgs extends runtime.Types.Exten
   where?: Prisma.TheoreticalRentalIncomeWhereInput
 }
 
+/**
+ * AssetCountOutputType without action
+ */
+export type AssetCountOutputTypeCountBbrDataArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.BBRDataWhereInput
+}
+
+/**
+ * AssetCountOutputType without action
+ */
+export type AssetCountOutputTypeCountOisDataArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OISDataWhereInput
+}
+
+/**
+ * AssetCountOutputType without action
+ */
+export type AssetCountOutputTypeCountEjfDataArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EJFDataWhereInput
+}
+
+/**
+ * AssetCountOutputType without action
+ */
+export type AssetCountOutputTypeCountPdfJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PdfJobWhereInput
+}
+
 
 export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -792,6 +1325,10 @@ export type AssetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   opex?: boolean | Prisma.Asset$opexArgs<ExtArgs>
   rentRoll?: boolean | Prisma.Asset$rentRollArgs<ExtArgs>
   tri?: boolean | Prisma.Asset$triArgs<ExtArgs>
+  bbrData?: boolean | Prisma.Asset$bbrDataArgs<ExtArgs>
+  oisData?: boolean | Prisma.Asset$oisDataArgs<ExtArgs>
+  ejfData?: boolean | Prisma.Asset$ejfDataArgs<ExtArgs>
+  pdfJobs?: boolean | Prisma.Asset$pdfJobsArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["asset"]>
 
@@ -831,6 +1368,10 @@ export type AssetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   opex?: boolean | Prisma.Asset$opexArgs<ExtArgs>
   rentRoll?: boolean | Prisma.Asset$rentRollArgs<ExtArgs>
   tri?: boolean | Prisma.Asset$triArgs<ExtArgs>
+  bbrData?: boolean | Prisma.Asset$bbrDataArgs<ExtArgs>
+  oisData?: boolean | Prisma.Asset$oisDataArgs<ExtArgs>
+  ejfData?: boolean | Prisma.Asset$ejfDataArgs<ExtArgs>
+  pdfJobs?: boolean | Prisma.Asset$pdfJobsArgs<ExtArgs>
   _count?: boolean | Prisma.AssetCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AssetIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -843,6 +1384,10 @@ export type $AssetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     opex: Prisma.$OpexPayload<ExtArgs>[]
     rentRoll: Prisma.$RentRollUnitPayload<ExtArgs>[]
     tri: Prisma.$TheoreticalRentalIncomePayload<ExtArgs>[]
+    bbrData: Prisma.$BBRDataPayload<ExtArgs>[]
+    oisData: Prisma.$OISDataPayload<ExtArgs>[]
+    ejfData: Prisma.$EJFDataPayload<ExtArgs>[]
+    pdfJobs: Prisma.$PdfJobPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1250,6 +1795,10 @@ export interface Prisma__AssetClient<T, Null = never, ExtArgs extends runtime.Ty
   opex<T extends Prisma.Asset$opexArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$opexArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OpexPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   rentRoll<T extends Prisma.Asset$rentRollArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$rentRollArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RentRollUnitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tri<T extends Prisma.Asset$triArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$triArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TheoreticalRentalIncomePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  bbrData<T extends Prisma.Asset$bbrDataArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$bbrDataArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$BBRDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  oisData<T extends Prisma.Asset$oisDataArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$oisDataArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OISDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  ejfData<T extends Prisma.Asset$ejfDataArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$ejfDataArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EJFDataPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pdfJobs<T extends Prisma.Asset$pdfJobsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Asset$pdfJobsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PdfJobPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1767,6 +2316,102 @@ export type Asset$triArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   take?: number
   skip?: number
   distinct?: Prisma.TheoreticalRentalIncomeScalarFieldEnum | Prisma.TheoreticalRentalIncomeScalarFieldEnum[]
+}
+
+/**
+ * Asset.bbrData
+ */
+export type Asset$bbrDataArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the BBRData
+   */
+  select?: Prisma.BBRDataSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the BBRData
+   */
+  omit?: Prisma.BBRDataOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.BBRDataInclude<ExtArgs> | null
+  where?: Prisma.BBRDataWhereInput
+  orderBy?: Prisma.BBRDataOrderByWithRelationInput | Prisma.BBRDataOrderByWithRelationInput[]
+  cursor?: Prisma.BBRDataWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.BBRDataScalarFieldEnum | Prisma.BBRDataScalarFieldEnum[]
+}
+
+/**
+ * Asset.oisData
+ */
+export type Asset$oisDataArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OISData
+   */
+  select?: Prisma.OISDataSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OISData
+   */
+  omit?: Prisma.OISDataOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OISDataInclude<ExtArgs> | null
+  where?: Prisma.OISDataWhereInput
+  orderBy?: Prisma.OISDataOrderByWithRelationInput | Prisma.OISDataOrderByWithRelationInput[]
+  cursor?: Prisma.OISDataWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OISDataScalarFieldEnum | Prisma.OISDataScalarFieldEnum[]
+}
+
+/**
+ * Asset.ejfData
+ */
+export type Asset$ejfDataArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EJFData
+   */
+  select?: Prisma.EJFDataSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EJFData
+   */
+  omit?: Prisma.EJFDataOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EJFDataInclude<ExtArgs> | null
+  where?: Prisma.EJFDataWhereInput
+  orderBy?: Prisma.EJFDataOrderByWithRelationInput | Prisma.EJFDataOrderByWithRelationInput[]
+  cursor?: Prisma.EJFDataWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EJFDataScalarFieldEnum | Prisma.EJFDataScalarFieldEnum[]
+}
+
+/**
+ * Asset.pdfJobs
+ */
+export type Asset$pdfJobsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PdfJob
+   */
+  select?: Prisma.PdfJobSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PdfJob
+   */
+  omit?: Prisma.PdfJobOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PdfJobInclude<ExtArgs> | null
+  where?: Prisma.PdfJobWhereInput
+  orderBy?: Prisma.PdfJobOrderByWithRelationInput | Prisma.PdfJobOrderByWithRelationInput[]
+  cursor?: Prisma.PdfJobWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PdfJobScalarFieldEnum | Prisma.PdfJobScalarFieldEnum[]
 }
 
 /**

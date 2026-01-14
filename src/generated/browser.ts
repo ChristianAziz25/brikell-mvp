@@ -13,10 +13,10 @@
  * 🟢 You can import this file directly.
  */
 
-import * as Prisma from './internal/prismaNamespaceBrowser.js'
+import * as Prisma from './internal/prismaNamespaceBrowser.ts'
 export { Prisma }
-export * as $Enums from './enums.js'
-export * from './enums.js';
+export * as $Enums from './enums.ts'
+export * from './enums.ts';
 /**
  * Model Asset
  * 
@@ -52,3 +52,38 @@ export type Chat = Prisma.ChatModel
  * 
  */
 export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model PdfJob
+ * 
+ */
+export type PdfJob = Prisma.PdfJobModel
+/**
+ * Model PdfParsedUnits
+ * 
+ */
+export type PdfParsedUnits = Prisma.PdfParsedUnitsModel
+/**
+ * Model BBRData
+ * 
+ */
+export type BBRData = Prisma.BBRDataModel
+/**
+ * Model OISData
+ * 
+ */
+export type OISData = Prisma.OISDataModel
+/**
+ * Model EJFData
+ * 
+ */
+export type EJFData = Prisma.EJFDataModel
+/**
+ * Model DocumentAnalysis
+ * 
+ */
+export type DocumentAnalysis = Prisma.DocumentAnalysisModel
+/**
+ * Model Anomaly
+ * 
+ */
+export type Anomaly = Prisma.AnomalyModel
