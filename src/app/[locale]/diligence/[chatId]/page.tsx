@@ -2,6 +2,7 @@
 
 import { type Chat as ChatHistory } from "@/app/api/chat-creation/route";
 import { Chat } from "@/components";
+import { AnswerLoadingState } from "@/components/answer";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import { PageAnimation } from "@/components/page-animation";
 import { PdfResearchPanel, FastPdfResearchPanel } from "@/components/pdf-research";
@@ -215,7 +216,7 @@ export default function Page() {
         <ConversationHistory />
         
         {/* Main Chat Section */}
-        <section className="flex flex-1 flex-col min-h-0 min-w-0 bg-background relative overflow-hidden border border-border rounded-2xl">
+        <section className="flex flex-1 flex-col min-h-0 min-w-0 bg-white relative overflow-hidden border border-border rounded-2xl">
           <div className="flex-1 min-h-0 overflow-hidden border-b border-border rounded-t-2xl">
             <div
               ref={messageScrollRef}
@@ -314,6 +315,7 @@ export default function Page() {
                   );
                 })}
 
+                {/* Loading state - shown when waiting for AI response */}
                 {isLoading &&
                   messages[messages.length - 1]?.role !== "assistant" && (
                     <div className="flex justify-start w-full max-w-full overflow-hidden">
@@ -325,9 +327,8 @@ export default function Page() {
                           <Brain className="h-4 w-4 text-zinc-500" />
                         </div>
                         <div className="bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 overflow-hidden flex-1 min-w-0">
-                          <div className="px-5 py-4 flex items-center gap-3">
-                            <Loader2 className="h-4 w-4 text-zinc-400 animate-spin" />
-                            <span className="text-sm text-zinc-400">thinking...</span>
+                          <div className="px-5 py-4">
+                            <AnswerLoadingState />
                           </div>
                         </div>
                       </div>
