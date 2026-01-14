@@ -23,7 +23,7 @@ export function MarkdownRenderer({
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-base font-semibold mb-2 mt-3 text-foreground break-words">
+            <h2 className="text-xs font-medium text-zinc-400 uppercase tracking-wider mt-6 mb-3 first:mt-0 border-b border-zinc-100 pb-2">
               {children}
             </h2>
           ),
@@ -38,26 +38,26 @@ export function MarkdownRenderer({
             </h4>
           ),
 
-          // Paragraphs
+          // Paragraphs - Better spacing
           p: ({ children }) => (
-            <p className="mb-2 text-sm leading-relaxed text-foreground break-words">
+            <p className="mb-4 text-sm leading-relaxed text-zinc-700 break-words last:mb-0">
               {children}
             </p>
           ),
 
-          // Lists
+          // Lists - Better spacing and alignment
           ul: ({ children }) => (
-            <ul className="list-disc list-inside mb-2 space-y-1 text-sm text-foreground">
+            <ul className="list-disc list-outside ml-4 mb-4 space-y-2 text-sm text-zinc-700">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal list-inside mb-2 space-y-1 text-sm text-foreground">
+            <ol className="list-decimal list-outside ml-4 mb-4 space-y-2 text-sm text-zinc-700">
               {children}
             </ol>
           ),
           li: ({ children }) => (
-            <li className="ml-2 text-foreground break-words text-sm">
+            <li className="text-zinc-700 leading-relaxed pl-1">
               {children}
             </li>
           ),
@@ -138,9 +138,9 @@ export function MarkdownRenderer({
             </a>
           ),
 
-          // Strong/Bold - Extra prominent for section headers
+          // Strong/Bold - Inline emphasis
           strong: ({ children }) => (
-            <strong className="font-bold text-foreground block mt-4 mb-2 first:mt-0">
+            <strong className="font-semibold text-zinc-900">
               {children}
             </strong>
           ),
