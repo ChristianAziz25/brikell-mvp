@@ -15,9 +15,12 @@ import { NextRequest } from "next/server";
 import OpenAI from "openai";
 import type {
   JobStatus,
-  DDResultsResponse,
   DDSummary,
+  UnitMatchResult,
+  DDResultsWithUnits,
 } from "@/lib/pdf-processing/types";
+import { extractUnitsFromText } from "@/lib/pdf-processing/unit-extractor";
+import { matchUnitsInMemory } from "@/lib/pdf-processing/fast-matcher";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -42,6 +45,8 @@ interface FastParseRequest {
   text: string;
   fileName: string;
   pageCount: number;
+  assetId?: string;
+  enableUnitMatching?: boolean;
 }
 
 interface ProgressUpdate {
@@ -68,7 +73,7 @@ export async function POST(request: NextRequest) {
   (async () => {
     try {
       const body: FastParseRequest = await request.json();
-      const { text, fileName } = body;
+      const { text, fileName, assetId, enableUnitMatching = true } = body;
 
       if (!text || !fileName) {
         await sendProgress({
@@ -91,25 +96,63 @@ export async function POST(request: NextRequest) {
 
       await sendProgress({
         status: "extracting",
-        progress: 30,
+        progress: 20,
         message: "Extracting key information...",
       });
 
-      // Generate DD summary using LLM
-      const ddSummary = await generateDDSummary(text);
+      // Run DD summary and unit extraction in PARALLEL for speed
+      const [ddSummary, extractionResult] = await Promise.all([
+        generateDDSummary(text),
+        enableUnitMatching ? extractUnitsFromText(text) : Promise.resolve(null),
+      ]);
 
-      await sendProgress({
-        status: "matching",
-        progress: 80,
-        message: "Finalizing analysis...",
-      });
+      // Match units if extraction was enabled and units were found
+      let unitMatching: UnitMatchResult | undefined;
+      if (extractionResult && extractionResult.units.length > 0) {
+        await sendProgress({
+          status: "matching",
+          progress: 70,
+          message: "Matching units against database...",
+        });
 
-      // Build results response
-      const results: DDResultsResponse = {
+        unitMatching = await matchUnitsInMemory(extractionResult.units, assetId);
+
+        await sendProgress({
+          status: "matching",
+          progress: 90,
+          message: unitMatching.hasAnomalies
+            ? `Found ${unitMatching.unmatchedUnits.length} potential anomalies...`
+            : "All units matched successfully...",
+        });
+      } else if (enableUnitMatching) {
+        // No units found in document
+        unitMatching = {
+          unmatchedUnits: [],
+          matchedCount: 0,
+          totalExtracted: 0,
+          hasAnomalies: false,
+        };
+
+        await sendProgress({
+          status: "matching",
+          progress: 90,
+          message: "No unit data found in document...",
+        });
+      } else {
+        await sendProgress({
+          status: "matching",
+          progress: 80,
+          message: "Finalizing analysis...",
+        });
+      }
+
+      // Build results response with unit matching
+      const results: DDResultsWithUnits = {
         jobId,
         fileName,
         completedAt: new Date().toISOString(),
         summary: ddSummary,
+        unitMatching,
       };
 
       await sendProgress({

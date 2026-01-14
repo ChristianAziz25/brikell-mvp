@@ -24,17 +24,19 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { parseClientPdf, type ClientParseResult } from "@/lib/pdf-processing/client-parser";
 import type {
   JobStatus,
-  DDResultsResponse,
+  DDResultsWithUnits,
   JobStatusResponse,
 } from "@/lib/pdf-processing/types";
 
 interface UseFastPdfParseOptions {
   /** Callback when processing completes */
-  onComplete?: (results: DDResultsResponse) => void;
+  onComplete?: (results: DDResultsWithUnits) => void;
   /** Callback when processing fails */
   onError?: (error: Error) => void;
-  /** Asset ID (not used for DD summary, kept for compatibility) */
+  /** Asset ID for scoped unit matching */
   assetId?: string;
+  /** Enable unit matching against database (default: true) */
+  enableUnitMatching?: boolean;
 }
 
 interface UseFastPdfParseReturn {
@@ -43,7 +45,7 @@ interface UseFastPdfParseReturn {
   /** Current job status (compatible with usePdfJob) */
   job: JobStatusResponse | null;
   /** Final results (when complete) */
-  results: DDResultsResponse | null;
+  results: DDResultsWithUnits | null;
   /** Whether currently processing */
   isProcessing: boolean;
   /** Current error if any */
@@ -60,11 +62,11 @@ interface UseFastPdfParseReturn {
 export function useFastPdfParse(
   options: UseFastPdfParseOptions = {}
 ): UseFastPdfParseReturn {
-  const { onComplete, onError, assetId } = options;
+  const { onComplete, onError, assetId, enableUnitMatching = true } = options;
 
   // State that matches usePdfJob return type
   const [job, setJob] = useState<JobStatusResponse | null>(null);
-  const [results, setResults] = useState<DDResultsResponse | null>(null);
+  const [results, setResults] = useState<DDResultsWithUnits | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -154,6 +156,8 @@ export function useFastPdfParse(
             text: parseResult.fullText,
             fileName: file.name,
             pageCount: parseResult.metadata.pageCount,
+            assetId,
+            enableUnitMatching,
           }),
           signal: abortControllerRef.current.signal,
         });
@@ -248,7 +252,7 @@ export function useFastPdfParse(
         abortControllerRef.current = null;
       }
     },
-    [assetId, reset]
+    [assetId, enableUnitMatching, reset]
   );
 
   // Cleanup on unmount

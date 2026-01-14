@@ -177,43 +177,43 @@ export default function Home() {
 
   return (
     <PageAnimation>
-      <div className="w-full max-w-5xl mx-auto h-full space-y-16">
-        <section className="max-w-2xl mx-auto space-y-6 pt-16">
-          <div className="space-y-3">
-            <h2 className="text-3xl font-bold text-foreground text-center">
+      <div className="w-full max-w-5xl mx-auto h-full space-y-20">
+        <section className="max-w-2xl mx-auto space-y-8 pt-20">
+          <div className="space-y-4">
+            <h2 className="text-4xl font-light text-foreground text-center tracking-tight">
               Welcome{" "}
-              <span className="font-light text-muted-foreground">Daniel</span>
+              <span className="font-normal text-foreground/60">Daniel</span>
             </h2>
             <div className="text-center">
               <TextShimmer
-                duration={2}
+                duration={2.5}
                 spread={3}
-                className="text-sm font-light text-muted-foreground"
+                className="text-sm font-light text-muted-foreground/80 tracking-wide"
               >
-                Type to type a command or ask a question
+                Type a command or ask a question
               </TextShimmer>
             </div>
           </div>
           <Search />
         </section>
-        <div className="space-y-6">
-          <h3 className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+        <div className="space-y-8">
+          <h3 className="section-label">
             My Dashboards
           </h3>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-4">
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(18rem,1fr))] gap-5">
             {dashboards.map(({ key, title, description, Chart, data }) => (
               <Dialog key={key}>
                 <DialogTrigger
-                  className="group h-full cursor-pointer transition-all duration-200 hover:-translate-y-1 hover:shadow-lg"
+                  className="group h-full cursor-pointer"
                   asChild
                 >
-                  <div className="flex h-full max-h-[200px] flex-col rounded-xl border border-border/60 bg-card text-card-foreground shadow-md overflow-hidden">
-                    <div className="px-4 pt-3 pb-2.5 border-b border-border/40 flex-shrink-0">
-                      <h4 className="text-sm font-semibold text-foreground leading-tight truncate">
+                  <div className="flex h-full max-h-[220px] flex-col rounded-2xl border-0 bg-card text-card-foreground shadow-card overflow-hidden transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-card-hover">
+                    <div className="px-5 pt-4 pb-3 flex-shrink-0">
+                      <h4 className="text-[13px] font-medium text-foreground/90 leading-tight truncate tracking-wide">
                         {title}
                       </h4>
                     </div>
-                    <div className="flex-1 min-h-0 p-2">
+                    <div className="flex-1 min-h-0 px-3 pb-3">
                       <Chart
                         className="h-full w-full border-0 bg-transparent shadow-none [&>div]:h-full"
                         data={data}
@@ -237,31 +237,31 @@ export default function Home() {
               <DialogTrigger asChild>
                 <button
                   type="button"
-                  className="group flex h-full max-h-[200px] flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-muted-foreground/30 bg-muted/5 text-muted-foreground shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-muted-foreground/50 hover:bg-muted/10"
+                  className="group flex h-full max-h-[220px] flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-border bg-card/50 text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-card-hover hover:border-border/80 hover:bg-card"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-background border border-muted-foreground/20 group-hover:border-muted-foreground/40 transition-colors">
-                    <Plus className="h-5 w-5" />
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-muted/50 group-hover:bg-muted transition-colors duration-300">
+                    <Plus className="h-4 w-4 text-muted-foreground" />
                   </span>
-                  <div className="text-center space-y-1.5">
-                    <p className="text-sm font-medium text-foreground">
+                  <div className="text-center space-y-2 px-4">
+                    <p className="text-[13px] font-medium text-foreground/80">
                       Create custom dashboard
                     </p>
-                    <p className="text-xs text-muted-foreground/80">
-                      Build a new view from your Supabase data.
+                    <p className="text-xs text-muted-foreground/70">
+                      Build a new view from your data
                     </p>
                   </div>
                 </button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl">
-                <DialogTitle>Create Custom Dashboard</DialogTitle>
-                <DialogDescription>
+              <DialogContent className="max-w-2xl rounded-2xl">
+                <DialogTitle className="text-xl font-light tracking-tight">Create Custom Dashboard</DialogTitle>
+                <DialogDescription className="text-muted-foreground/80">
                   Select complexes and KPIs to build your custom dashboard.
                 </DialogDescription>
-                <div className="space-y-6 py-4">
+                <div className="space-y-8 py-6">
                   {/* Complex Selection */}
-                  <div>
-                    <h4 className="text-sm font-medium mb-3">Select Complexes</h4>
-                    <div className="flex items-center space-x-2 mb-4">
+                  <div className="space-y-4">
+                    <h4 className="section-label">Select Complexes</h4>
+                    <div className="flex items-center space-x-2.5">
                       <Checkbox
                         id="select-all-complexes"
                         checked={selectedComplexes.length === assets.length && assets.length > 0}
@@ -269,14 +269,14 @@ export default function Home() {
                       />
                       <label
                         htmlFor="select-all-complexes"
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        className="text-[13px] font-normal text-foreground/80 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                       >
                         Select All
                       </label>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto pr-2">
+                    <div className="grid grid-cols-2 gap-2 max-h-60 overflow-y-auto pr-2">
                       {assets.map((asset) => (
-                        <div key={asset.id} className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted/50 transition-colors">
+                        <div key={asset.id} className="flex items-center space-x-2.5 p-3 rounded-xl hover:bg-muted/40 transition-colors duration-200">
                           <Checkbox
                             id={`complex-${asset.id}`}
                             checked={selectedComplexes.includes(asset.id)}
@@ -284,9 +284,9 @@ export default function Home() {
                           />
                           <label
                             htmlFor={`complex-${asset.id}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                            className="text-[13px] font-normal text-foreground/80 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2.5"
                           >
-                            <Building2 className="h-4 w-4 text-muted-foreground" />
+                            <Building2 className="h-4 w-4 text-muted-foreground/60" />
                             {asset.name}
                           </label>
                         </div>
@@ -295,11 +295,11 @@ export default function Home() {
                   </div>
 
                   {/* KPI Selection */}
-                  <div>
-                    <h4 className="text-sm font-medium mb-3">Select KPIs</h4>
-                    <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-4">
+                    <h4 className="section-label">Select KPIs</h4>
+                    <div className="grid grid-cols-3 gap-2">
                       {["GRI", "CAPEX", "OPEX"].map(kpi => (
-                        <div key={kpi} className="flex items-center space-x-2 p-2 rounded-md hover:bg-muted/50 transition-colors">
+                        <div key={kpi} className="flex items-center space-x-2.5 p-3 rounded-xl hover:bg-muted/40 transition-colors duration-200">
                           <Checkbox
                             id={`kpi-${kpi}`}
                             checked={selectedKPIs.includes(kpi)}
@@ -307,11 +307,11 @@ export default function Home() {
                           />
                           <label
                             htmlFor={`kpi-${kpi}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2"
+                            className="text-[13px] font-normal text-foreground/80 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 flex items-center gap-2.5"
                           >
-                            {kpi === "GRI" && <TrendingUp className="h-4 w-4 text-muted-foreground" />}
-                            {kpi === "CAPEX" && <Plus className="h-4 w-4 text-muted-foreground" />}
-                            {kpi === "OPEX" && <HomeIcon className="h-4 w-4 text-muted-foreground" />}
+                            {kpi === "GRI" && <TrendingUp className="h-4 w-4 text-muted-foreground/60" />}
+                            {kpi === "CAPEX" && <Plus className="h-4 w-4 text-muted-foreground/60" />}
+                            {kpi === "OPEX" && <HomeIcon className="h-4 w-4 text-muted-foreground/60" />}
                             {kpi}
                           </label>
                         </div>
@@ -319,8 +319,8 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2">
-                  <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+                <div className="flex justify-end gap-3 pt-2">
+                  <Button variant="ghost" onClick={() => setIsCreateDialogOpen(false)}>
                     Cancel
                   </Button>
                   <Button

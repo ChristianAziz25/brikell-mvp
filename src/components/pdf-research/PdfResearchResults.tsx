@@ -2,14 +2,15 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import type { DDResultsResponse } from "@/lib/pdf-processing/types";
+import type { DDResultsWithUnits } from "@/lib/pdf-processing/types";
+import { UnitMatchingResults } from "./UnitMatchingResults";
 
 interface PdfResearchResultsProps {
-  results: DDResultsResponse;
+  results: DDResultsWithUnits;
 }
 
 export function PdfResearchResults({ results }: PdfResearchResultsProps) {
-  const { summary } = results;
+  const { summary, unitMatching } = results;
 
   return (
     <motion.div
@@ -70,6 +71,9 @@ export function PdfResearchResults({ results }: PdfResearchResultsProps) {
             {summary.missingInformation}
           </p>
         </div>
+
+        {/* Unit Matching Results */}
+        {unitMatching && <UnitMatchingResults results={unitMatching} />}
       </div>
 
       {/* Footer */}

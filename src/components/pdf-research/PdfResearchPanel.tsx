@@ -4,7 +4,7 @@ import { useCallback, useState, useRef, useEffect } from "react";
 import { X } from "lucide-react";
 import { usePdfJob } from "@/hooks/use-pdf-job";
 import { PdfResearchLoading } from "./PdfResearchLoading";
-import { PdfResearchResults } from "./PdfResearchResults";
+import { LegacyPdfResearchResults } from "./LegacyPdfResearchResults";
 import { PdfResearchError } from "./PdfResearchError";
 
 interface PdfResearchPanelProps {
@@ -97,7 +97,7 @@ export function PdfResearchPanel({
 
       {/* Results state with fade-in */}
       {isCompleted && showResults && (
-        <PdfResearchResults results={results} />
+        <LegacyPdfResearchResults results={results} />
       )}
 
       {/* Brief transition state - show loading briefly before results fade in */}

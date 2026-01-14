@@ -87,7 +87,7 @@ export function FastPdfResearchPanel({
   // Initial loading state before first progress update
   if (!job) {
     return (
-      <div className="w-full bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 px-5 py-4">
+      <div className="w-full bg-white rounded-xl shadow-sm border border-zinc-100 px-5 py-4">
         <PdfResearchLoading
           status="pending"
           progress={0}
@@ -100,7 +100,7 @@ export function FastPdfResearchPanel({
   // Error state
   if (error || job.status === "failed") {
     return (
-      <div className="w-full bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 px-5 py-4">
+      <div className="w-full bg-white rounded-xl shadow-sm border border-zinc-100 px-5 py-4">
         <PdfResearchError
           message={error?.message || job.errorMessage || "Processing failed"}
           onRetry={handleRetry}
@@ -115,7 +115,7 @@ export function FastPdfResearchPanel({
   const isCompleted = job.status === "completed" && results;
 
   return (
-    <div className="w-full bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 px-5 py-4 relative">
+    <div className="w-full bg-white rounded-xl shadow-sm border border-zinc-100 px-5 py-4 relative">
       {/* Dismiss button (only show when completed) */}
       {isCompleted && onDismiss && (
         <button

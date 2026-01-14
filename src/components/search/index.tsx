@@ -156,7 +156,7 @@ export function Search({
       >
         <div
           className={cn(
-            "bg-card rounded-2xl p-2.5 border grid grid-cols-[1fr] [grid-template-areas:'primary'_'footer']",
+            "bg-card rounded-2xl p-3 shadow-card grid grid-cols-[1fr] [grid-template-areas:'primary'_'footer'] transition-all duration-300 focus-within:shadow-card-hover",
             className
           )}
         >
@@ -168,16 +168,16 @@ export function Search({
             aria-hidden="true"
           />
 
-          <div className="flex min-h-14 items-center overflow-x-hidden px-1.5 [grid-area:primary]">
-            <div className="relative flex items-center gap-2 flex-1 max-h-52 overflow-auto text-sm leading-relaxed overscroll-contain">
-              <SearchIcon className="h-3 w-3 text-muted-foreground shrink-0" />
+          <div className="flex min-h-14 items-center overflow-x-hidden px-2 [grid-area:primary]">
+            <div className="relative flex items-center gap-3 flex-1 max-h-52 overflow-auto text-[13px] leading-relaxed overscroll-contain">
+              <SearchIcon className="h-4 w-4 text-muted-foreground/60 shrink-0" />
               <div className="relative flex-1">
                 <div
                   ref={inputRef}
                   contentEditable="plaintext-only"
                   translate="no"
                   spellCheck={false}
-                  className="relative py-2 z-10 outline-none whitespace-pre-wrap leading-none"
+                  className="relative py-2 z-10 outline-none whitespace-pre-wrap leading-relaxed text-foreground/80"
                   onInput={handleInput}
                   onKeyDown={handleKeyDown}
                   onFocus={() => {
@@ -185,7 +185,7 @@ export function Search({
                   }}
                 />
                 {isEmpty && (
-                  <div className="w-full pointer-events-none absolute top-2 text-muted-foreground leading-none">
+                  <div className="w-full pointer-events-none absolute top-2 text-muted-foreground/50 leading-relaxed">
                     {placeholder}
                   </div>
                 )}
@@ -194,10 +194,10 @@ export function Search({
                 <Button
                   type="submit"
                   size="icon"
-                  className="h-8 w-8 rounded-full bg-foreground text-background hover:bg-foreground/90"
+                  className="h-9 w-9 rounded-full bg-foreground text-background hover:bg-foreground/90 shadow-sm transition-all duration-200 hover:scale-105"
                   aria-label="Send message"
                 >
-                  <Send className="h-3 w-3" />
+                  <Send className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
@@ -207,33 +207,33 @@ export function Search({
 
       {/* Search Results Dropdown */}
       {showResults && value.trim().length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-card border rounded-xl shadow-lg max-h-96 overflow-y-auto z-50">
+        <div className="absolute top-full left-0 right-0 mt-3 bg-card border-0 rounded-2xl shadow-lg max-h-96 overflow-y-auto z-50 animate-fade-in">
           {isSearching ? (
-            <div className="p-4 text-center text-sm text-muted-foreground">
+            <div className="p-6 text-center text-sm text-muted-foreground/70">
               Searching...
             </div>
           ) : hasResults ? (
-            <div className="p-2">
+            <div className="p-3">
               {searchResults.buildings.length > 0 && (
                 <div className="mb-4">
-                  <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  <div className="section-label px-3 py-2">
                     Buildings
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {searchResults.buildings.map((building) => (
                       <button
                         key={building.id}
                         type="button"
-                        className="w-full flex items-start gap-3 px-3 py-2 rounded-lg hover:bg-muted/50 transition-colors text-left"
+                        className="w-full flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/40 transition-all duration-200 text-left"
                         onClick={() => handleResultClick(building)}
                       >
-                        <Building2 className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <Building2 className="h-4 w-4 text-muted-foreground/60 mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-foreground truncate">
+                          <div className="text-[13px] font-medium text-foreground/90 truncate">
                             {building.name}
                           </div>
                           {(building.address || building.city) && (
-                            <div className="text-xs text-muted-foreground truncate">
+                            <div className="text-xs text-muted-foreground/70 truncate mt-0.5">
                               {[building.address, building.city]
                                 .filter(Boolean)
                                 .join(", ")}
@@ -248,23 +248,23 @@ export function Search({
 
               {searchResults.units.length > 0 && (
                 <div>
-                  <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                  <div className="section-label px-3 py-2">
                     Units
                   </div>
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {searchResults.units.map((unit) => (
                       <button
                         key={unit.id}
                         type="button"
-                        className="w-full flex items-start gap-3 px-3 py-2 rounded-lg hover:bg-muted/50 transition-colors text-left"
+                        className="w-full flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/40 transition-all duration-200 text-left"
                         onClick={() => handleResultClick(unit)}
                       >
-                        <Home className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                        <Home className="h-4 w-4 text-muted-foreground/60 mt-0.5 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-medium text-foreground truncate">
+                          <div className="text-[13px] font-medium text-foreground/90 truncate">
                             {unit.address}
                           </div>
-                          <div className="text-xs text-muted-foreground truncate">
+                          <div className="text-xs text-muted-foreground/70 truncate mt-0.5">
                             {unit.propertyName} • {unit.unitType}
                             {unit.tenantName1 && ` • ${unit.tenantName1}`}
                           </div>
@@ -276,7 +276,7 @@ export function Search({
               )}
             </div>
           ) : (
-            <div className="p-4 text-center text-sm text-muted-foreground">
+            <div className="p-6 text-center text-sm text-muted-foreground/70">
               No results found
             </div>
           )}

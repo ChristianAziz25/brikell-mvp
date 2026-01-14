@@ -93,11 +93,11 @@ export const DesktopSidebar = ({
   return (
     <motion.div
       className={cn(
-        "h-full px-4 py-4 pt-6 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800 w-[300px] shrink-0",
+        "h-full px-4 py-5 pt-6 hidden md:flex md:flex-col bg-card dark:bg-neutral-800 w-[280px] shrink-0",
         className
       )}
       animate={{
-        width: animate ? (open ? "300px" : "64px") : "300px",
+        width: animate ? (open ? "280px" : "64px") : "280px",
       }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
@@ -118,13 +118,13 @@ export const MobileSidebar = ({
     <>
       <div
         className={cn(
-          "h-10 px-4 py-2 flex flex-row md:hidden items-center justify-between bg-neutral-100 dark:bg-neutral-800 w-full"
+          "h-12 px-4 py-3 flex flex-row md:hidden items-center justify-between bg-card dark:bg-neutral-800 w-full border-b border-border/40"
         )}
         {...props}
       >
         <div className="flex justify-end z-20 w-full">
           <Menu
-            className="size-6 text-neutral-800 dark:text-neutral-200 cursor-pointer"
+            className="size-5 text-foreground dark:text-neutral-200 cursor-pointer"
             onClick={() => setOpen(!open)}
           />
         </div>
@@ -135,19 +135,19 @@ export const MobileSidebar = ({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "-100%", opacity: 0 }}
               transition={{
-                duration: 0.3,
-                ease: "easeInOut",
+                duration: 0.25,
+                ease: "easeOut",
               }}
               className={cn(
-                "fixed h-full w-full inset-0 bg-white dark:bg-neutral-900 p-10 z-100 flex flex-col justify-between",
+                "fixed h-full w-full inset-0 bg-card dark:bg-neutral-900 p-10 z-100 flex flex-col justify-between",
                 className
               )}
             >
               <div
-                className="absolute right-10 top-10 z-50 text-neutral-800 dark:text-neutral-200 cursor-pointer"
+                className="absolute right-10 top-10 z-50 text-foreground dark:text-neutral-200 cursor-pointer"
                 onClick={() => setOpen(!open)}
               >
-                <X />
+                <X className="size-5" />
               </div>
               {children}
             </motion.div>
@@ -183,8 +183,10 @@ export const SidebarLink = ({
       <Link
         href={link.href}
         className={cn(
-          "flex items-center group/sidebar p-2 gap-2 rounded-md transition-colors",
-          isActive && "bg-neutral-200 dark:bg-neutral-700",
+          "flex items-center group/sidebar px-3 py-2.5 gap-3 rounded-xl transition-all duration-200",
+          isActive
+            ? "bg-muted/80 dark:bg-neutral-700"
+            : "hover:bg-muted/50 dark:hover:bg-neutral-700/50",
           className
         )}
         {...props}
@@ -197,16 +199,17 @@ export const SidebarLink = ({
             opacity: animate ? (open ? 1 : 0) : 1,
           }}
           className={cn(
-            "text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre p-0! m-0!",
+            "text-foreground/80 dark:text-neutral-200 text-[13px] font-normal group-hover/sidebar:translate-x-0.5 transition duration-200 whitespace-pre p-0! m-0!",
             link.beta ? "flex flex-row items-center" : "inline-block",
-            "leading-none"
+            "leading-none",
+            isActive && "text-foreground font-medium"
           )}
         >
           {link.label}
           {link.beta && (
             <Badge
               variant="outline"
-              className="ml-2 text-[0.5rem] text-neutral-500 dark:text-neutral-400 leading-none shrink-0"
+              className="ml-2 text-[9px] text-muted-foreground dark:text-neutral-400 leading-none shrink-0 border-border/50"
             >
               Beta
             </Badge>
@@ -214,7 +217,7 @@ export const SidebarLink = ({
         </motion.span>
       </Link>
       {link.divider && (
-        <div className="h-px my-2 w-full bg-neutral-200 dark:bg-neutral-700 shrink-0" />
+        <div className="h-px my-3 w-full bg-border/40 dark:bg-neutral-700 shrink-0" />
       )}
     </>
   );

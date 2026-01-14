@@ -508,7 +508,7 @@ export default function Page() {
               </div>
               <div className="flex-1 overflow-x-auto no-scrollbar overscroll-x-contain">
                 <div className="overflow-hidden rounded-2xl border border-border/50 bg-card">
-                  <div className="border-b p-4">
+                  <div className="border-b px-6 py-5">
                     <div className="flex flex-row items-center justify-between w-full">
                       <p className="font-medium text-muted-foreground">
                         All Buildings
@@ -522,7 +522,7 @@ export default function Page() {
                     ref={tableContainerRef}
                     className="relative w-full overflow-x-auto no-scrollbar"
                   >
-                    <table className="w-full caption-bottom text-sm">
+                    <table className="w-full caption-bottom text-xs">
                       <thead className="[&_tr]:border-b">
                         {/* Column header rows */}
                         {table.getHeaderGroups().map((headerGroup) => (
@@ -530,7 +530,7 @@ export default function Page() {
                             {headerGroup.headers.map((header) => (
                               <th
                                 key={header.id}
-                                className="h-12 px-4 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0"
+                                className="h-14 px-6 text-left align-middle font-semibold text-muted-foreground [&:has([role=checkbox])]:pr-0"
                               >
                                 {header.isPlaceholder
                                   ? null
@@ -574,7 +574,7 @@ export default function Page() {
                                   {row.getVisibleCells().map((cell) => (
                                     <td
                                       key={cell.id}
-                                      className="p-4 align-middle [&:has([role=checkbox])]:pr-0"
+                                      className="px-6 py-5 align-middle [&:has([role=checkbox])]:pr-0"
                                     >
                                       {flexRender(
                                         cell.column.columnDef.cell,

@@ -132,3 +132,20 @@ export interface DDResultsResponse {
   completedAt: string;
   summary: DDSummary;
 }
+
+// Unit matching result for fast parsing (in-memory matching)
+export interface UnitMatchResult {
+  /** Units from PDF that were NOT found in database (anomalies) */
+  unmatchedUnits: ExtractedUnit[];
+  /** Number of units from PDF that matched database records */
+  matchedCount: number;
+  /** Total units extracted from PDF */
+  totalExtracted: number;
+  /** Whether any anomalies were found */
+  hasAnomalies: boolean;
+}
+
+// Extended DD results with unit matching
+export interface DDResultsWithUnits extends DDResultsResponse {
+  unitMatching?: UnitMatchResult;
+}

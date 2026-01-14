@@ -46,7 +46,7 @@ export default async function RootLayout({
         <Providers>
           <NextIntlClientProvider messages={messages}>
             <SidebarProvider>
-              <div className="flex w-full min-h-svh bg-muted/5 overflow-hidden">
+              <div className="flex w-full min-h-svh bg-background overflow-hidden">
                 <AppSidebar>{children}</AppSidebar>
               </div>
             </SidebarProvider>

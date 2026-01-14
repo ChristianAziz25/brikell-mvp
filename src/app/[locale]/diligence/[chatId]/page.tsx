@@ -326,7 +326,7 @@ export default function Page() {
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100">
                           <Brain className="h-4 w-4 text-zinc-500" />
                         </div>
-                        <div className="bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 overflow-hidden flex-1 min-w-0">
+                        <div className="bg-white rounded-xl shadow-sm border border-zinc-100 overflow-hidden flex-1 min-w-0">
                           <div className="px-5 py-4">
                             <AnswerLoadingState />
                           </div>

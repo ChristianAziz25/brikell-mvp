@@ -6,7 +6,7 @@ import { ExportButton } from "@/components/ui/export-button";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { use, useMemo, useState } from "react";
+import { Fragment, use, useMemo, useState } from "react";
 import { MyAssetsSkeleton } from "../components/skeleton";
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -329,22 +329,20 @@ export default function PropertyPage({
                     <tr className="border-b border-border/40 bg-muted/10">
                       <th className="py-2 px-6"></th>
                       {visibleMonths.map((month, i) => (
-                        <>
-                          <th 
-                            key={`${month}-actual`} 
+                        <Fragment key={month}>
+                          <th
                             className="text-right py-2 px-4 font-normal text-muted-foreground text-xs uppercase tracking-wide"
                           >
                             Actual
                           </th>
-                          <th 
-                            key={`${month}-budget`} 
+                          <th
                             className={`text-right py-2 px-4 font-normal text-muted-foreground text-xs uppercase tracking-wide ${
                               i < visibleMonths.length - 1 ? "border-r border-border/40" : ""
                             }`}
                           >
                             Budget
                           </th>
-                        </>
+                        </Fragment>
                       ))}
                     </tr>
                   </thead>
