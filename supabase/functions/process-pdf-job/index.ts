@@ -46,6 +46,25 @@ Return a JSON object with this structure:
 
 If a field is not available, omit it or set to null.`;
 
+// Summary generation prompt for LLM
+const SUMMARY_GENERATION_PROMPT = `You are a due diligence analyst. Given the matching results between a PDF rent roll and a portfolio database, generate a brief summary.
+
+Return ONLY a JSON object with this structure:
+{
+  "bulletPoints": [
+    "Brief insight about the matching results",
+    "Another key finding",
+    "Actionable recommendation if needed"
+  ]
+}
+
+Guidelines:
+- Generate 3-5 concise bullet points
+- Focus on actionable insights
+- Mention specific numbers (units matched, missing, confidence levels)
+- Be professional and direct
+- If there are low confidence matches, recommend review`;
+
 interface ExtractedUnit {
   unit_address?: string;
   unit_zipcode?: string;
@@ -147,7 +166,12 @@ serve(async (req) => {
     // 7. Match against units table
     const matchResult = await matchUnits(job.id, job.asset_id);
 
-    // 8. Complete the job
+    await updateProgress(job.id, "matching", 95);
+
+    // 8. Generate summary
+    const summary = await generateSummary(matchResult.stats);
+
+    // 9. Complete the job
     await supabase
       .from("pdf_job")
       .update({
@@ -155,6 +179,7 @@ serve(async (req) => {
         progress: 100,
         completed_at: new Date().toISOString(),
         matching_result: matchResult,
+        summary: summary,
         updated_at: new Date().toISOString(),
       })
       .eq("id", job.id);
@@ -222,6 +247,87 @@ async function handleJobFailure(jobId: string, error: Error) {
     `Job ${jobId} failed. Retry ${newRetryCount}/${maxRetries}. ` +
       (shouldRetry ? `Next retry in ${backoffMs / 1000}s` : "Max retries reached")
   );
+}
+
+interface MatchingStats {
+  totalPdfUnits: number;
+  totalDbUnits: number;
+  matched: number;
+  missing: number;
+  extra: number;
+  avgConfidence: number;
+}
+
+async function generateSummary(stats: MatchingStats): Promise<string> {
+  try {
+    const prompt = `Matching Results:
+- Total units in PDF: ${stats.totalPdfUnits}
+- Matched units: ${stats.matched}
+- Missing (in PDF but not in portfolio): ${stats.missing}
+- Extra (in portfolio but not in PDF): ${stats.extra}
+- Average match confidence: ${(stats.avgConfidence * 100).toFixed(1)}%
+
+Generate 3-5 bullet points summarizing these findings.`;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${openaiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: SUMMARY_GENERATION_PROMPT },
+          { role: "user", content: prompt },
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.3,
+        max_tokens: 500,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error("Summary generation failed:", await response.text());
+      return generateFallbackSummary(stats);
+    }
+
+    const data = await response.json();
+    const content = data.choices[0]?.message?.content;
+
+    if (!content) {
+      return generateFallbackSummary(stats);
+    }
+
+    const parsed = JSON.parse(content);
+    return parsed.bulletPoints?.join("\n") || generateFallbackSummary(stats);
+  } catch (err) {
+    console.error("Summary generation error:", err);
+    return generateFallbackSummary(stats);
+  }
+}
+
+function generateFallbackSummary(stats: MatchingStats): string {
+  const bullets: string[] = [];
+
+  if (stats.matched > 0) {
+    bullets.push(`${stats.matched} unit${stats.matched !== 1 ? 's' : ''} matched with your portfolio`);
+  }
+  if (stats.missing > 0) {
+    bullets.push(`${stats.missing} unit${stats.missing !== 1 ? 's' : ''} from the document not found in portfolio`);
+  }
+  if (stats.extra > 0) {
+    bullets.push(`${stats.extra} portfolio unit${stats.extra !== 1 ? 's' : ''} not referenced in document`);
+  }
+  if (stats.avgConfidence > 0) {
+    const conf = Math.round(stats.avgConfidence * 100);
+    bullets.push(`Average match confidence: ${conf}%`);
+    if (conf < 85) {
+      bullets.push("Some matches have lower confidence - review recommended");
+    }
+  }
+
+  return bullets.join("\n") || "Analysis complete.";
 }
 
 async function extractTextFromPdf(fileData: Blob): Promise<string> {

@@ -22,6 +22,7 @@ export async function GET(
         startedAt: true,
         completedAt: true,
         matchingResult: true,
+        summary: true,
       },
     });
 
@@ -45,6 +46,7 @@ export async function GET(
       createdAt: job.createdAt.toISOString(),
       startedAt: job.startedAt?.toISOString(),
       completedAt: job.completedAt?.toISOString(),
+      summary: job.summary || undefined,
     };
 
     // Include stats summary for completed jobs

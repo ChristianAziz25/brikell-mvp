@@ -75,6 +75,7 @@ export interface JobStatusResponse {
   completedAt?: string;
   errorMessage?: string;
   retryCount: number;
+  summary?: string;
 }
 
 export interface PdfUnitResult {
@@ -113,4 +114,21 @@ export interface JobResultsResponse {
   missingInDb: PdfUnitResult[];
   extraInDb: DbUnitResult[];
   stats: MatchingStats;
+  summary: string;
+}
+
+// DD Summary types
+export interface DDSummary {
+  propertyOverview: string;
+  keyFinancials: string;
+  rentRollHighlights: string;
+  risksAndRedFlags: string;
+  missingInformation: string;
+}
+
+export interface DDResultsResponse {
+  jobId: string;
+  fileName: string;
+  completedAt: string;
+  summary: DDSummary;
 }

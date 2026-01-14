@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models.ts'
-export type * from './prismaNamespace.ts'
+export type * from '../models'
+export type * from './prismaNamespace'
 
 export const Decimal = runtime.Decimal
 
@@ -234,6 +234,7 @@ export const PdfJobScalarFieldEnum = {
   startedAt: 'startedAt',
   completedAt: 'completedAt',
   matchingResult: 'matchingResult',
+  summary: 'summary',
   assetId: 'assetId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

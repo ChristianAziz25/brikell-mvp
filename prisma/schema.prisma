@@ -206,6 +206,7 @@ model PdfJob {
   startedAt     DateTime?    @map("started_at")
   completedAt   DateTime?    @map("completed_at")
   matchingResult Json?       @map("matching_result")
+  summary       String?      @map("summary")
   assetId       String?      @map("asset_id")
   createdAt     DateTime     @default(now()) @map("created_at")
   updatedAt     DateTime     @updatedAt @map("updated_at")

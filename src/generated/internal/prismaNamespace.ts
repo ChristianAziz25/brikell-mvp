@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from '../models.ts'
-import { type PrismaClient } from './class.ts'
+import type * as Prisma from "../models"
+import { type PrismaClient } from "./class"
 
-export type * from '../models.ts'
+export type * from '../models'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -1643,6 +1643,7 @@ export const PdfJobScalarFieldEnum = {
   startedAt: 'startedAt',
   completedAt: 'completedAt',
   matchingResult: 'matchingResult',
+  summary: 'summary',
   assetId: 'assetId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

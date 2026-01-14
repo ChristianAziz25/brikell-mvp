@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from '../enums.ts'
-import type * as Prisma from '../internal/prismaNamespace.ts'
+import type * as $Enums from "../enums"
+import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model PdfJob
@@ -53,6 +53,7 @@ export type PdfJobMinAggregateOutputType = {
   nextRetryAt: Date | null
   startedAt: Date | null
   completedAt: Date | null
+  summary: string | null
   assetId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -71,6 +72,7 @@ export type PdfJobMaxAggregateOutputType = {
   nextRetryAt: Date | null
   startedAt: Date | null
   completedAt: Date | null
+  summary: string | null
   assetId: string | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -90,6 +92,7 @@ export type PdfJobCountAggregateOutputType = {
   startedAt: number
   completedAt: number
   matchingResult: number
+  summary: number
   assetId: number
   createdAt: number
   updatedAt: number
@@ -124,6 +127,7 @@ export type PdfJobMinAggregateInputType = {
   nextRetryAt?: true
   startedAt?: true
   completedAt?: true
+  summary?: true
   assetId?: true
   createdAt?: true
   updatedAt?: true
@@ -142,6 +146,7 @@ export type PdfJobMaxAggregateInputType = {
   nextRetryAt?: true
   startedAt?: true
   completedAt?: true
+  summary?: true
   assetId?: true
   createdAt?: true
   updatedAt?: true
@@ -161,6 +166,7 @@ export type PdfJobCountAggregateInputType = {
   startedAt?: true
   completedAt?: true
   matchingResult?: true
+  summary?: true
   assetId?: true
   createdAt?: true
   updatedAt?: true
@@ -267,6 +273,7 @@ export type PdfJobGroupByOutputType = {
   startedAt: Date | null
   completedAt: Date | null
   matchingResult: runtime.JsonValue | null
+  summary: string | null
   assetId: string | null
   createdAt: Date
   updatedAt: Date
@@ -309,6 +316,7 @@ export type PdfJobWhereInput = {
   startedAt?: Prisma.DateTimeNullableFilter<"PdfJob"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"PdfJob"> | Date | string | null
   matchingResult?: Prisma.JsonNullableFilter<"PdfJob">
+  summary?: Prisma.StringNullableFilter<"PdfJob"> | string | null
   assetId?: Prisma.StringNullableFilter<"PdfJob"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PdfJob"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PdfJob"> | Date | string
@@ -330,6 +338,7 @@ export type PdfJobOrderByWithRelationInput = {
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   matchingResult?: Prisma.SortOrderInput | Prisma.SortOrder
+  summary?: Prisma.SortOrderInput | Prisma.SortOrder
   assetId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -354,6 +363,7 @@ export type PdfJobWhereUniqueInput = Prisma.AtLeast<{
   startedAt?: Prisma.DateTimeNullableFilter<"PdfJob"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"PdfJob"> | Date | string | null
   matchingResult?: Prisma.JsonNullableFilter<"PdfJob">
+  summary?: Prisma.StringNullableFilter<"PdfJob"> | string | null
   assetId?: Prisma.StringNullableFilter<"PdfJob"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PdfJob"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PdfJob"> | Date | string
@@ -375,6 +385,7 @@ export type PdfJobOrderByWithAggregationInput = {
   startedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   matchingResult?: Prisma.SortOrderInput | Prisma.SortOrder
+  summary?: Prisma.SortOrderInput | Prisma.SortOrder
   assetId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -402,6 +413,7 @@ export type PdfJobScalarWhereWithAggregatesInput = {
   startedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PdfJob"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PdfJob"> | Date | string | null
   matchingResult?: Prisma.JsonNullableWithAggregatesFilter<"PdfJob">
+  summary?: Prisma.StringNullableWithAggregatesFilter<"PdfJob"> | string | null
   assetId?: Prisma.StringNullableWithAggregatesFilter<"PdfJob"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PdfJob"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PdfJob"> | Date | string
@@ -421,6 +433,7 @@ export type PdfJobCreateInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   asset?: Prisma.AssetCreateNestedOneWithoutPdfJobsInput
@@ -441,6 +454,7 @@ export type PdfJobUncheckedCreateInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   assetId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -461,6 +475,7 @@ export type PdfJobUpdateInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   asset?: Prisma.AssetUpdateOneWithoutPdfJobsNestedInput
@@ -481,6 +496,7 @@ export type PdfJobUncheckedUpdateInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -501,6 +517,7 @@ export type PdfJobCreateManyInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   assetId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -520,6 +537,7 @@ export type PdfJobUpdateManyMutationInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -538,6 +556,7 @@ export type PdfJobUncheckedUpdateManyInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -567,6 +586,7 @@ export type PdfJobCountOrderByAggregateInput = {
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
   matchingResult?: Prisma.SortOrder
+  summary?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -592,6 +612,7 @@ export type PdfJobMaxOrderByAggregateInput = {
   nextRetryAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  summary?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -610,6 +631,7 @@ export type PdfJobMinOrderByAggregateInput = {
   nextRetryAt?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  summary?: Prisma.SortOrder
   assetId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -705,6 +727,7 @@ export type PdfJobCreateWithoutAssetInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   parsedUnits?: Prisma.PdfParsedUnitsCreateNestedManyWithoutJobInput
@@ -724,6 +747,7 @@ export type PdfJobUncheckedCreateWithoutAssetInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   parsedUnits?: Prisma.PdfParsedUnitsUncheckedCreateNestedManyWithoutJobInput
@@ -772,6 +796,7 @@ export type PdfJobScalarWhereInput = {
   startedAt?: Prisma.DateTimeNullableFilter<"PdfJob"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"PdfJob"> | Date | string | null
   matchingResult?: Prisma.JsonNullableFilter<"PdfJob">
+  summary?: Prisma.StringNullableFilter<"PdfJob"> | string | null
   assetId?: Prisma.StringNullableFilter<"PdfJob"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PdfJob"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PdfJob"> | Date | string
@@ -791,6 +816,7 @@ export type PdfJobCreateWithoutParsedUnitsInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   asset?: Prisma.AssetCreateNestedOneWithoutPdfJobsInput
@@ -810,6 +836,7 @@ export type PdfJobUncheckedCreateWithoutParsedUnitsInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   assetId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -845,6 +872,7 @@ export type PdfJobUpdateWithoutParsedUnitsInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   asset?: Prisma.AssetUpdateOneWithoutPdfJobsNestedInput
@@ -864,6 +892,7 @@ export type PdfJobUncheckedUpdateWithoutParsedUnitsInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   assetId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -883,6 +912,7 @@ export type PdfJobCreateManyAssetInput = {
   startedAt?: Date | string | null
   completedAt?: Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -901,6 +931,7 @@ export type PdfJobUpdateWithoutAssetInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parsedUnits?: Prisma.PdfParsedUnitsUpdateManyWithoutJobNestedInput
@@ -920,6 +951,7 @@ export type PdfJobUncheckedUpdateWithoutAssetInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   parsedUnits?: Prisma.PdfParsedUnitsUncheckedUpdateManyWithoutJobNestedInput
@@ -939,6 +971,7 @@ export type PdfJobUncheckedUpdateManyWithoutAssetInput = {
   startedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchingResult?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  summary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -988,6 +1021,7 @@ export type PdfJobSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   startedAt?: boolean
   completedAt?: boolean
   matchingResult?: boolean
+  summary?: boolean
   assetId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1010,6 +1044,7 @@ export type PdfJobSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   startedAt?: boolean
   completedAt?: boolean
   matchingResult?: boolean
+  summary?: boolean
   assetId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1030,6 +1065,7 @@ export type PdfJobSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   startedAt?: boolean
   completedAt?: boolean
   matchingResult?: boolean
+  summary?: boolean
   assetId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1050,12 +1086,13 @@ export type PdfJobSelectScalar = {
   startedAt?: boolean
   completedAt?: boolean
   matchingResult?: boolean
+  summary?: boolean
   assetId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PdfJobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fileName" | "filePath" | "fileSizeBytes" | "status" | "progress" | "errorMessage" | "retryCount" | "maxRetries" | "nextRetryAt" | "startedAt" | "completedAt" | "matchingResult" | "assetId" | "createdAt" | "updatedAt", ExtArgs["result"]["pdfJob"]>
+export type PdfJobOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "fileName" | "filePath" | "fileSizeBytes" | "status" | "progress" | "errorMessage" | "retryCount" | "maxRetries" | "nextRetryAt" | "startedAt" | "completedAt" | "matchingResult" | "summary" | "assetId" | "createdAt" | "updatedAt", ExtArgs["result"]["pdfJob"]>
 export type PdfJobInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   asset?: boolean | Prisma.PdfJob$assetArgs<ExtArgs>
   parsedUnits?: boolean | Prisma.PdfJob$parsedUnitsArgs<ExtArgs>
@@ -1088,6 +1125,7 @@ export type $PdfJobPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     startedAt: Date | null
     completedAt: Date | null
     matchingResult: runtime.JsonValue | null
+    summary: string | null
     assetId: string | null
     createdAt: Date
     updatedAt: Date
@@ -1529,6 +1567,7 @@ export interface PdfJobFieldRefs {
   readonly startedAt: Prisma.FieldRef<"PdfJob", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"PdfJob", 'DateTime'>
   readonly matchingResult: Prisma.FieldRef<"PdfJob", 'Json'>
+  readonly summary: Prisma.FieldRef<"PdfJob", 'String'>
   readonly assetId: Prisma.FieldRef<"PdfJob", 'String'>
   readonly createdAt: Prisma.FieldRef<"PdfJob", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PdfJob", 'DateTime'>

@@ -136,6 +136,9 @@ export async function GET(
           : 0,
     };
 
+    // Get summary from job or generate fallback
+    const summary = job.summary || generateFallbackSummary(stats);
+
     const response: JobResultsResponse = {
       jobId: job.id,
       fileName: job.fileName,
@@ -144,6 +147,7 @@ export async function GET(
       missingInDb,
       extraInDb,
       stats,
+      summary,
     };
 
     return NextResponse.json(response);
@@ -154,4 +158,33 @@ export async function GET(
       { status: 500 }
     );
   }
+}
+
+function generateFallbackSummary(stats: MatchingStats): string {
+  const bullets: string[] = [];
+
+  if (stats.matched > 0) {
+    bullets.push(
+      `${stats.matched} unit${stats.matched !== 1 ? "s" : ""} matched with your portfolio`
+    );
+  }
+  if (stats.missing > 0) {
+    bullets.push(
+      `${stats.missing} unit${stats.missing !== 1 ? "s" : ""} from the document not found in portfolio`
+    );
+  }
+  if (stats.extra > 0) {
+    bullets.push(
+      `${stats.extra} portfolio unit${stats.extra !== 1 ? "s" : ""} not referenced in document`
+    );
+  }
+  if (stats.avgConfidence > 0) {
+    const conf = Math.round(stats.avgConfidence * 100);
+    bullets.push(`Average match confidence: ${conf}%`);
+    if (conf < 85) {
+      bullets.push("Some matches have lower confidence - review recommended");
+    }
+  }
+
+  return bullets.join("\n") || "Analysis complete.";
 }

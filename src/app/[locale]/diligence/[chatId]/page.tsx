@@ -4,14 +4,15 @@ import { type Chat as ChatHistory } from "@/app/api/chat-creation/route";
 import { Chat } from "@/components";
 import { MarkdownRenderer } from "@/components/MarkdownRenderer";
 import { PageAnimation } from "@/components/page-animation";
+import { PdfResearchPanel, FastPdfResearchPanel } from "@/components/pdf-research";
 import { cn } from "@/lib/utils";
 import type { MyUIMessage } from "@/types/ChatMessage";
 import { useChat } from "@ai-sdk/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UIMessage } from "ai";
-import { Brain, Loader2 } from "lucide-react";
+import { Brain, FileText, Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ConversationHistory } from "./ConversationHistory";
 
 function extractMessageContent(message: UIMessage): string {
@@ -37,6 +38,29 @@ function extractMessageContent(message: UIMessage): string {
 export default function Page() {
   const { chatId } = useParams<{ chatId: string }>();
   const queryClient = useQueryClient();
+
+  // PDF state for deep research
+  // NEW: Fast parsing uses File directly (no upload to storage)
+  const [activePdfFile, setActivePdfFile] = useState<File | null>(null);
+  // LEGACY: Job-based parsing uses jobId (uploads to storage)
+  const [activePdfJobId, setActivePdfJobId] = useState<string | null>(null);
+
+  // NEW: Fast parsing handler - no file upload, client-side extraction
+  const handlePdfFileReady = useCallback((file: File) => {
+    setActivePdfFile(file);
+    setActivePdfJobId(null); // Clear any legacy job
+  }, []);
+
+  // LEGACY: Job-based handler (for fallback)
+  const handlePdfJobStarted = useCallback((jobId: string) => {
+    setActivePdfJobId(jobId);
+    setActivePdfFile(null); // Clear any fast parse
+  }, []);
+
+  const handlePdfDismiss = useCallback(() => {
+    setActivePdfFile(null);
+    setActivePdfJobId(null);
+  }, []);
 
   const { data: chatData } = useQuery<ChatHistory>({
     queryKey: ["chat-history", chatId],
@@ -198,7 +222,8 @@ export default function Page() {
               className="h-full space-y-4 overflow-y-auto overflow-x-hidden p-6 pb-4 no-scrollbar"
             >
               <div className="w-full max-w-full overflow-x-hidden">
-                {messages.length === 0 && (
+                {/* Hide intro message when PDF parsing is active */}
+                {messages.length === 0 && !activePdfFile && !activePdfJobId && (
                   <div className="flex justify-start w-full max-w-full overflow-hidden">
                     <div
                       className="flex max-w-3xl items-start gap-3 min-w-0 overflow-hidden"
@@ -308,11 +333,61 @@ export default function Page() {
                       </div>
                     </div>
                   )}
+
+                {/* PDF Deep Research Panel - NEW Fast Parsing (no storage upload) */}
+                {activePdfFile && (
+                  <div className="flex justify-start w-full max-w-full overflow-hidden">
+                    <div
+                      className="flex max-w-3xl items-start gap-3 min-w-0 w-full overflow-hidden"
+                      style={{ maxWidth: "100%" }}
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100">
+                        <FileText className="h-4 w-4 text-zinc-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <FastPdfResearchPanel
+                          file={activePdfFile}
+                          onDismiss={handlePdfDismiss}
+                          onRetry={(file) => setActivePdfFile(file)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* PDF Deep Research Panel - LEGACY Job-based (uploads to storage) */}
+                {activePdfJobId && !activePdfFile && (
+                  <div className="flex justify-start w-full max-w-full overflow-hidden">
+                    <div
+                      className="flex max-w-3xl items-start gap-3 min-w-0 w-full overflow-hidden"
+                      style={{ maxWidth: "100%" }}
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100">
+                        <FileText className="h-4 w-4 text-zinc-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <PdfResearchPanel
+                          jobId={activePdfJobId}
+                          onDismiss={handlePdfDismiss}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
 
-          <Chat className="p-4 rounded-b-2xl" eventHandler={handleChatEvent} />
+          <Chat
+            className="p-4 rounded-b-2xl"
+            eventHandler={handleChatEvent}
+            // NEW: Fast parsing - client-side extraction, no storage upload
+            onPdfFileReady={handlePdfFileReady}
+            useFastParsing={true}
+            // LEGACY: Job-based system (fallback, uses storage)
+            onPdfJobStarted={handlePdfJobStarted}
+            usePdfJobSystem={false}
+          />
         </section>
       </div>
     </PageAnimation>
