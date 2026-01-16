@@ -3,7 +3,6 @@ import { Icon } from "@/components/icon";
 import { Sidebar, SidebarBody, SidebarLink } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import {
-  AlertTriangleIcon,
   Building2Icon,
   HouseIcon,
   LayoutDashboardIcon,
@@ -48,14 +47,6 @@ const navItems: NavItem[] = [
     divider: true,
   },
   {
-    title: "Leakage Detection",
-    url: "/anomalies",
-    icon: (
-      <AlertTriangleIcon className="size-4 shrink-0 text-neutral-700 dark:text-neutral-200 flex items-center justify-center" />
-    ),
-    beta: true,
-  },
-  {
     title: "Diligence",
     url: "/diligence",
     icon: (
@@ -94,7 +85,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-5 bg-card dark:bg-neutral-800 border-r border-r-border/40">
           <Icon className="size-8 flex shrink-0" />
-          <div className="h-px w-full bg-border/50 dark:bg-neutral-700 shrink-0" />
+          <div className="h-[2px] w-full bg-border dark:bg-neutral-600 shrink-0" />
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden no-scrollbar overscroll-y-contain">
             <div className="flex flex-col gap-1">
               {navItems.map((item, idx) => (
@@ -111,7 +102,7 @@ export function AppSidebar({ children }: { children: React.ReactNode }) {
               ))}
             </div>
           </div>
-          <div className="h-px w-full bg-border/50 dark:bg-neutral-700" />
+          <div className="h-[2px] w-full bg-border dark:bg-neutral-600" />
           <div className="flex flex-col gap-1">
             {footerItems.map((item, idx) => (
               <SidebarLink

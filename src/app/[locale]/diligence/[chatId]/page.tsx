@@ -236,9 +236,9 @@ export default function Page() {
                       <div className="bg-zinc-50 rounded-xl shadow-sm border border-zinc-100 overflow-hidden flex-1 min-w-0">
                         <div className="px-5 py-4">
                           <p className="text-sm text-zinc-600">
-                            Hello! I&apos;m your AI analyst. Ask me anything about
+                            Hello! I&apos;m your AI Agent. Ask me anything about
                             your data. I can help you analyze trends and answer
-                            questions about your information.
+                            questions about your portfolio.
                           </p>
                         </div>
                       </div>

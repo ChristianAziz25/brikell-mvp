@@ -217,7 +217,7 @@ export const SidebarLink = ({
         </motion.span>
       </Link>
       {link.divider && (
-        <div className="h-px my-3 w-full bg-border/40 dark:bg-neutral-700 shrink-0" />
+        <div className="h-[2px] my-3 w-full bg-border dark:bg-neutral-600 shrink-0" />
       )}
     </>
   );

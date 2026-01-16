@@ -34,20 +34,28 @@ const CustomTooltip = ({ active, payload, label }: {
       <div className="bg-card border border-border/50 rounded-xl shadow-lg p-3 min-w-[140px]">
         <p className="text-sm font-medium text-foreground mb-2">{label}</p>
         <div className="space-y-1.5">
-          {payload.map((entry, index) => (
-            <div key={index} className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-2">
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: entry.color }}
-                />
-                <span className="text-xs text-muted-foreground">{entry.name}</span>
+          {payload.map((entry, index) => {
+            // Format percentages for Vacancy Rate and NOI %
+            const isPercentage = entry.name.includes("Rate") || entry.name.includes("NOI %");
+            const displayValue = isPercentage 
+              ? `${entry.value.toFixed(2)}%`
+              : formatValue(entry.value);
+            
+            return (
+              <div key={index} className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2">
+                  <div
+                    className="w-2 h-2 rounded-full"
+                    style={{ backgroundColor: entry.color }}
+                  />
+                  <span className="text-xs text-muted-foreground">{entry.name}</span>
+                </div>
+                <span className="text-xs font-medium text-foreground">
+                  {displayValue}
+                </span>
               </div>
-              <span className="text-xs font-medium text-foreground">
-                {formatValue(entry.value)}
-              </span>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     );
@@ -69,11 +77,14 @@ export function GlowingLineChart({
     ? Object.keys(data[0]).filter((key) => key !== "month")
     : [];
 
-  // Monochrome grayscale palette
+  // Monochrome grayscale palette - extended for more lines
   const colors = [
-    "#18181b", // zinc-900
-    "#71717a", // zinc-500
-    "#a1a1aa", // zinc-400
+    "#18181b", // zinc-900 - black
+    "#3f3f46", // zinc-700 - dark grey
+    "#71717a", // zinc-500 - medium grey
+    "#a1a1aa", // zinc-400 - light grey
+    "#d4d4d8", // zinc-300 - very light grey
+    "#52525b", // zinc-600 - medium dark grey
   ];
 
   return (
